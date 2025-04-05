@@ -94,7 +94,6 @@ export const loginUser = async (req, res, next) => {
 };
 
 export const testRoute = (req, res) => {
-  console.log('🚀 Test route hit');
-  res.send('✅ API is working!');
+  console.log('✅ Backend test route hit!');
+  res.json({ message: 'Backend is connected successfully!' });
 };
- 

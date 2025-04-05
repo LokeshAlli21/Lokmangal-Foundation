@@ -1,4 +1,3 @@
-
 import moment from 'moment';
 window.moment = moment;
 
@@ -16,18 +15,34 @@ import { Outlet } from "react-router-dom";
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentUser } from './store/authSlice';
+import { useEffect } from 'react';
 
 function App() {
+  const dispatch = useDispatch();
+  const { user, loading, error, token } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token) {
+      console.log("Token found, fetching current user...");
+      dispatch(getCurrentUser());
+    } else {
+      console.log("No token found. User not logged in.");
+    }
+  }, [dispatch, token]);
 
   return (
     <>
-    <Header />
-    <Outlet />
-    <Footer />
+      <div>
+        {loading ? "Loading..." : <h1>Welcome {user ? user.name : 'No user'}!</h1>}
+        {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+      </div>
+      <Header />
+      <Outlet />
+      <Footer />
     </>
-
-  )
+  );
 }
 
-export default App
+export default App;
