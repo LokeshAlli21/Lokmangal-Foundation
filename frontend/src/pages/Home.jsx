@@ -13,14 +13,14 @@ function Home() {
             <div className="hom-ban">
               <div className="ban-tit">
                 <span>
-                  <i className="no1">#1</i> Matrimony
+                  लोकमंगल फाउंडेशन
                 </span>
                 <h1>
-                  Find your
+                तुमच्या मनासारखा जोडीदार येथे शोधा,
                   <br />
-                  <b>Right Match</b> here
+                  <b>प्रेम आणि विश्वासाच्या नव्या प्रवासाला</b> सुरुवात करा!
                 </h1>
-                <p>Most trusted Matrimony Brand in the World.</p>
+                <p>"मिलनाचे नवसपूर्त स्थळ – हजारो मन जुळले आहेत इथे!</p>
               </div>
               <div className="ban-search chosenini">
                 <form>
@@ -30,16 +30,16 @@ function Home() {
                         <label>I'm looking for</label>
                         <select className="chosen-select">
                           <option value="">I'm looking for</option>
-                          <option value="Men">Men</option>
-                          <option value="Women">Women</option>
+                          <option value="Men">वर शोधत आहे (Looking for Groom)</option>
+                          <option value="Women"> वधू शोधत आहे (Looking for Bride)</option>
                         </select>
                       </div>
                     </li>
                     <li className="sr-age">
                       <div className="form-group">
-                        <label>Age</label>
+                        <label>वय (Age)</label>
                         <select className="chosen-select">
-                          <option value="">Age</option>
+                          <option value="">वय (Age)</option>
                           <option value="">18 to 30</option>
                           <option value="">31 to 40</option>
                           <option value="">41 to 50</option>
@@ -53,9 +53,9 @@ function Home() {
                     </li>
                     <li className="sr-reli">
                       <div className="form-group">
-                        <label>Religion</label>
+                        <label>धर्म (Religion)</label>
                         <select className="chosen-select">
-                          <option>Religion</option>
+                          <option>धर्म (Religion)</option>
                           <option>Any</option>
                           <option>Hindu</option>
                           <option>Muslim</option>
@@ -68,7 +68,7 @@ function Home() {
                       <div className="form-group">
                         <label>City</label>
                         <select className="chosen-select">
-                          <option>Location</option>
+                          <option>स्थान (Location)</option>
                           <option>Any location</option>
                           <option>Chennai</option>
                           <option>New york</option>
@@ -111,16 +111,16 @@ function Home() {
   </section>
   {/* END */}
   {/* QUICK ACCESS */}
-  <section>
+  {/* <section>
     <div className="str home-acces-main">
       <div className="container">
         <div className="row">
-          {/* BACKGROUND SHAPE */}
+          
           <div className="wedd-shap">
             <span className="abo-shap-1" />
             <span className="abo-shap-4" />
           </div>
-          {/* END BACKGROUND SHAPE */}
+          
           <div className="home-tit">
             <p>Quick Access</p>
             <h2>
@@ -200,18 +200,18 @@ function Home() {
         </div>
       </div>
     </div>
-  </section>
+  </section> */}
   {/* END */}
   {/* TRUST BRANDS */}
   <section>
-    <div className="hom-cus-revi">
+    <div className="hom-cus-revi" style={{ backgroundColor: '#fefcf4'}}>
       <div className="container">
         <div className="row">
           <div className="home-tit">
-            <p>trusted brand</p>
+            <p>Trusted By</p>
             <h2>
-              <span>
-                Trust by <b className="num">1500</b>+ Couples
+              <span> 
+              <b className="num">१५००+</b>प्रेमकथा, एका क्लिकवर सुरू झालेल्या!
               </span>
             </h2>
             <span className="leaf1" />
@@ -228,12 +228,10 @@ function Home() {
                     <i className="cir-com cir-3" />
                   </div>
                   <p>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s,{" "}
+साईटवरील उत्कृष्ट मॅचमेकिंग सुविधांमुळे आम्हाला आमचा परिपूर्ण जोडीदार मिळाला. संपूर्ण प्रक्रियेत पारदर्शकता आणि सोपी संवाद प्रणाली होती.
                   </p>
-                  <h5>Jack danial</h5>
-                  <span>New york</span>
+                  <h5>Akshay & Snehal Deshmukh</h5>
+                  <span>सोलापूर (Solapur)</span>
                 </div>
               </li>
               <li>
@@ -245,12 +243,10 @@ function Home() {
                     <i className="cir-com cir-3" />
                   </div>
                   <p>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s,{" "}
+                  Our family recommended this website, and now we are happily married! It’s a reliable and safe option, perfect for the entire family.
                   </p>
-                  <h5>Jack danial</h5>
-                  <span>New york</span>
+                  <h5>Prathamesh & Pooja Patil</h5>
+                  <span>नाशिक (Nashik)</span>
                 </div>
               </li>
               <li>
@@ -262,12 +258,10 @@ function Home() {
                     <i className="cir-com cir-3" />
                   </div>
                   <p>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s,{" "}
+                  आम्ही वेगवेगळ्या वेबसाइट्स ट्राय केल्या होत्या, पण ही सर्वोत्तम ठरली. प्रामाणिक प्रोफाइल्स आणि उत्कृष्ट जोड्या जुळवण्याची पद्धत!
                   </p>
-                  <h5>Jack danial</h5>
-                  <span>New york</span>
+                  <h5>Rohit & Swati Jadhav</h5>
+                  <span>कोल्हापूर (Kolhapur)</span>
                 </div>
               </li>
               <li>
@@ -279,12 +273,25 @@ function Home() {
                     <i className="cir-com cir-3" />
                   </div>
                   <p>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s,{" "}
+                  Our wedding journey started here. The entire experience was wonderful, and the platform was extremely helpful.
                   </p>
-                  <h5>Jack danial</h5>
-                  <span>New york</span>
+                  <h5>Samarth & Aditi More</h5>
+                  <span>पुणे (Pune)</span>
+                </div>
+              </li>
+              <li>
+                <div className="cus-revi-box">
+                  <div className="revi-im">
+                    <img src="images/user/5.jpg" alt="" loading="lazy" />
+                    <i className="cir-com cir-1" />
+                    <i className="cir-com cir-2" />
+                    <i className="cir-com cir-3" />
+                  </div>
+                  <p>
+                  आमच्या लग्नाचा प्रवास इथेच सुरू झाला. संपूर्ण अनुभव उत्कृष्ट होता आणि प्लॅटफॉर्म अत्यंत मदतीचा ठरला.
+                  </p>
+                  <h5>Tejas & Manasi Kulkarni</h5>
+                  <span>औरंगाबाद (Aurangabad)</span>
                 </div>
               </li>
             </ul>
@@ -310,8 +317,8 @@ function Home() {
                 <span>
                   <i className="no1">#1</i> Wedding Website
                 </span>
-                <h2>Why choose us</h2>
-                <p>Most Trusted and premium Matrimony Service in the World.</p>
+                <h2>आम्हाला का निवडावे?</h2>
+                <p>आईवडिलांच्या पसंतीस पात्र, तरुणाईच्या मनाजोगते!</p>
               </div>
             </div>
           </div>
@@ -333,7 +340,7 @@ function Home() {
                 data-dely="0.1"
               >
                 <img src="images/icon/prize.png" alt="" loading="lazy" />
-                <h4>Genuine profiles</h4>
+                <h4>खरे प्रोफाइल्स</h4>
                 <p>Contact genuine profiles with 100% verified mobile</p>
               </div>
             </li>
@@ -344,7 +351,7 @@ function Home() {
                 data-dely="0.3"
               >
                 <img src="images/icon/trust.png" alt="" loading="lazy" />
-                <h4>Most trusted</h4>
+                <h4> र्वात विश्वासार्ह</h4>
                 <p>The most trusted wedding matrimony brand lorem</p>
               </div>
             </li>
@@ -355,8 +362,8 @@ function Home() {
                 data-dely="0.6"
               >
                 <img src="images/icon/rings.png" alt="" loading="lazy" />
-                <h4>2000+ weddings</h4>
-                <p>Lakhs of peoples have found their life partner</p>
+                <h4>१५००+ जोडप्यांचा विश्वास</h4>
+                <p>1500+ stories that started with just one click!</p>
               </div>
             </li>
           </ul>
@@ -391,13 +398,12 @@ function Home() {
           <div className="col-lg-6">
             <div className="ab-wel-rhs">
               <div className="ab-wel-tit">
+                <h2>स्वागत आहे! लोकमंगल</h2>
                 <h2>
-                  Welcome to <em>Wedding matrimony</em>
+                 फाउंडेशन मॅट्रिमोनीमध्ये<em>जिथे परंपरा आणि प्रेम जुळते!</em>
                 </h2>
                 <p>
-                  Best wedding matrimony It is a long established fact that a
-                  reader will be distracted by the readable content of a page
-                  when looking at its layout.{" "}
+                आतापर्यंत हजारो मन जुळवणारा महाराष्ट्राचं सर्वोत्तम विवाह मंच! येथे तुमच्या स्वप्नातील जोडीदार शोधा आणि नव्या आयुष्याच्या प्रवासाला सुरूवात करा!
                 </p>
                 <p>
                   {" "}
@@ -407,10 +413,7 @@ function Home() {
               </div>
               <div className="ab-wel-tit-1">
                 <p>
-                  There are many variations of passages of Lorem Ipsum
-                  available, but the majority have suffered alteration in some
-                  form, by injected humour, or randomised words which don't look
-                  even slightly believable.
+                Begin a new chapter of marriage with us. Every profile here is verified and trustworthy. Find a partner as per your preferences and create the perfect match!
                 </p>
               </div>
               <div className="ab-wel-tit-2">
@@ -496,7 +499,7 @@ function Home() {
           <div className="home-tit">
             <p>Moments</p>
             <h2>
-              <span>How it works</span>
+              <span>ही प्रक्रिया कशी कार्य करते?</span>
             </h2>
             <span className="leaf1" />
             <span className="tit-ani-" />
@@ -515,12 +518,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slow"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Register</h5>
+                    <h5>नोंदणी करा (Register)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    तुमच्या स्वप्नातील जोडीदार शोधण्यासाठी पहिली पाहिरी  – मोफत नोंदणी!"
+                    (First step to your dream partner – Register for free!)
                     </p>
                   </div>
                 </div>
@@ -531,12 +533,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slower"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Find your Match</h5>
+                    <h5>तुमचा जोडीदार शोधा (Find Your Match)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    तुमच्या आवडीनुसार प्रोफाइल्स ब्राउज करा आणि योग्य जोडीदार निवडा.
+(Browse profiles based on your preferences and find the right match!)
                     </p>
                   </div>
                   <div
@@ -567,12 +568,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slow"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Send Interest</h5>
+                    <h5>आवड दर्शवा (Send Interest)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    तुमच्या आवडीनुसार जोडीदार निवडा आणि संवाद सुरू करा.
+(Express interest in a suitable match and start a conversation!)
                     </p>
                   </div>
                 </div>
@@ -583,12 +583,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slower"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Get Profile Information</h5>
+                    <h5>प्रोफाइल माहिती अद्यतनित करा (Get Profile Information)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    तुमचे प्रोफाइल पूर्ण करा आणि जुळवणीसाठी अधिक संधी मिळवा.
+                    (Complete your profile to increase your chances of getting the best matches!)
                     </p>
                   </div>
                   <div
@@ -611,12 +610,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slow"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Start Meetups</h5>
+                    <h5>संवाद वाढवा आणि भेटी घ्या (Start Meetups)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    ऑनलाइन संवाद साधा, फोनवर बोला आणि प्रत्यक्ष भेटी घ्या.
+                    (Connect online, talk over the phone, and plan personal meetings)
                     </p>
                   </div>
                 </div>
@@ -627,12 +625,11 @@ function Home() {
                     className="tline-con animate animate__animated animate__slower"
                     data-ani="animate__fadeInUp"
                   >
-                    <h5>Getting Marriage</h5>
+                    <h5>लग्नाची गाठ बांधा! (Getting Married)</h5>
                     <span>Timing: 7:00 PM</span>
                     <p>
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever.
+                    एकमेकांना जाणून घ्या, कुटुंबांचा आशीर्वाद घ्या आणि नवीन प्रवास सुरू करा!
+(Get to know each other, seek family blessings, and start your new journey!)
                     </p>
                   </div>
                   <div
@@ -789,7 +786,7 @@ function Home() {
   </section>
   {/* END */}
   {/* TEAM START */}
-  <section>
+  {/* <section>
     <div className="ab-team">
       <div className="container">
         <div className="row">
@@ -941,7 +938,7 @@ function Home() {
         </div>
       </div>
     </div>
-  </section>
+  </section> */}
   {/* END */}
   {/* GALLERY START */}
   <section>
