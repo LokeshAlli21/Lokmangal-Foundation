@@ -3,7 +3,7 @@ window.moment = moment;
 
 import './css/style.css';
 import './js/jquery-ui';
-import './js/slick';         // Problem is found here while deploying on vercel 
+// import './js/slick';         // Problem is found here while deploying on vercel 
                                 // index-DiNQ4MbH.js:402 Uncaught ReferenceError: require is not defined
                                 //     at index-DiNQ4MbH.js:402:6013
                                 //     at index-DiNQ4MbH.js:402:6045
