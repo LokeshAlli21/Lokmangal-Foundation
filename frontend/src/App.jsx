@@ -15,32 +15,34 @@ import { Outlet } from "react-router-dom";
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentUser } from './store/authSlice';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+
+import { login, logout} from './store/authSlice'
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import authService from './backend-services/auth/auth';
+
 function App() {
   const dispatch = useDispatch();
-  const { user, loading, error, token } = useSelector((state) => state.auth);
-
+  
   useEffect(() => {
-    if (token) {
-      console.log("Token found, fetching current user...");
-      dispatch(getCurrentUser());
-    } else {
-      console.log("No token found. User not logged in.");
-    }
-  }, [dispatch, token]);
+    authService.getCurrentUser()
+    .then((userData) => {
+      if(userData) {
+        dispatch(login(userData))
+      } else {
+        dispatch(logout())
+      }
+      console.log("userData : ",userData);
+    })
+    .catch((error) => console.log("Login Error : ",error))
+  }, [])
 
   return (
     <>
-      <div>
-        {loading ? "Loading..." : <h1>Welcome {user ? user.name : 'No user'}!</h1>}
-        {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-      </div>
       <Header />
       <ToastContainer position="bottom-right" autoClose={5000}  />
       <Outlet />

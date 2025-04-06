@@ -70,12 +70,15 @@ class AuthService {
 
       const data = await response.json();
 
+      console.log("data at login service in auth.js :: data:",data);
+      
+
       if (!response.ok) {
         toast.error("🚫 Invalid credentials. Please try again.");
         throw new Error("Invalid credentials");
       }
 
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("authToken", data.user.token);
       toast.success(`✅ Welcome back! Logged in successfully.`);
       return data;
 

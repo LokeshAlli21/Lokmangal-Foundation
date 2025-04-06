@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import env from '../env/env';
-import authService from '../backend-services/auth/auth'; // make sure this path is correct
+import authService from '../backend-services/auth/auth';
 
 function SignUp() {
 

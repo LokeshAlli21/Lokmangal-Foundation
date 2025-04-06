@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import authService from '../backend-services/auth/auth';
+import { login as authLogin } from '../store/authSlice';
 
 function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
+    // Reset error
+    setError('');
+
+    // Basic Validation
     if (!email || !password) {
       setError('All fields are required');
       return;
@@ -19,11 +30,36 @@ function Login() {
       return;
     }
 
-    setError('');
-    console.log('Email:', email);
-    console.log('Password:', password);
-    alert('Login successful!');
-    // Add your actual login logic here
+    try {
+      setLoading(true);
+
+      const session = await authService.login({ email, password });
+      console.log("session: ",session);
+
+      if (session) {
+
+        const userData = await authService.getCurrentUser()
+        if(userData){
+          dispatch(authLogin(userData))
+        }
+
+        console.log('✅ Login Success:', userData);
+
+        alert('Login successful!');
+        navigate('/'); 
+      }
+    } catch (error) {
+      console.error('❌ Login Failed:', error);
+
+      // Proper error handling
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'An error occurred during login';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +77,7 @@ function Login() {
                     </h2>
                   </div>
                   <div className="im">
-                    <img src="images/login-couple.png" alt="" />
+                    <img src="images/login-couple.png" alt="Login visual" />
                   </div>
                   <div className="log-bg">&nbsp;</div>
                 </div>
@@ -51,12 +87,13 @@ function Login() {
                       <h4>Start for free</h4>
                       <h1>Sign in to Matrimony</h1>
                       <p>
-                        Not a member? <a href="sign-up.html">Sign up now</a>
+                        Not a member? <a href="/sign-up">Sign up now</a>
                       </p>
                     </div>
                     <div className="form-login">
                       <form onSubmit={handleSubmit}>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
+
                         <div className="form-group">
                           <label className="lb">Email:</label>
                           <input
@@ -67,6 +104,7 @@ function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                           />
                         </div>
+
                         <div className="form-group">
                           <label className="lb">Password:</label>
                           <input
@@ -77,18 +115,13 @@ function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                           />
                         </div>
-                        <div className="form-group form-check">
-                          <label className="form-check-label">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              name="agree"
-                            />{" "}
-                            Remember me
-                          </label>
-                        </div>
-                        <button type="submit" className="btn btn-primary">
-                          Sign in
+
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={loading}
+                        >
+                          {loading ? 'Signing in...' : 'Sign in'}
                         </button>
                       </form>
                     </div>
