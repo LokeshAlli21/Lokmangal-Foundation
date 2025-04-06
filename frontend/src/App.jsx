@@ -9,6 +9,9 @@ import './js/jquery-ui';
                                 //     at index-DiNQ4MbH.js:402:6045
                                 //     at index-DiNQ4MbH.js:1:23
                                 //     at index-DiNQ4MbH.js:515:50793
+                                import 'slick-carousel';
+                                import "slick-carousel/slick/slick.css"; 
+                                import "slick-carousel/slick/slick-theme.css";
 import './js/select-opt';
 import './js/Chart';
 import './js/mail';
