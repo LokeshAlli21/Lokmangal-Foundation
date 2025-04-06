@@ -17,6 +17,14 @@ app.use(loggerMiddleware);
 // Routes
 app.use('/api/auth', authRoutes);
 
+export const testRoute = (req, res) => {
+  console.log('✅ Backend test route hit!');
+  res.json({ message: 'Backend is connected successfully!' });
+};
+
+app.get('/api/test', testRoute)
+
+
 app.get('/', (req, res) =>{
   console.log("user hit a main route!");
   

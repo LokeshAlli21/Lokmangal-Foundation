@@ -19,6 +19,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from './store/authSlice';
 import { useEffect } from 'react';
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const dispatch = useDispatch();
   const { user, loading, error, token } = useSelector((state) => state.auth);
@@ -39,6 +42,7 @@ function App() {
         {error && <div style={{ color: 'red' }}>Error: {error}</div>}
       </div>
       <Header />
+      <ToastContainer position="bottom-right" autoClose={5000}  />
       <Outlet />
       <Footer />
     </>
