@@ -3,15 +3,13 @@ window.moment = moment;
 
 import './css/style.css';
 import './js/jquery-ui';
-// import './js/slick';         // Problem is found here while deploying on vercel 
+import './js/slick';         // Problem is found here while deploying on vercel 
                                 // index-DiNQ4MbH.js:402 Uncaught ReferenceError: require is not defined
                                 //     at index-DiNQ4MbH.js:402:6013
                                 //     at index-DiNQ4MbH.js:402:6045
                                 //     at index-DiNQ4MbH.js:1:23
                                 //     at index-DiNQ4MbH.js:515:50793
-                                import 'slick-carousel';
-                                import "slick-carousel/slick/slick.css"; 
-                                import "slick-carousel/slick/slick-theme.css";
+                                
 import './js/select-opt';
 import './js/Chart';
 import './js/mail';
@@ -32,6 +30,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import authService from './backend-services/auth/auth';
+
+import 'slick-carousel';
+                                import "slick-carousel/slick/slick.css"; 
+                                import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   const dispatch = useDispatch();
