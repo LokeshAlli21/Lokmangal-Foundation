@@ -3,7 +3,7 @@ window.moment = moment;
 
 import './css/style.css';
 import './js/jquery-ui';
-// import './js/slick';
+import './js/slick';
 // import './js/select-opt';
 import './js/Chart';
 import './js/mail';
