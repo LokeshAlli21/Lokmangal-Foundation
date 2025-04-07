@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { loggerMiddleware } from './middlewares/loggerMiddleware.js';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
+// importing routes
 import authRoutes from './routes/authRoutes.js';
+import noAuthRoutes from './routes/noAuthRoutes.js';
 
 dotenv.config();
 
@@ -15,15 +17,17 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 // Routes
-app.use('/api/auth', authRoutes);
 
 export const testRoute = (req, res) => {
   console.log('✅ Backend test route hit!');
   res.json({ message: 'Backend is connected successfully!' });
 };
 
+app.use('/api/auth', authRoutes);
+
 app.get('/api/test', testRoute)
 
+app.get('/api/no-auth', noAuthRoutes)
 
 app.get('/', (req, res) =>{
   console.log("user hit a main route!");
