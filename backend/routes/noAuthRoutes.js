@@ -3,6 +3,6 @@ import { getProfiles } from '../controllers/noAuthController.js';
 
 const router = express.Router();
 
-router.get('/get-profiles', getProfiles);
+router.post('/get-profiles', getProfiles);
 
 export default router;

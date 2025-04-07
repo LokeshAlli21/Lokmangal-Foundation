@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 function Home() {
   const [isWide, setIsWide] = useState(window.innerWidth > 1050);
@@ -54,8 +55,63 @@ function Home() {
       city
     })
   
-    console.log(formData);
+    console.log("formData: \n as category:",formData);
+
+    fetch('http://localhost:5000/api/no-auth/get-profiles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ category: formData })
+    })
+    .then(response => response.json())
+    .then(data => console.log("data from backend on click submit: ", data))
+    .catch(error => console.error('Error:', error));    
+    
   };
+
+
+  // const callTestWithAuth = async () => {
+  //   try {
+  //     console.log('📤 Sending request to /api/test-with-auth');
+  
+  //     const token = localStorage.getItem('authToken');
+  
+  //     if (!token) {
+  //       console.error('No token found in localStorage');
+  //       toast.error('Authentication token not found. Please login again.');
+  //       return; // ✅ Important: Stop function execution
+  //     }
+  
+  //     const response = await fetch('http://localhost:5000/api/test-with-auth', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${token}`
+  //       },
+  //       body: JSON.stringify({})
+  //     });
+  
+  //     const data = await response.json();
+  
+  //     console.log('📥 Response received:', response);
+  
+  //     if (!response.ok) {
+  //       console.error('Server responded with error:', data.message);
+  //       toast.error(data.message || 'Server error occurred');
+  //       return; // ✅ Stop here
+  //     }
+  
+  //     console.log('✅ Data from backend:', data);
+  //     toast.success(data.message || 'Request successful!');
+  
+  //   } catch (error) {
+  //     console.error('❌ Network/Error:', error);
+  //     toast.error(`Network Error: ${error.message}`);
+  //   }
+  // };
+  
+
 
   useEffect(() => {
     const $ = window.$;
@@ -69,11 +125,14 @@ function Home() {
         [name]: value,
       }));
     });
+
+    // callTestWithAuth()
   
     // Cleanup to prevent memory leaks
     return () => {
       $(".chosen-select").off("change");
     };
+    
   }, []);
   
   

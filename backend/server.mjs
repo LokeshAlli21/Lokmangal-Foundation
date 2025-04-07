@@ -6,6 +6,9 @@ import { errorMiddleware } from './middlewares/errorMiddleware.js';
 // importing routes
 import authRoutes from './routes/authRoutes.js';
 import noAuthRoutes from './routes/noAuthRoutes.js';
+import testWithAuth from './routes/routes.js';
+
+
 
 dotenv.config();
 
@@ -26,8 +29,10 @@ export const testRoute = (req, res) => {
 app.use('/api/auth', authRoutes);
 
 app.get('/api/test', testRoute)
+app.use('/api/test-with-auth', testWithAuth)
 
-app.get('/api/no-auth', noAuthRoutes)
+
+app.use('/api/no-auth', noAuthRoutes)
 
 app.get('/', (req, res) =>{
   console.log("user hit a main route!");
