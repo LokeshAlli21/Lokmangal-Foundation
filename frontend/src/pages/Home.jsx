@@ -1,6 +1,83 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 function Home() {
+  const [isWide, setIsWide] = useState(window.innerWidth > 1050);
+
+  const [formData, setFormData] = useState({
+    lookingFor: "",
+    age: "",
+    religion: "",
+    caste: "",
+    city: "",
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsWide(window.innerWidth > 1050);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const style = {
+    width: "100%",
+    display: 'flex',
+    flexWrap: isWide ? 'nowrap' : 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    const $ = window.$;
+  
+    const lookingFor = $("select[name='lookingFor']").val();
+    const age = $("select[name='age']").val();
+    const religion = $("select[name='religion']").val();
+    const caste = $("select[name='caste']").val();
+    const city = $("select[name='city']").val();
+  
+    setFormData({
+      lookingFor,
+      age,
+      religion,
+      caste,
+      city
+    })
+  
+    console.log(formData);
+  };
+
+  useEffect(() => {
+    const $ = window.$;
+    $(".chosen-select").chosen();
+  
+    // Attach change event
+    $(".chosen-select").on("change", function (e) {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    });
+  
+    // Cleanup to prevent memory leaks
+    return () => {
+      $(".chosen-select").off("change");
+    };
+  }, []);
+  
+  
+
   return (
     <>
   {/* END USER PROFILE MENU POPUP */}
@@ -22,63 +99,113 @@ function Home() {
                 </h1>
                 <p>"मिलनाचे नवसपूर्त स्थळ – हजारो मन जुळले आहेत इथे!</p>
               </div>
-              <div className="ban-search chosenini">
-                <form>
-                  <ul>
+              <div
+                className="ban-search chosenini"
+                style={{ marginLeft: "0", marginRight: "0", width: "100%" }}
+              >
+                <form onSubmit={handleSubmit}>
+                  <ul style={style}>
                     <li className="sr-look">
                       <div className="form-group">
                         <label>I'm looking for</label>
-                        <select className="chosen-select">
+                        <select
+                          className="chosen-select"
+                          name="lookingFor"
+                          value={formData.lookingFor}
+                          onChange={handleChange}
+                        >
                           <option value="">I'm looking for</option>
-                          <option value="Men">वर शोधत आहे (Looking for Groom)</option>
-                          <option value="Women"> वधू शोधत आहे (Looking for Bride)</option>
+                          <option value="Men">
+                            वर शोधत आहे (Looking for Groom)
+                          </option>
+                          <option value="Women">
+                            वधू शोधत आहे (Looking for Bride)
+                          </option>
                         </select>
                       </div>
                     </li>
+
                     <li className="sr-age">
                       <div className="form-group">
                         <label>वय (Age)</label>
-                        <select className="chosen-select">
+                        <select
+                          className="chosen-select"
+                          name="age"
+                          value={formData.age}
+                          onChange={handleChange}
+                        >
                           <option value="">वय (Age)</option>
-                          <option value="">18 to 30</option>
-                          <option value="">31 to 40</option>
-                          <option value="">41 to 50</option>
-                          <option value="">51 to 60</option>
-                          <option value="">61 to 70</option>
-                          <option value="">71 to 80</option>
-                          <option value="">81 to 90</option>
-                          <option value="">91 to 100</option>
+                          <option value="18 to 30">18 to 30</option>
+                          <option value="31 to 40">31 to 40</option>
+                          <option value="41 to 50">41 to 50</option>
+                          <option value="51 to 60">51 to 60</option>
+                          <option value="61 to 70">61 to 70</option>
+                          <option value="71 to 80">71 to 80</option>
+                          <option value="81 to 90">81 to 90</option>
+                          <option value="91 to 100">91 to 100</option>
                         </select>
                       </div>
                     </li>
+
                     <li className="sr-reli">
                       <div className="form-group">
                         <label>धर्म (Religion)</label>
-                        <select className="chosen-select">
-                          <option>धर्म (Religion)</option>
-                          <option>Any</option>
-                          <option>Hindu</option>
-                          <option>Muslim</option>
-                          <option>Jain</option>
-                          <option>Christian</option>
+                        <select
+                          className="chosen-select"
+                          name="religion"
+                          value={formData.religion}
+                          onChange={handleChange}
+                        >
+                          <option value="">धर्म (Religion)</option>
+                          <option value="Any">Any</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Muslim">Muslim</option>
+                          <option value="Jain">Jain</option>
+                          <option value="Christian">Christian</option>
                         </select>
                       </div>
                     </li>
+
+                    <li className="sr-reli">
+                      <div className="form-group">
+                        <label>Caste/Sub Caste</label>
+                        <select
+                          className="chosen-select"
+                          name="caste"
+                          value={formData.caste}
+                          onChange={handleChange}
+                        >
+                          <option value="">Caste/Sub Caste</option>
+                          <option value="Any">Any</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Muslim">Muslim</option>
+                          <option value="Jain">Jain</option>
+                          <option value="Christian">Christian</option>
+                        </select>
+                      </div>
+                    </li>
+
                     <li className="sr-cit">
                       <div className="form-group">
                         <label>City</label>
-                        <select className="chosen-select">
-                          <option>स्थान (Location)</option>
-                          <option>Any location</option>
-                          <option>Chennai</option>
-                          <option>New york</option>
-                          <option>Perth</option>
-                          <option>London</option>
+                        <select
+                          className="chosen-select"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleChange}
+                        >
+                          <option value="">स्थान (Location)</option>
+                          <option value="Any location">Any location</option>
+                          <option value="Chennai">Chennai</option>
+                          <option value="New york">New york</option>
+                          <option value="Perth">Perth</option>
+                          <option value="London">London</option>
                         </select>
                       </div>
                     </li>
+
                     <li className="sr-btn">
-                      <input type="submit" defaultValue="Search" />
+                      <input type="submit" value="Search" />
                     </li>
                   </ul>
                 </form>
