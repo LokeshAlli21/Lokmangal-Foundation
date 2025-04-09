@@ -47,6 +47,7 @@ function Login() {
 
         alert('Login successful!');
         navigate('/'); 
+        window.scrollTo(0, 0);
       }
     } catch (error) {
       console.error('❌ Login Failed:', error);
