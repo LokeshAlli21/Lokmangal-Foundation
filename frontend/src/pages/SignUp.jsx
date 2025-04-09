@@ -6,7 +6,7 @@ import authService from '../backend-services/auth/auth';
 
 function SignUp() {
 
-  const navigate = useNavigate();
+    
   const dispatch = useDispatch();
   const [error, setError] = useState('');
 
@@ -66,11 +66,11 @@ function SignUp() {
     }
   };
 
-  const handleLogout = async () => {
-    const data = await authService.logout();
-    console.log(data);
+  // const handleLogout = async () => {
+  //   const data = await authService.logout();
+  //   console.log(data);
     
-  }
+  // }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -125,11 +125,11 @@ function SignUp() {
                 <div className="rhs">
                   <div>
                     <div className="form-tit">
-                    <button type="button" className=' rounded m-5 px-5 py-6 outline-none' onClick={handleLogout}>Logout</button>
+                    {/* <button type="button" className=' rounded m-5 px-5 py-6 outline-none' onClick={handleLogout}>Logout</button> */}
                       <h4>Start for free</h4>
                       <h1>Sign up to Matrimony</h1>
                       <p>
-                        Already a member? <a href="login.html">Login</a>
+                        Already a member? <a href="/login">Login</a>
                       </p>
                     </div>
                     <div className="form-login">

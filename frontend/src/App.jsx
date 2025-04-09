@@ -17,6 +17,8 @@ import './js/custom';
 import 'animate.css';
 import './css/animate.min.css';
 
+import store from './store/store';
+
 import { Outlet } from "react-router-dom";
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -37,6 +39,9 @@ import 'slick-carousel';
 
 function App() {
   const dispatch = useDispatch();
+
+
+console.log('Initial State:', store.getState());
   
   useEffect(() => {
     authService.getCurrentUser()

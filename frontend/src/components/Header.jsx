@@ -298,7 +298,7 @@ function Header() {
               <i />
               <i />
             </span>
-            <a href="index.html" className="logo-brand">
+            <a href="/" className="logo-brand">
               <img
                 src="images/logo-b.png"
                 alt=""
@@ -458,22 +458,22 @@ function Header() {
                           <h4>User dashboard pages</h4>
                           <ul>
                             <li>
-                              <a href="user-dashboard.html">Dashboard</a>
+                              <a href="/dashboard">Dashboard</a>
                             </li>
                             <li>
-                              <a href="user-profile.html">My profile</a>
+                              <a href="/profile">My profile</a>
                             </li>
                             <li>
-                              <a href="user-interests.html">Interests</a>
+                              <a href="/interests">Interests</a>
                             </li>
                             <li>
-                              <a href="user-chat.html">Chat lists</a>
+                              <a href="/chat">Chat lists</a>
                             </li>
                             <li>
-                              <a href="user-plan.html">My plan details</a>
+                              <a href="/plan">My plan details</a>
                             </li>
                             <li>
-                              <a href="user-setting.html">Profile settings</a>
+                              <a href="/setting">Profile settings</a>
                             </li>
                             <li>
                               <a href="user-profile-edit.html">
@@ -544,22 +544,22 @@ function Header() {
                 <div className="smenu-open smenu-single">
                   <ul>
                     <li>
-                      <a href="user-dashboard.html">Dashboard</a>
+                      <a href="/dashboard">Dashboard</a>
                     </li>
                     <li>
-                      <a href="user-profile.html">My profile</a>
+                      <a href="/profile">My profile</a>
                     </li>
                     <li>
-                      <a href="user-interests.html">Interests</a>
+                      <a href="/interests">Interests</a>
                     </li>
                     <li>
-                      <a href="user-chat.html">Chat lists</a>
+                      <a href="/chat">Chat lists</a>
                     </li>
                     <li>
-                      <a href="user-plan.html">My plan details</a>
+                      <a href="/plan">My plan details</a>
                     </li>
                     <li>
-                      <a href="user-setting.html">Profile settings</a>
+                      <a href="/setting">Profile settings</a>
                     </li>
                     <li>
                       <a href="user-profile-edit.html">Edit full profile</a>
