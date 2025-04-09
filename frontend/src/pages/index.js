@@ -8,6 +8,7 @@ import Chat from './Chat'
 import Plan from './Plan'
 import Setting from './Setting'
 import Logout from './Logout'
+import EditProfile from './EditProfile'
 
 export {
     Home,
@@ -20,4 +21,5 @@ export {
     Plan,
     Setting,
     Logout,
+    EditProfile,
 }

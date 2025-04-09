@@ -1,6 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 
 function Header() {
+
+  const authStatus = useSelector(state => state.auth.status);
+
+  useEffect(() => {
+      if (authStatus === null) {
+          console.log('Auth status is still loading...');
+          return;
+      }
+  
+      console.log('Final auth status:', authStatus);
+  }, [authStatus]);
+  
+
   return (
     <>
     {/* PRELOADER */}
@@ -476,7 +490,7 @@ function Header() {
                               <a href="/setting">Profile settings</a>
                             </li>
                             <li>
-                              <a href="user-profile-edit.html">
+                              <a href="/edit-profile">
                                 Edit full profile
                               </a>
                             </li>
@@ -521,12 +535,13 @@ function Header() {
                     <li>
                       <a href="photo-gallery-1.html">Photo gallery 1</a>
                     </li>
-                    <li>
+                    {authStatus? "" : <>
+                      <li>
                       <a href="/login">Login</a>
                     </li>
                     <li>
                       <a href="/signup">Sign-up</a>
-                    </li>
+                    </li></>}
                     <li>
                       <a href="plans.html">Pricing plans</a>
                     </li>
@@ -536,9 +551,11 @@ function Header() {
               <li>
                 <a href="plans.html">Plans</a>
               </li>
+              {authStatus? "" :
               <li>
-                <a href="/signup">Register</a>
+              <a href="/signup">Register</a>
               </li>
+            }
               <li className="smenu-pare">
                 <span className="smenu">Dashboard</span>
                 <div className="smenu-open smenu-single">
@@ -562,11 +579,14 @@ function Header() {
                       <a href="/setting">Profile settings</a>
                     </li>
                     <li>
-                      <a href="user-profile-edit.html">Edit full profile</a>
+                      <a href="/edit-profile">Edit full profile</a>
                     </li>
+                    
+                    {authStatus? "" :
                     <li>
                       <a href="/login">Sign in</a>
                     </li>
+                    }
                   </ul>
                 </div>
               </li>

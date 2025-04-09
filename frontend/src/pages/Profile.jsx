@@ -69,7 +69,7 @@ function Profile() {
                 </div>
                 <div className="edit">
                   <a
-                    href="user-profile-edit.html"
+                    href="/edit-profile"
                     className="cta-dark"
                     target="_blank"
                   >
