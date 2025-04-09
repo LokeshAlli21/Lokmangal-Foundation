@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function EditProfile() {
   
+  
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [emailOtp, setEmailOtp] = useState('');
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
+  const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
+  const [emailCooldown, setEmailCooldown] = useState(0);
+  const [phoneCooldown, setPhoneCooldown] = useState(0);
+
   const [formData, setFormData] = useState({
     fullName: '',
     middleName: '',
@@ -33,9 +45,85 @@ function EditProfile() {
     otherPreferences: '',
   });
 
+ 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    // Reset verification if user edits fields
+    if (name === 'email') {
+      setEmailVerified(false);
+      setEmailOtpSent(false);
+      setEmailOtp('');
+    }
+    if (name === 'mobile') {
+      setPhoneVerified(false);
+      setPhoneOtpSent(false);
+      setPhoneOtp('');
+    }
+  };
+
+
+
+  
+  // Cooldown timer for resend OTP (email and phone)
+  useEffect(() => {
+    let interval = null;
+    if (emailCooldown > 0) {
+      interval = setInterval(() => {
+        setEmailCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    if (phoneCooldown > 0) {
+      interval = setInterval(() => {
+        setPhoneCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [emailCooldown, phoneCooldown]);
+
+  // Utility to generate random 6-digit OTP
+  const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+  const sendEmailOtp = () => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      return toast.error('Please enter a valid email');
+    }
+    const otp = generateOtp();
+    setGeneratedEmailOtp(otp);
+    setEmailOtpSent(true);
+    setEmailCooldown(30); // 30 seconds cooldown
+    toast.success(`OTP sent to email! (for test: ${otp})`);
+  };
+
+  const verifyEmailOtp = () => {
+    if (emailOtp === generatedEmailOtp) {
+      setEmailVerified(true);
+      toast.success('Email verified successfully!');
+    } else {
+      toast.error('Invalid OTP');
+    }
+  };
+
+  const sendPhoneOtp = () => {
+    if (!/^\d{10}$/.test(formData.mobile)) {
+      return toast.error('Please enter valid 10-digit phone number');
+    }
+    const otp = generateOtp();
+    setGeneratedPhoneOtp(otp);
+    setPhoneOtpSent(true);
+    setPhoneCooldown(30); // 30 seconds cooldown
+    toast.success(`OTP sent to phone! (for test: ${otp})`);
+  };
+
+  const verifyPhoneOtp = () => {
+    if (phoneOtp === generatedPhoneOtp) {
+      setPhoneVerified(true);
+      toast.success('Phone verified successfully!');
+    } else {
+      toast.error('Invalid OTP');
+    }
   };
 
   const validateForm = () => {
@@ -150,6 +238,32 @@ function EditProfile() {
                       <div className="form-group">
                         <label className="lb">Mobile Number (मोबाईल नंबर):</label>
                         <input type="text" name="mobile" className="form-control" placeholder="Mobile number / मोबाईल नंबर" value={formData.mobile} onChange={handleChange} />
+                       
+                        
+                        {!phoneVerified && formData.mobile.length === 10 && (
+          <div>
+            <button
+              onClick={sendPhoneOtp}
+              disabled={phoneOtpSent && phoneCooldown > 0}
+            >
+              {phoneOtpSent && phoneCooldown > 0 ? `Resend OTP in ${phoneCooldown}s` : 'Send OTP'}
+            </button>
+            {phoneOtpSent && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Enter Phone OTP"
+                  value={phoneOtp}
+                  onChange={(e) => setPhoneOtp(e.target.value)}
+                />
+                <button onClick={verifyPhoneOtp}>Verify Phone</button>
+              </div>
+            )}
+          </div>
+        )}
+        {phoneVerified && <span style={{ color: 'green' }}>✅ Verified</span>}
+
+
                       </div>
                       <div className="form-group">
                         <label className="lb">Alternate Mobile (पर्यायी मोबाईल नंबर): (Optional)</label>
@@ -158,6 +272,34 @@ function EditProfile() {
                       <div className="form-group">
                         <label className="lb">Email (ई-मेल पत्ता):</label>
                         <input type="email" name="email" className="form-control" placeholder="Email / ई-मेल पत्ता" value={formData.email} onChange={handleChange} />
+
+
+
+                        {!emailVerified && formData.email.includes('@') && (
+          <div>
+            <button
+              onClick={sendEmailOtp}
+              disabled={emailOtpSent && emailCooldown > 0}
+            >
+              {emailOtpSent && emailCooldown > 0 ? `Resend OTP in ${emailCooldown}s` : 'Send OTP'}
+            </button>
+            {emailOtpSent && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Enter Email OTP"
+                  value={emailOtp}
+                  onChange={(e) => setEmailOtp(e.target.value)}
+                />
+                <button onClick={verifyEmailOtp}>Verify Email</button>
+              </div>
+            )}
+          </div>
+        )}
+        {emailVerified && <span style={{ color: 'green' }}>✅ Verified</span>}
+
+      <br /><br />
+
                       </div>
 
                       {/* Education & Profession */}
