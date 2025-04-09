@@ -17,7 +17,7 @@ function EditProfile() {
   const [phoneCooldown, setPhoneCooldown] = useState(0);
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
     middleName: '',
     lastName: '',
     gender: '',
@@ -93,7 +93,7 @@ function EditProfile() {
     const otp = generateOtp();
     setGeneratedEmailOtp(otp);
     setEmailOtpSent(true);
-    setEmailCooldown(30); // 30 seconds cooldown
+    setEmailCooldown(60); // 30 seconds cooldown
     toast.success(`OTP sent to email! (for test: ${otp})`);
   };
 
@@ -113,7 +113,7 @@ function EditProfile() {
     const otp = generateOtp();
     setGeneratedPhoneOtp(otp);
     setPhoneOtpSent(true);
-    setPhoneCooldown(30); // 30 seconds cooldown
+    setPhoneCooldown(60); // 30 seconds cooldown
     toast.success(`OTP sent to phone! (for test: ${otp})`);
   };
 
@@ -128,12 +128,12 @@ function EditProfile() {
 
   const validateForm = () => {
     const {
-      fullName, gender, dob, maritalStatus, religion,
+      firstName, gender, dob, maritalStatus, religion,
       caste, state, city, pincode, mobile, email,
       education, occupation
     } = formData;
 
-    if (!fullName.trim()) return toast.error("Please enter Full Name / कृपया पूर्ण नाव भरा");
+    if (!firstName.trim()) return toast.error("Please enter Full Name / कृपया पूर्ण नाव भरा");
     if (!gender) return toast.error("Please select Gender / कृपया लिंग निवडा");
     if (!dob) return toast.error("Please enter Date of Birth / कृपया जन्मतारीख भरा");
     if (!maritalStatus) return toast.error("Please select Marital Status / कृपया वैवाहिक स्थिती निवडा");
@@ -170,12 +170,13 @@ function EditProfile() {
                     {/* Personal Info */}
                     <div className="edit-pro-parti">
                       <div className="form-tit">
-                        <h4>Basic Info / वैयक्तिक माहिती</h4>
-                        <h1>Edit my profile / माझा प्रोफाइल संपादित करा</h1>
+                        <h4>Edit my profile / माझा प्रोफाइल संपादित करा</h4>
+                        {/* <h4>Section 1:</h4> */}
+                        <h1>👤 Personal Information (वैयक्तिक माहिती) </h1>
                       </div>
                       <div className="form-group">
-                        <label className="lb">Full Name (पूर्ण नाव):</label>
-                        <input type="text" name="fullName" className="form-control" placeholder="Enter your full name / आपले पूर्ण नाव भरा" value={formData.fullName} onChange={handleChange} />
+                        <label className="lb">First Name (प्रथम नाव):</label>
+                        <input type="text" name="firstName" className="form-control" placeholder="Enter your full name / आपले पूर्ण नाव भरा" value={formData.firstName} onChange={handleChange} />
                       </div>
                       <div className="form-group">
                         <label className="lb">Middle Name (मध्य नाव):</label>
@@ -221,6 +222,12 @@ function EditProfile() {
                       </div>
 
                       {/* Location Info */}
+
+                      <br />
+                      <div className="form-tit" >
+                        {/* <h4>Section 2:</h4> */}
+                        <h1>📍 Location Details (ठिकाणाची माहिती) </h1>
+                      </div>
                       <div className="form-group">
                         <label className="lb">State (राज्य):</label>
                         <input type="text" name="state" className="form-control" placeholder="State / राज्य" value={formData.state} onChange={handleChange} />
@@ -235,36 +242,46 @@ function EditProfile() {
                       </div>
 
                       {/* Contact Info */}
+
+                      <br />
+                      <div className="form-tit" >
+                        {/* <h4>Section 2:</h4> */}
+                        <h1>📞 Contact Information (संपर्क माहिती) </h1>
+                      </div>
+
                       <div className="form-group">
                         <label className="lb">Mobile Number (मोबाईल नंबर):</label>
                         <input type="text" name="mobile" className="form-control" placeholder="Mobile number / मोबाईल नंबर" value={formData.mobile} onChange={handleChange} />
                        
                         
                         {!phoneVerified && formData.mobile.length === 10 && (
-          <div>
-            <button
-              onClick={sendPhoneOtp}
-              disabled={phoneOtpSent && phoneCooldown > 0}
-            >
-              {phoneOtpSent && phoneCooldown > 0 ? `Resend OTP in ${phoneCooldown}s` : 'Send OTP'}
-            </button>
-            {phoneOtpSent && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Enter Phone OTP"
-                  value={phoneOtp}
-                  onChange={(e) => setPhoneOtp(e.target.value)}
-                />
-                <button onClick={verifyPhoneOtp}>Verify Phone</button>
-              </div>
-            )}
-          </div>
-        )}
-        {phoneVerified && <span style={{ color: 'green' }}>✅ Verified</span>}
+                        <>
+                          <button
+                          type="button" className="btn btn-primary mt-2"
+                            onClick={sendPhoneOtp}
+                            disabled={phoneOtpSent && phoneCooldown > 0}
+                          >
+                            {phoneOtpSent && phoneCooldown > 0 ? `Resend OTP in ${phoneCooldown}s` : 'Send OTP'}
+                          </button>
+                          {phoneOtpSent && (
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="Enter Phone OTP"
+                                className="form-control mt-2" 
+                                value={phoneOtp}
+                                onChange={(e) => setPhoneOtp(e.target.value)}
+                              />
+                              <button type="button" className="btn btn-success mt-2" onClick={verifyPhoneOtp}>Verify Phone</button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {phoneVerified && <p className="text-success">Phone number Verified ✅</p>}
 
 
                       </div>
+                      
                       <div className="form-group">
                         <label className="lb">Alternate Mobile (पर्यायी मोबाईल नंबर): (Optional)</label>
                         <input type="text" name="altMobile" className="form-control" placeholder="Alternate mobile (optional) / पर्यायी मोबाईल नंबर" value={formData.altMobile} onChange={handleChange} />
@@ -276,44 +293,139 @@ function EditProfile() {
 
 
                         {!emailVerified && formData.email.includes('@') && (
-          <div>
-            <button
-              onClick={sendEmailOtp}
-              disabled={emailOtpSent && emailCooldown > 0}
-            >
-              {emailOtpSent && emailCooldown > 0 ? `Resend OTP in ${emailCooldown}s` : 'Send OTP'}
-            </button>
-            {emailOtpSent && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Enter Email OTP"
-                  value={emailOtp}
-                  onChange={(e) => setEmailOtp(e.target.value)}
-                />
-                <button onClick={verifyEmailOtp}>Verify Email</button>
-              </div>
-            )}
-          </div>
-        )}
-        {emailVerified && <span style={{ color: 'green' }}>✅ Verified</span>}
+                          <>
+                            <button type="button" className="btn btn-primary mt-2"
+                            onClick={sendEmailOtp}  disabled={emailOtpSent && emailCooldown > 0}>
+                              {emailOtpSent && emailCooldown > 0 ? `Resend OTP in ${emailCooldown}s` : 'Send OTP'}
+                            </button>
+                            {emailOtpSent && (
+                              <div>
+                                <input  type="text" className="form-control mt-2"  placeholder="Enter Email OTP" value={emailOtp}  onChange={(e) => setEmailOtp(e.target.value)}
+                                />
+                                <button type="button" className="btn btn-success mt-2" onClick={verifyEmailOtp}>Verify Email</button>
+                              </div>
+                            )}
+                          </>
+                        )}
+                        {emailVerified && <p className="text-success">Email Verified ✅</p>}
 
-      <br /><br />
+                       
+
+                      
 
                       </div>
 
-                      {/* Education & Profession */}
-                      <div className="form-group">
-                        <label className="lb">Education (शिक्षण):</label>
-                        <input type="text" name="education" className="form-control" placeholder="Education / शिक्षण" value={formData.education} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label className="lb">Occupation (व्यवसाय):</label>
-                        <input type="text" name="occupation" className="form-control" placeholder="Occupation / व्यवसाय" value={formData.occupation} onChange={handleChange} />
-                      </div>
+                      <br />
+<div className="form-tit">
+  <h1>🎓 Education & Profession (शिक्षण आणि व्यवसाय)</h1>
+</div>
 
-                      {/* Add rest of the fields as same pattern */}
-                      {/* I can give you full form ready if you want! */}
+<div className="form-group">
+  <label className="lb">Education Qualification (शैक्षणिक पात्रता):</label>
+  <select name="education" className="form-control" value={formData.education} onChange={handleChange}>
+    <option value="">Select Education / शिक्षण निवडा</option>
+    <option value="Below 10th">Below 10th</option>
+    <option value="10th Pass">10th Pass</option>
+    <option value="12th Pass">12th Pass</option>
+    <option value="ITI">ITI</option>
+    <option value="Diploma">Diploma</option>
+    <option value="UG">Undergraduate (UG)</option>
+    <option value="Graduate">Graduate</option>
+    <option value="Postgraduate">Postgraduate</option>
+    <option value="PhD">PhD</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+
+<div className="form-group">
+  <label className="lb">Occupation (व्यवसाय):</label>
+  <select name="occupation" className="form-control" value={formData.occupation} onChange={handleChange}>
+    <option value="">Select Occupation / व्यवसाय निवडा</option>
+    <option value="Job">Job</option>
+    <option value="Business">Business</option>
+    <option value="Government Employee">Government Employee</option>
+    <option value="Self Employed">Self Employed</option>
+    <option value="Student">Student</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+<div className="form-group">
+  <label className="lb">Annual Income (वार्षिक उत्पन्न):</label>
+  <select name="annualIncome" className="form-control" value={formData.annualIncome} onChange={handleChange}>
+    <option value="">Select Income Range / उत्पन्न श्रेणी निवडा</option>
+    <option value="Below 2 Lakh">Below 2 Lakh</option>
+    <option value="2 - 5 Lakh">2 - 5 Lakh</option>
+    <option value="5 - 10 Lakh">5 - 10 Lakh</option>
+    <option value="10 - 20 Lakh">10 - 20 Lakh</option>
+    <option value="Above 20 Lakh">Above 20 Lakh</option>
+  </select>
+</div>
+
+<br />
+<div className="form-tit">
+  <h1>🏠 Family Information (कौटुंबिक माहिती)</h1>
+</div>
+
+<div className="form-group">
+  <label className="lb">Father’s Name (वडिलांचे नाव):</label>
+  <input type="text" name="fatherName" className="form-control" placeholder="Father’s Name / वडिलांचे नाव" value={formData.fatherName} onChange={handleChange} />
+</div>
+
+<div className="form-group">
+  <label className="lb">Mother’s Name (आईचे नाव):</label>
+  <input type="text" name="motherName" className="form-control" placeholder="Mother’s Name / आईचे नाव" value={formData.motherName} onChange={handleChange} />
+</div>
+
+<div className="form-group">
+  <label className="lb">Family Status (कौटुंबिक स्थिती):</label>
+  <input type="text" name="familyStatus" className="form-control" placeholder="Family Status / कौटुंबिक स्थिती" value={formData.familyStatus} onChange={handleChange} />
+</div>
+
+<div className="form-group">
+  <label className="lb">Family Type (कुटुंब प्रकार):</label>
+  <select name="familyType" className="form-control" value={formData.familyType} onChange={handleChange}>
+    <option value="">Select Family Type / कुटुंब प्रकार निवडा</option>
+    <option value="Nuclear">Nuclear Family</option>
+    <option value="Joint Family">Joint Family</option>
+  </select>
+</div>
+
+<br />
+<div className="form-tit">
+  <h1>💑 Partner Preferences (पार्टनर प्राधान्ये)</h1>
+</div>
+
+<div className="form-group">
+  <label className="lb">Preferred Age Range (प्राधान्य वयोगट):</label>
+  <select name="preferredAgeRange" className="form-control" value={formData.preferredAgeRange} onChange={handleChange}>
+    <option value="">Select Age Range / वयोगट निवडा</option>
+    <option value="18 to 30">18 to 30</option>
+    <option value="31 to 40">31 to 40</option>
+    <option value="41 to 50">41 to 50</option>
+    <option value="51 to 60">51 to 60</option>
+    {/* <option value="61 to 70">61 to 70</option>
+    <option value="71 to 80">71 to 80</option>
+    <option value="81 to 90">81 to 90</option>
+    <option value="91 to 100">91 to 100</option> */}
+  </select>
+</div>
+
+<div className="form-group">
+  <label className="lb">Preferred Religion & Caste (प्राधान्य धर्म व जात):</label>
+  <input type="text" name="preferredReligionCaste" className="form-control" placeholder="Preferred Religion & Caste / प्राधान्य धर्म व जात" value={formData.preferredReligionCaste} onChange={handleChange} />
+</div>
+
+<div className="form-group">
+  <label className="lb">Preferred Location (प्राधान्य शहर/राज्य):</label>
+  <input type="text" name="preferredLocation" className="form-control" placeholder="Preferred Location / प्राधान्य शहर/राज्य" value={formData.preferredLocation} onChange={handleChange} />
+</div>
+
+<div className="form-group">
+  <label className="lb">Other Preferences (इतर प्राधान्ये):</label>
+  <input type="text" name="otherPreferences" className="form-control" placeholder="Other Preferences / इतर प्राधान्ये" value={formData.otherPreferences} onChange={handleChange} />
+</div>
 
                     </div>
 
