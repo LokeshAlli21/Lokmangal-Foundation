@@ -43,6 +43,8 @@ function EditProfile() {
     preferredReligionCaste: '',
     preferredLocation: '',
     otherPreferences: '',
+    emailVerified: emailVerified,
+    phoneVerified: phoneVerified,
   });
 
  
@@ -100,6 +102,8 @@ function EditProfile() {
   const verifyEmailOtp = () => {
     if (emailOtp === generatedEmailOtp) {
       setEmailVerified(true);
+      setFormData(p => ({emailVerified : true, ...p }))
+      // console.log(formData.emailVerified);
       toast.success('Email verified successfully!');
     } else {
       toast.error('Invalid OTP');
@@ -120,43 +124,128 @@ function EditProfile() {
   const verifyPhoneOtp = () => {
     if (phoneOtp === generatedPhoneOtp) {
       setPhoneVerified(true);
+      setFormData(p => ({phoneVerified: true, ...p}))
+      // console.log(phoneVerified);
       toast.success('Phone verified successfully!');
     } else {
       toast.error('Invalid OTP');
     }
   };
 
-  const validateForm = () => {
-    const {
-      firstName, gender, dob, maritalStatus, religion,
-      caste, state, city, pincode, mobile, email,
-      education, occupation
-    } = formData;
+const validateForm = () => {
+  const {
+    firstName, middleName, lastName, gender, dob,
+    maritalStatus, religion, caste, subCaste, state,
+    city, pincode, mobile, altMobile, email,
+    education, occupation, income, fatherName,
+    motherName, familyStatus, familyType,
+    preferredAgeRange, preferredReligionCaste,
+    preferredLocation, otherPreferences, emailVerified, phoneVerified
+  } = formData;
 
-    if (!firstName.trim()) return toast.error("Please enter Full Name / कृपया पूर्ण नाव भरा");
-    if (!gender) return toast.error("Please select Gender / कृपया लिंग निवडा");
-    if (!dob) return toast.error("Please enter Date of Birth / कृपया जन्मतारीख भरा");
-    if (!maritalStatus) return toast.error("Please select Marital Status / कृपया वैवाहिक स्थिती निवडा");
-    if (!religion) return toast.error("Please select Religion / कृपया धर्म निवडा");
-    if (!caste) return toast.error("Please enter Caste / कृपया जात भरा");
-    if (!state) return toast.error("Please enter State / कृपया राज्य भरा");
-    if (!city) return toast.error("Please enter City / कृपया शहर भरा");
-    if (!pincode.match(/^\d{6}$/)) return toast.error("Please enter valid 6-digit Pincode / वैध 6 अंकी पिनकोड भरा");
-    if (!mobile.match(/^\d{10}$/)) return toast.error("Please enter valid 10-digit Mobile Number / वैध 10 अंकी मोबाईल नंबर भरा");
-    if (!email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) return toast.error("Please enter valid Email / वैध ई-मेल पत्ता भरा");
-    if (!education) return toast.error("Please enter Education Qualification / शैक्षणिक पात्रता भरा");
-    if (!occupation) return toast.error("Please enter Occupation / व्यवसाय भरा");
+  // Helper regex
+  const pincodeRegex = /^\d{6}$/;
+  const mobileRegex = /^\d{10}$/;
+  const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-    return true;
-  };
+  // Required fields list
+  const requiredFields = [
+    { value: firstName.trim(), message: "Please enter First Name / कृपया प्रथम नाव भरा" },
+    // { value: middleName.trim(), message: "Please enter Middle Name / कृपया मध्य नाव भरा" },
+    { value: lastName.trim(), message: "Please enter Last Name / कृपया आडनाव भरा" },
+    { value: gender, message: "Please select Gender / कृपया लिंग निवडा" },
+    { value: dob, message: "Please enter Date of Birth / कृपया जन्मतारीख भरा" },
+    { value: maritalStatus, message: "Please select Marital Status / कृपया वैवाहिक स्थिती निवडा" },
+    { value: religion, message: "Please select Religion / कृपया धर्म निवडा" },
+    { value: caste.trim(), message: "Please enter Caste / कृपया जात भरा" },
+    // { value: subCaste.trim(), message: "Please enter Sub-Caste / कृपया उपजात भरा" },
+    { value: state.trim(), message: "Please enter State / कृपया राज्य भरा" },
+    { value: city.trim(), message: "Please enter City / कृपया शहर भरा" },
+    { value: education.trim(), message: "Please enter Education Qualification / शैक्षणिक पात्रता भरा" },
+    { value: occupation.trim(), message: "Please enter Occupation / कृपया व्यवसाय भरा" },
+    // { value: income.trim(), message: "Please enter Income / कृपया उत्पन्न भरा" },
+    // { value: fatherName.trim(), message: "Please enter Father's Name / कृपया वडिलांचे नाव भरा" },
+    // { value: motherName.trim(), message: "Please enter Mother's Name / कृपया आईचे नाव भरा" },
+    // { value: familyStatus.trim(), message: "Please select Family Status / कृपया कौटुंबिक स्थिती निवडा" },
+    // { value: familyType.trim(), message: "Please select Family Type / कृपया कुटुंबाचा प्रकार निवडा" },
+    { value: preferredAgeRange.trim(), message: "Please enter Preferred Age Range / कृपया वय श्रेणी भरा" },
+    { value: preferredReligionCaste.trim(), message: "Please enter Preferred Religion & Caste / कृपया पसंतीचा धर्म आणि जात भरा" },
+    { value: preferredLocation.trim(), message: "Please enter Preferred Location / कृपया पसंतीचे ठिकाण भरा" }
+  ];
+
+  
+  
+  // Validate required fields
+  for (let field of requiredFields) {
+    if (!field.value) {
+      toast.error(field.message);
+      return false;
+    }
+  }
+
+  // ✅ Verifications
+  if (!phoneVerified) return toast.error("Please verify your Mobile Number / कृपया मोबाईल नंबर सत्यापित करा");
+  if (!emailVerified) return toast.error("Please verify your Email / कृपया ईमेल सत्यापित करा");
+  
+  if (!dob) return toast.error("Please enter Date of Birth / कृपया जन्मतारीख भरा");
+
+  // DOB validation
+  const today = new Date();
+  const birthDate = new Date(dob);
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  const dayDiff = today.getDate() - birthDate.getDate();
+
+  if (
+    age < 18 ||
+    (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+  ) {
+    return toast.error("You must be at least 18 years old / आपली वय किमान १८ वर्षे असावी");
+  }
+
+  if (age > 60) {
+    return toast.error("Age must be below 60 years / वय ६० वर्षांपेक्षा कमी असावे");
+  }
+
+  // Validate formats
+  if (!pincodeRegex.test(pincode)) {
+    toast.error("Please enter valid 6-digit Pincode / वैध 6 अंकी पिनकोड भरा");
+    return false;
+  }
+
+  if (!mobileRegex.test(mobile)) {
+    toast.error("Please enter valid 10-digit Mobile Number / वैध 10 अंकी मोबाईल नंबर भरा");
+    return false;
+  }
+
+  if (altMobile && !mobileRegex.test(altMobile)) {
+    toast.error("Please enter valid 10-digit Alternate Mobile Number / वैध पर्यायी मोबाईल नंबर भरा");
+    return false;
+  }
+
+  if (!emailRegex.test(email)) {
+    toast.error("Please enter valid Email / वैध ई-मेल पत्ता भरा");
+    return false;
+  }
+
+  // If everything is valid
+  return true;
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      toast.success("Profile updated successfully! / प्रोफाइल यशस्वीरित्या अपडेट झाला!");
-      console.log(formData);
+  
+    if (!validateForm()) {
+      return; // Stop submission if invalid
     }
+  
+    // Proceed with submission (API call, etc.)
+    console.log("Form is valid, submitting...");
+    console.log("formData: ", formData);
+    
   };
+  
 
   return (
     <section>
@@ -176,7 +265,7 @@ function EditProfile() {
                       </div>
                       <div className="form-group">
                         <label className="lb">First Name (प्रथम नाव):</label>
-                        <input type="text" name="firstName" className="form-control" placeholder="Enter your full name / आपले पूर्ण नाव भरा" value={formData.firstName} onChange={handleChange} />
+                        <input type="text" name="firstName" className="form-control" placeholder="Enter your First Name / आपले प्रथम नाव भरा" value={formData.firstName} onChange={handleChange} />
                       </div>
                       <div className="form-group">
                         <label className="lb">Middle Name (मध्य नाव):</label>
@@ -196,9 +285,18 @@ function EditProfile() {
                         </select>
                       </div>
                       <div className="form-group">
-                        <label className="lb">Date of Birth (जन्मतारीख):</label>
-                        <input type="date" name="dob" className="form-control" value={formData.dob} onChange={handleChange} />
-                      </div>
+                      <label className="lb">Date of Birth (जन्मतारीख):</label>
+                      <input
+                        type="date"
+                        name="dob"
+                        className="form-control"
+                        value={formData.dob}
+                        onChange={handleChange}
+                        min={`${new Date(new Date().setFullYear(new Date().getFullYear() - 60)).toISOString().split('T')[0]}`}
+                        max={`${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}`}
+                      />
+                    </div>
+
                       <div className="form-group">
                         <label className="lb">Marital Status (वैवाहिक स्थिती):</label>
                         <select name="maritalStatus" className="form-select chosen-select" value={formData.maritalStatus} onChange={handleChange}>
@@ -366,6 +464,7 @@ function EditProfile() {
 <br />
 <div className="form-tit">
   <h1>🏠 Family Information (कौटुंबिक माहिती)</h1>
+  <h4>(Optional but recommended) </h4>
 </div>
 
 <div className="form-group">
