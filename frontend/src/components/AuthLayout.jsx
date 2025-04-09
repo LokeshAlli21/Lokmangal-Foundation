@@ -7,14 +7,7 @@ function AuthLayout({ children, authentication = true }) {
     const location = useLocation(); // Get current location
     const [loader, setLoader] = useState(true);
 
-    // const getAuthStatus = async () => {
-    //     return await useSelector(state => state.auth.status)
-    // }
-
-    // const authStatus = getAuthStatus()
-
-    
-    const authStatus = useSelector(state => state.auth.status);
+    const authStatus = true // making its value true for temprary
 
     useEffect(() => {
         console.log('Route changed or mounted');
@@ -27,11 +20,11 @@ function AuthLayout({ children, authentication = true }) {
         if (authentication && authStatus !== authentication) {
             navigate('/login');
         } else if (!authentication && authStatus !== authentication) {
-            // No action needed
+            navigate(location.pathname);
         }
 
         setLoader(false);
-    }, [location.pathname, authStatus, authentication, navigate]); // Added location.pathname
+    }, [location.pathname, authStatus, authentication, navigate]);
 
     return loader ? (
         <h1 className="text-center text-2xl font-semibold text-gray-600 py-10">Loading...</h1>

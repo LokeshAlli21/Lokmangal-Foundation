@@ -31,57 +31,57 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: (
-          // <AuthLayout currentpath="/signup" authentication={false}>
+          <AuthLayout currentpath="/signup" authentication={false}>
             <SignUp />
-          // </AuthLayout>
+          </AuthLayout>
         ),
       },
       {
         path: "/dashboard",
         element: (
-          // <AuthLayout  authentication={true}>
+          <AuthLayout  authentication={true}>
             <Dashboard />
-          // </AuthLayout>
+          </AuthLayout>
         ),
       },
       {
         path: "/profile",
         element: (
-            // <AuthLayout  authentication={true}>
+            <AuthLayout  authentication={true}>
               <Profile />
-            // </AuthLayout>
+            </AuthLayout>
         ),
       },
       {
         path: "/interests",
         element: (
-            // <AuthLayout  authentication={true}>
+            <AuthLayout  authentication={true}>
               <Interests />
-            // </AuthLayout>
+            </AuthLayout>
         ),
       },
       {
         path: "/chat",
         element: (
-            // <AuthLayout   authentication={true}>
+            <AuthLayout   authentication={true}>
               <Chat />
-            // </AuthLayout>
+            </AuthLayout>
         ),
       },
       {
         path: "/plan",
         element: (
-            // <AuthLayout  authentication={true}>
+            <AuthLayout  authentication={true}>
               <Plan />
-            // </AuthLayout>
+            </AuthLayout>
         ),
       },
       {
         path: "/setting",
         element: (
-            // <AuthLayout  authentication={true}>
+            <AuthLayout  authentication={true}>
               <Setting />
-            // </AuthLayout>
+            </AuthLayout>
         ),
       },
       {
