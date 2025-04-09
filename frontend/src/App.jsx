@@ -23,7 +23,7 @@ import { Outlet } from "react-router-dom";
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
 import { login, logout} from './store/authSlice'
@@ -39,9 +39,6 @@ import 'slick-carousel';
 
 function App() {
   const dispatch = useDispatch();
-
-
-console.log('Initial State:', store.getState());
   
   useEffect(() => {
     authService.getCurrentUser()
@@ -51,7 +48,7 @@ console.log('Initial State:', store.getState());
       } else {
         dispatch(logout())
       }
-      console.log("userData : ",userData);
+      // console.log("userData : ",userData);
     })
     .catch((error) => console.log("Login Error : ",error))
   }, [])

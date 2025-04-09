@@ -104,13 +104,18 @@ class AuthService {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("called 📢 GET /api/auth/user");
+      
 
       if (!response.ok) {
         toast.error("🚫 Unauthorized access. Please log in again.");
         throw new Error("Unauthorized");
       }
 
-      return await response.json();
+      const data = await response.json()
+      // console.log('in getcurrentuser: ',data.user);
+
+      return  data.user
 
     } catch (error) {
       console.error("AuthService GetUser Error:", error);

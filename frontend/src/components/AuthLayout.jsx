@@ -1,36 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function AuthLayout({ children, authentication = true }) {
     const navigate = useNavigate();
-    const location = useLocation(); // Get current location
-    const [loader, setLoader] = useState(true);
+    const location = useLocation();
 
-    const authStatus = true // making its value true for temprary
+    const authStatus = useSelector(state => state.auth.status);
 
     useEffect(() => {
-        console.log('Route changed or mounted');
-        console.log('Current values:', {
-            authStatus,
-            authentication,
-            pathname: location.pathname,
-        });
+        if (authStatus === null) {
+            console.log('Auth status is still loading...');
+            return;
+        }
+
+        console.log('Final auth status:', authStatus);
 
         if (authentication && authStatus !== authentication) {
             navigate('/login');
         } else if (!authentication && authStatus !== authentication) {
             navigate(location.pathname);
         }
+    }, [authStatus, navigate, location.pathname, authentication]);
 
-        setLoader(false);
-    }, [location.pathname, authStatus, authentication, navigate]);
+    if (authStatus === null) {
+        return (
+            <h1 className="text-center text-2xl font-semibold text-gray-600 py-10">
+                Loading...
+            </h1>
+        );
+    }
 
-    return loader ? (
-        <h1 className="text-center text-2xl font-semibold text-gray-600 py-10">Loading...</h1>
-    ) : (
-        <>{children}</>
-    );
+    return <>{children}</>;
 }
 
 export default AuthLayout;

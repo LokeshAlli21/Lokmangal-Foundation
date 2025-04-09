@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-    status: false,
+    status: null,
     userData: null,
 }
 
@@ -15,13 +15,18 @@ export const authSlice = createSlice({
             
             state.status = true
             state.userData = action.payload
-            // console.log("see state: ");
-            // console.log(state.userData);
+            console.log("redux got updated", state.status);
+            // console.log("see current state: ");
+            // console.log("state.status : ",state.status);
+            // console.log("state.userData : ",state.userData);
             
         },
         logout: (state, action) => {
             state.status = false
             state.userData = null
+            // console.log("see current state: ");
+            // console.log("state.status : ",state.status);
+            // console.log("state.userData : ",state.userData);
         }
     }
 })
