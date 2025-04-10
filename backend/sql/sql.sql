@@ -80,6 +80,9 @@ CREATE TABLE profiles (
   height_feet INTEGER,
   height_inches INTEGER,
   weight INTEGER,
+
+  -- Photo URL
+  photo_url TEXT,
   
   -- Timestamps
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -169,59 +172,6 @@ CREATE TRIGGER trigger_sync_user_after_profile_update
 AFTER UPDATE OF email, mobile ON profiles
 FOR EACH ROW
 EXECUTE PROCEDURE sync_user_after_profile_update();
-
-
--- Trigger: On UPDATE of users email/phone → Update profile
-CREATE OR REPLACE FUNCTION sync_profile_after_user_update()
-RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE profiles
-  SET email = NEW.email,
-      mobile = NEW.phone
-  WHERE user_id = NEW.id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_sync_profile_after_user_update
-AFTER UPDATE OF email, phone ON users
-FOR EACH ROW
-EXECUTE FUNCTION sync_profile_after_user_update();
-
-
-
--- Trigger: On UPDATE of profiles email/phone → Update users
-CREATE OR REPLACE FUNCTION sync_user_after_profile_update()
-RETURNS TRIGGER AS $$
-BEGIN
-  UPDATE users
-  SET email = NEW.email,
-      phone = NEW.mobile
-  WHERE id = NEW.user_id;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_sync_user_after_profile_update
-AFTER UPDATE OF email, mobile ON profiles
-FOR EACH ROW
-EXECUTE FUNCTION sync_user_after_profile_update();
-
-
--- Trigger: On INSERT into users → Create profile
-CREATE OR REPLACE FUNCTION create_profile_after_user_insert()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO profiles (user_id, email, mobile)
-  VALUES (NEW.id, NEW.email, NEW.phone);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_create_profile_after_user_insert
-AFTER INSERT ON users
-FOR EACH ROW
-EXECUTE FUNCTION create_profile_after_user_insert();
 
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------- profile_views ✅ (to limit profile views) ----------------------------------------------------

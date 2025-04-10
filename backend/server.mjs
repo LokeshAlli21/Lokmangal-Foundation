@@ -7,6 +7,7 @@ import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import noAuthRoutes from './routes/noAuthRoutes.js';
 import testWithAuth from './routes/routes.js';
+import profileRoute from './routes/profileRoute.js'
 
 
 

@@ -1,8 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
+import databaseService from "../backend-services/database/database"
 
 function Home() {
   const [isWide, setIsWide] = useState(window.innerWidth > 1050);
+  const [profiles, setProfiles] = useState();
+
+
+
+
+
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const cardWidth = 320; // Width of the card
+  const gapBetweenCards = 24; // Gap between cards
+  const totalWidth = cardWidth + gapBetweenCards; // Card width + gap between cards
+
+  const handleNext = () => {
+    setScrollPosition(scrollPosition + totalWidth); // Move right
+  };
+
+  const handlePrevious = () => {
+    setScrollPosition(scrollPosition - totalWidth); // Move left
+  };
+
+
+
+  
 
   const [formData, setFormData] = useState({
     lookingFor: "",
@@ -57,17 +80,26 @@ function Home() {
   
     console.log("formData: \n as category:",formData);
 
-    fetch('http://localhost:5000/api/no-auth/get-profiles', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ category: formData })
+    databaseService.getAllProfiles(formData)
+    .then(p => {
+      if (!p || p.length === 0) {
+        // Show toast when there are no profiles
+        toast("No profile matches your filter.", { type: 'info' });
+      } else {
+        setProfiles(p);
+        console.log('profiles: ', p);
+      }
     })
-    .then(response => response.json())
-    .then(data => console.log("data from backend on click submit: ", data))
-    .catch(error => console.error('Error:', error));    
+    .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error fetching profiles:', error);
+      toast("Error fetching profiles. Please try again.", { type: 'error' });
+    });
+
+    console.log("see profiles from profiles state; ", profiles);
     
+
+
   };
 
 
@@ -174,10 +206,10 @@ function Home() {
                           onChange={handleChange}
                         >
                           <option value="">I'm looking for</option>
-                          <option value="Men">
+                          <option value="Male">
                             वर शोधत आहे (Looking for Groom)
                           </option>
-                          <option value="Women">
+                          <option value="Female">
                             वधू शोधत आहे (Looking for Bride)
                           </option>
                         </select>
@@ -217,10 +249,10 @@ function Home() {
                         >
                           <option value="">धर्म (Religion)</option>
                           <option value="Any">Any</option>
-                          <option value="Hindu">Hindu</option>
-                          <option value="Muslim">Muslim</option>
+                          <option value="Hinduism">Hindu</option>
+                          <option value="Islam">Muslim</option>
                           <option value="Jain">Jain</option>
-                          <option value="Christian">Christian</option>
+                          <option value="Christianity">Christian</option>
                         </select>
                       </div>
                     </li>
@@ -295,6 +327,196 @@ function Home() {
       </div>
     </div>
   </section>
+
+  <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        overflowX: 'hidden',
+        gap: `${gapBetweenCards}px`, // Ensures space between cards
+        padding: '20px',
+        width: '100%',
+        maxWidth: '100%',
+      }}
+    >
+      {/* Previous Button */}
+      <button
+        onClick={handlePrevious}
+        style={{
+          position: 'absolute',
+          left: '0',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          backgroundColor: '#4CAF50',
+          color: '#fff',
+          border: 'none',
+          padding: '10px 16px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          fontSize: '18px',
+          zIndex: '1', // Ensure button is above cards
+        }}
+      >
+        &lt;
+      </button>
+
+      {/* Profiles Container */}
+      <div
+        style={{
+          display: 'flex',
+          transition: 'transform 0.5s ease',
+          transform: `translateX(-${scrollPosition}px)`,
+        }}
+      >
+        {profiles && profiles.map((profile) => (
+          <div
+            key={profile.id}
+            style={{
+              flex: 'none',
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+              width: `${cardWidth}px`,
+              marginRight: `${gapBetweenCards}px`, // Adding space between cards
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+            }}
+          >
+            <img
+              src={profile.photo_url}
+              alt={`${profile.middle_name} ${profile.last_name}`}
+              style={{
+                width: '100%',
+                height: '250px',
+                objectFit: 'cover',
+                borderTopLeftRadius: '16px',
+                borderTopRightRadius: '16px',
+              }}
+            />
+            <div style={{ padding: '16px' }}>
+              <h2
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  marginBottom: '12px',
+                  color: '#333',
+                  textAlign: 'center',
+                  lineHeight: '1.4',
+                }}
+              >
+                {profile.middle_name} {profile.last_name}
+              </h2>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                {profile.gender}, {Math.floor((new Date() - new Date(profile.dob)) / (365.25 * 24 * 60 * 60 * 1000))} years
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                📍 {profile.city}, {profile.state}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                🎓 {profile.education}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                💼 {profile.occupation}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                💰 Income: {profile.income}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                🛐 Religion: {profile.religion}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                🧩 Caste: {profile.caste}
+              </p>
+              <p
+                style={{
+                  color: '#4b5563',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                }}
+              >
+                🧍 Height: {profile.height_feet}ft {profile.height_inches}in
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Next Button */}
+      <button
+        onClick={handleNext}
+        style={{
+          position: 'absolute',
+          right: '0',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          backgroundColor: '#4CAF50',
+          color: '#fff',
+          border: 'none',
+          padding: '10px 16px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          fontSize: '18px',
+          zIndex: '1', // Ensure button is above cards
+        }}
+      >
+        &gt;
+      </button>
+    </div>
+
+
+
   {/* END */}
   {/* QUICK ACCESS */}
   {/* <section>
