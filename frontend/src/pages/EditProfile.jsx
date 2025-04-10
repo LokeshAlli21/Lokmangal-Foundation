@@ -45,6 +45,9 @@ function EditProfile() {
     otherPreferences: '',
     emailVerified: emailVerified,
     phoneVerified: phoneVerified,
+    heightFeet: '',
+    heightInches: '',
+    weight: '',
   });
 
  
@@ -140,7 +143,10 @@ const validateForm = () => {
     education, occupation, income, fatherName,
     motherName, familyStatus, familyType,
     preferredAgeRange, preferredReligionCaste,
-    preferredLocation, otherPreferences, emailVerified, phoneVerified
+    preferredLocation, otherPreferences, emailVerified, phoneVerified, 
+    heightFeet,
+    heightInches,
+    weight,
   } = formData;
 
   // Helper regex
@@ -155,6 +161,9 @@ const validateForm = () => {
     { value: lastName.trim(), message: "Please enter Last Name / कृपया आडनाव भरा" },
     { value: gender, message: "Please select Gender / कृपया लिंग निवडा" },
     { value: dob, message: "Please enter Date of Birth / कृपया जन्मतारीख भरा" },
+    { value: heightFeet, message: "Please select Height (Feet) / कृपया फूट मध्ये उंची निवडा" },
+    { value: heightInches, message: "Please select Height (Inches) / कृपया इंच मध्ये उंची निवडा" },
+    { value: weight, message: "Please enter Weight / कृपया वजन भरा" },
     { value: maritalStatus, message: "Please select Marital Status / कृपया वैवाहिक स्थिती निवडा" },
     { value: religion, message: "Please select Religion / कृपया धर्म निवडा" },
     { value: caste.trim(), message: "Please enter Caste / कृपया जात भरा" },
@@ -296,6 +305,52 @@ const validateForm = () => {
                         max={`${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}`}
                       />
                     </div>
+
+
+
+<div className="form-group">
+  <label className="lb">Height (उंची):</label>
+  <div className="d-flex gap-2">
+    <select
+      name="heightFeet"
+      className="form-control"
+      value={formData.heightFeet}
+      onChange={handleChange}
+    >
+      <option value="">Feet / फूट निवडा</option>
+      {[...Array(8)].map((_, i) => (
+        <option key={i + 3} value={i + 3}>{i + 3} ft</option>
+      ))}
+    </select>
+
+    <select
+      name="heightInches"
+      className="form-control"
+      value={formData.heightInches}
+      onChange={handleChange}
+    >
+      <option value="">Inches / इंच निवडा</option>
+      {[...Array(12)].map((_, i) => (
+        <option key={i} value={i}>{i} in</option>
+      ))}
+    </select>
+  </div>
+</div>
+
+<div className="form-group">
+  <label className="lb">Weight (वजन):</label>
+  <input
+    type="number"
+    name="weight"
+    className="form-control"
+    placeholder="Weight in kg / वजन किलोग्राम मध्ये भरा"
+    value={formData.weight}
+    onChange={handleChange}
+    min="20"
+    max="300"
+    step="1"
+  />
+</div>
 
                       <div className="form-group">
                         <label className="lb">Marital Status (वैवाहिक स्थिती):</label>
