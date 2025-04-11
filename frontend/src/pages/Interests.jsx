@@ -168,10 +168,13 @@ function Interests() {
         return (
           <li key={profile.id}>
             <div className="db-int-pro-1">
-              <img src={profile.photo_url} alt={`${profile.middle_name} ${profile.last_name}`} />
+              <img
+               src={profile.photo_url} alt={`${profile.first_name} ${profile.last_name}`} 
+               style={{height: '150px'}}
+               />
             </div>
             <div className="db-int-pro-2">
-              <h5>{`${profile.middle_name} ${profile.last_name}`}</h5>
+              <h5>{`${profile.first_name} ${profile.last_name}`}</h5>
               <ol className="poi">
                 <li>
                   City: <strong>{profile.city}</strong>

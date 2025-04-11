@@ -1,12 +1,16 @@
 import express from 'express';
 import { protect } from '../middlewares/protect.js';
-import {getProfiles, getProfileById} from '../controllers/profileController.js'
+import {getProfiles, getProfileById, getFullProfileByEmail, updateProfile} from '../controllers/profileController.js'
 
 const router = express.Router();
 
 router.get('/get-profiles', protect, getProfiles);
 
 router.get('/profile/:id', protect, getProfileById);
+
+router.post('/get-full-profile', protect, getFullProfileByEmail);
+
+router.put('/update-profile/:id', protect, updateProfile);
 
 export default router;
 

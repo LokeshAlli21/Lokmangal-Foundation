@@ -137,16 +137,31 @@ EXECUTE PROCEDURE create_profile_after_user_insert();
 
 
 -- ✅ 6. Function: When user updates email/phone in users table → update in profiles table
+
+-- CREATE OR REPLACE FUNCTION sync_profile_after_user_update()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--   UPDATE profiles
+--   SET email = NEW.email,
+--       mobile = NEW.phone
+--   WHERE user_id = NEW.id;
+--   RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION sync_profile_after_user_update()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE profiles
-  SET email = NEW.email,
-      mobile = NEW.phone
-  WHERE user_id = NEW.id;
+  IF (NEW.email IS DISTINCT FROM OLD.email OR NEW.phone IS DISTINCT FROM OLD.phone) THEN
+    UPDATE profiles
+    SET email = NEW.email,
+        mobile = NEW.phone
+    WHERE user_id = NEW.id;
+  END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- ✅ 7. Trigger: After update on users, sync profile
 CREATE TRIGGER trigger_sync_profile_after_user_update

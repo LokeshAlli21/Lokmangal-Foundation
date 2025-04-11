@@ -1,9 +1,38 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import databaseService from '../backend-services/database/database';
 
 function EditProfile() {
+
   
+
+  const userData = useSelector(state => state.auth.userData);
+  // console.log("getting userData : ", userData);
+  
+  const [email, setEmail] = useState(userData.email)
+  const [myProfile, setMyProfile] = useState({})
+  // console.log('see my profile in state: ', myProfile);
+  useEffect(() => {
+    databaseService.getCurrentUserProfileByEmail(email)
+    .then(data => {
+      if (!data || data.length === 0) {
+        // Show toast when there are no profiles
+        toast("No profil is found.", { type: 'info' });
+      } else {
+        setMyProfile(data);
+        console.log('see my profile: ', data);
+      }
+    })
+    .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error fetching profiles:', error);
+      toast("Error fetching your profile.", { type: 'error' });
+    });
+  },[])
+
+
   
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
@@ -15,6 +44,8 @@ function EditProfile() {
   const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
   const [emailCooldown, setEmailCooldown] = useState(0);
   const [phoneCooldown, setPhoneCooldown] = useState(0);
+
+  const [userID, setUserId] = useState(userData.id || myProfile.user_id || null)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -54,6 +85,8 @@ function EditProfile() {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // console.log(value);
+    
     setFormData({ ...formData, [name]: value });
 
     // Reset verification if user edits fields
@@ -70,6 +103,52 @@ function EditProfile() {
   };
 
 
+useEffect(() =>{
+  setFormData({
+    firstName: myProfile.first_name || '',
+    middleName: myProfile.middle_name || '',
+    lastName: myProfile.last_name || '',
+    gender: myProfile.gender || '',
+    dob: myProfile.dob || '',
+    maritalStatus: myProfile.marital_status || '',
+    religion: myProfile.religion || '',
+    caste: myProfile.caste || '',
+    subCaste: myProfile.sub_caste || '',
+    state: myProfile.state || '',
+    city: myProfile.city || '',
+    pincode: myProfile.pincode || '',
+    mobile: myProfile.mobile || '',
+    altMobile: myProfile.alt_mobile || '',
+    email: userData.email || '',
+    education: myProfile.education || '',
+    occupation: myProfile.occupation || '',
+    income: myProfile.income || '',
+    fatherName: myProfile.father_name || '',
+    motherName: myProfile.mother_name || '',
+    familyStatus: myProfile.family_status || '',
+    familyType: myProfile.family_type || '',
+    preferredAgeRange: myProfile.preferred_age_range || '',
+    preferredReligionCaste: myProfile.preferred_religion_caste || '',
+    preferredLocation: myProfile.preferred_location || '',
+    otherPreferences: myProfile.other_preferences || '',
+    emailVerified: myProfile.email_verified || emailVerified,
+    phoneVerified: myProfile.phone_verified || phoneVerified,
+    heightFeet: myProfile.height_feet || '',
+    heightInches: myProfile.height_inches || '',
+    weight: myProfile.weight || '',
+  })
+
+  // console.log("log from formData: ", formData);
+  
+  setUserId(myProfile.user_id)
+
+},[myProfile])
+
+
+useEffect(() => {
+  setEmailVerified(formData.emailVerified)
+  setPhoneVerified(formData.phoneVerified)
+}, [myProfile])
 
   
   // Cooldown timer for resend OTP (email and phone)
@@ -106,7 +185,7 @@ function EditProfile() {
     if (emailOtp === generatedEmailOtp) {
       setEmailVerified(true);
       setFormData(p => ({emailVerified : true, ...p }))
-      // console.log(formData.emailVerified);
+      console.log("email otp verified: ",formData);
       toast.success('Email verified successfully!');
     } else {
       toast.error('Invalid OTP');
@@ -242,7 +321,7 @@ const validateForm = () => {
 };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
   
     if (!validateForm()) {
@@ -252,6 +331,52 @@ const validateForm = () => {
     // Proceed with submission (API call, etc.)
     console.log("Form is valid, submitting...");
     console.log("formData: ", formData);
+
+    // databaseService.get/
+
+    console.log(userID);
+
+    const formattedData = {
+        first_name: formData.firstName,
+        middle_name: formData.middleName,
+        last_name: formData.lastName,
+        gender: formData.gender,
+        dob: formData.dob,
+        marital_status: formData.maritalStatus,
+        religion: formData.religion,
+        caste: formData.caste,
+        sub_caste: formData.subCaste,
+        state: formData.state,
+        city: formData.city,
+        pincode: formData.pincode,
+        mobile: formData.mobile,
+        alt_mobile: formData.altMobile,
+        email: formData.email,
+        education: formData.education,
+        occupation: formData.occupation,
+        income: formData.income,
+        father_name: formData.fatherName,
+        mother_name: formData.motherName,
+        family_status: formData.familyStatus,
+        family_type: formData.familyType,
+        preferred_age_range: formData.preferredAgeRange,
+        preferred_religion_caste: formData.preferredReligionCaste,
+        preferred_location: formData.preferredLocation,
+        other_preferences: formData.otherPreferences,
+        height_feet: formData.heightFeet,
+        height_inches: formData.heightInches,
+        email_verified: formData.emailVerified,
+        phone_verified: formData.phoneVerified
+    }
+    
+    try {
+      const response = await databaseService.updateProfile(userID, formattedData)
+      console.log("✅ Profile update response:", response);
+      toast.success("Profile updated successfully")
+    } catch (error) {
+      console.log("error: ", error);
+      
+    }
     
   };
   
@@ -299,7 +424,7 @@ const validateForm = () => {
                         type="date"
                         name="dob"
                         className="form-control"
-                        value={formData.dob}
+                        value={formData.dob ? formData.dob.split('T')[0] : ''}
                         onChange={handleChange}
                         min={`${new Date(new Date().setFullYear(new Date().getFullYear() - 60)).toISOString().split('T')[0]}`}
                         max={`${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}`}

@@ -1,6 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import databaseService from '../backend-services/database/database';
+import { useSelector } from 'react-redux';
 
 function Profile() {
+  
+  const userData = useSelector(state => state.auth.userData);
+  // console.log("getting userData : ", userData);
+  
+  
+  const [email, setEmail] = useState(userData.email)
+  const [myProfile, setMyProfile] = useState({})
+  // console.log('see my profile in state: ', myProfile);
+  useEffect(() => {
+    databaseService.getCurrentUserProfileByEmail(email)
+    .then(data => {
+      if (!data || data.length === 0) {
+        // Show toast when there are no profiles
+        toast("No profil is found.", { type: 'info' });
+      } else {
+        setMyProfile(data);
+        console.log('see my profile: ', data);
+      }
+    })
+    .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error fetching profiles:', error);
+      toast("Error fetching your profile.", { type: 'error' });
+    });
+  },[])
+
   return (
     <section>
   <div className="db">

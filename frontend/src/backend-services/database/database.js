@@ -69,20 +69,29 @@ class DatabaseService {
   }
 
 
-  // ✅ Get profile by user ID (Relationship route)////////////////////////////////////////////////////////////////////
-  async getCurrentUserProfileByUserId(userId) {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/profiles/profile/${userId}`, {
-        headers: this.getAuthHeaders(),
-      });
-      const data = await this.handleResponse(response);
-      toast.success("✅ Profile loaded successfully!");
-      return data;
-    } catch (error) {
-      toast.error(`❌ Failed to load profile: ${error.message}`);
-      throw error;
-    }
+// ✅ Get full profile by email (POST request)
+async getCurrentUserProfileByEmail(email) {
+  try {
+    const response = await fetch(`${this.baseUrl}/api/profiles/get-full-profile`, {
+      method: 'POST',
+      headers: {
+        ...this.getAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }), // Send email in request body
+    });
+
+    const data = await this.handleResponse(response);
+    toast.success("✅ Your profile is loaded successfully!");
+    // console.log("data:", data);
+    
+    return data;
+  } catch (error) {
+    console.error('Error loading your profile:', error);
+    toast.error(`❌ Failed to load your profile: ${error.message}`);
+    throw error;
   }
+}
 
   async getProfileById(userId) {
     try {
@@ -99,21 +108,21 @@ class DatabaseService {
   }
 
   // ✅ Create profile for specific user (Relationship route)
-  async createProfileForUser(userId, profileData) {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/users/${userId}/profile`, {
-        method: "POST",
-        headers: this.getAuthHeaders(),
-        body: JSON.stringify(profileData),
-      });
-      const data = await this.handleResponse(response);
-      toast.success("✅ Profile created successfully!");
-      return data;
-    } catch (error) {
-      toast.error(`❌ Failed to create profile: ${error.message}`);
-      throw error;
-    }
-  }
+  // async createProfileForUser(userId, profileData) {
+  //   try {
+  //     const response = await fetch(`${this.baseUrl}/api/users/${userId}/profile`, {
+  //       method: "POST",
+  //       headers: this.getAuthHeaders(),
+  //       body: JSON.stringify(profileData),
+  //     });
+  //     const data = await this.handleResponse(response);
+  //     toast.success("✅ Profile created successfully!");
+  //     return data;
+  //   } catch (error) {
+  //     toast.error(`❌ Failed to create profile: ${error.message}`);
+  //     throw error;
+  //   }
+  // }
 
   // ✅ Create new profile
   async createProfile(profileData) {
@@ -135,11 +144,15 @@ class DatabaseService {
   // ✅ Update profile by profile ID
   async updateProfile(profileId, profileData) {
     try {
-      const response = await fetch(`${this.baseUrl}/api/profiles/${profileId}`, {
+      const response = await fetch(`${this.baseUrl}/api/profiles/update-profile/${profileId}`, {
         method: "PUT",
-        headers: this.getAuthHeaders(),
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(profileData),
       });
+  
       const data = await this.handleResponse(response);
       toast.success("✅ Profile updated successfully!");
       return data;
