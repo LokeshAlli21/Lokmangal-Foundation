@@ -35,6 +35,8 @@ app.use('/api/test-with-auth', testWithAuth)
 
 app.use('/api/no-auth', noAuthRoutes)
 
+app.use('/api/profiles', profileRoute)
+
 app.get('/', (req, res) =>{
   console.log("user hit a main route!");
   

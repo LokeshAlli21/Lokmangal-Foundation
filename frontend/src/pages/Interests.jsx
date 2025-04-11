@@ -1,58 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
+import databaseService from "../backend-services/database/database"
 
 function Interests() {
 
-  const [profiles, setProfiles] = useState([ // date of  user created
-    {
-      id: 44,
-      middle_name: "Rose",
-      last_name: "Davis",
-      gender: "Female",
-      dob: "1994-08-18T18:30:00.000Z",
-      marital_status: "Single",
-      religion: "Christianity",
-      caste: "SC",
-      sub_caste: "Chamar",
-      state: "Florida",
-      city: "Miami",
-      pincode: "33101",
-      education: "B.A. in Literature",
-      occupation: "Content Writer",
-      income: "60000",
-      family_status: "Middle Class",
-      height_feet: 5,
-      date_of_user_created: "2025-04-02T00:00:00.000Z",
-      height_inches: 4,
-      photo_url: "https://randomuser.me/api/portraits/women/34.jpg",
-      family_type: "Joint",
-      preferred_age_range: "26-31",
-    },
-    {
-      id: 46,
-      middle_name: "Marie",
-      date_of_user_created: "2025-04-08T00:00:00.000Z",
-      last_name: "Moore",
-      gender: "Female",
-      dob: "1993-12-04T18:30:00.000Z",
-      marital_status: "Single",
-      religion: "Christianity",
-      caste: "OBC",
-      sub_caste: "None",
-      state: "Texas",
-      city: "Houston",
-      pincode: "77001",
-      education: "M.A. in History",
-      occupation: "Teacher",
-      income: "55000",
-      family_status: "Upper Middle Class",
-      height_feet: 5,
-      height_inches: 6,
-      photo_url: "https://randomuser.me/api/portraits/women/45.jpg",
-      family_type: "Nuclear",
-      preferred_age_range: "27-32",
-    },
-  ])
+  const [profiles, setProfiles] = useState([])
 
+  useEffect(() => {
+    databaseService.getAllProfilesWithAuth()
+    .then(p => {
+      if (!p || p.length === 0) {
+        // Show toast when there are no profiles
+        toast("No profils.", { type: 'info' });
+      } else {
+        setProfiles(p);
+        console.log('profiles from interests page: ', p);
+      }
+    })
+    .catch(error => {
+      // Handle any errors that occur during the fetch
+      console.error('Error fetching profiles:', error);
+      toast("Error fetching profiles. Please try again.", { type: 'error' });
+    });
+  },[])
   
   return (
     <section>
@@ -219,7 +189,7 @@ function Interests() {
               <ol className="poi poi-date">
               <li>User since: {
                 (() => {
-                  const createdDate = new Date(profile.date_of_user_created);
+                  const createdDate = new Date(profile.created_at);
                   const now = new Date();
                   const diffTime = Math.abs(now - createdDate);
                   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -232,7 +202,7 @@ function Interests() {
                 })()
               }</li>
               </ol>
-              <a href="profile-details.html" className="cta-5" target="_blank" rel="noopener noreferrer">
+              <a href={`/profile-details/${profile.id}`} className="cta-5" target="_blank" rel="noopener noreferrer">
                 View full profile
               </a>
             </div>

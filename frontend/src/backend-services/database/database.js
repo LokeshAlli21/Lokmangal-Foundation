@@ -48,12 +48,45 @@ class DatabaseService {
       throw error;
     }
   }
-
-
-  // ✅ Get profile by user ID (Relationship route)
-  async getProfileByUserId(userId) {
+  async getAllProfilesWithAuth() {
     try {
-      const response = await fetch(`${this.baseUrl}/api/users/${userId}/profile`, {
+
+      const response = await fetch(
+        `${this.baseUrl}/api/profiles/get-profiles`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
+
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profiles loaded successfully!");
+      return data;
+
+    } catch (error) {
+      toast.error(`🚨 Failed to load profiles: ${error.message}`);
+      throw error;
+    }
+  }
+
+
+  // ✅ Get profile by user ID (Relationship route)////////////////////////////////////////////////////////////////////
+  async getCurrentUserProfileByUserId(userId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/profile/${userId}`, {
+        headers: this.getAuthHeaders(),
+      });
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profile loaded successfully!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to load profile: ${error.message}`);
+      throw error;
+    }
+  }
+
+  async getProfileById(userId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/profile/${userId}`, {
         headers: this.getAuthHeaders(),
       });
       const data = await this.handleResponse(response);

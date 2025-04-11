@@ -1,34 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import databaseService from '../backend-services/database/database';
+
 
 const ProfileDetails = () => {
-  const formData = {
-    firstName: 'John',
-    middleName: 'M.',
-    lastName: 'Doe',
-    gender: 'Male',
-    dob: '1990-05-15',
-    maritalStatus: 'Single',
-    religion: 'Christianity',
-    caste: 'Catholic',
-    subCaste: 'Roman Catholic',
-    state: 'California',
-    city: 'Los Angeles',
-    pincode: '90001',
-    education: 'Masters in Computer Science',
-    occupation: 'Software Engineer',
-    income: '$100,000',
-    fatherName: 'Robert Doe',
-    motherName: 'Maria Doe',
-    familyStatus: 'Middle Class',
-    familyType: 'Nuclear Family',
-    preferredAgeRange: '25-30',
-    preferredReligionCaste: 'Christianity - Catholic',
-    preferredLocation: 'California, USA',
-    otherPreferences: 'Well-educated, family-oriented',
-    heightFeet: '5',
-    heightInches: '11',
-    weight: '75kg',
-  };
+
+  const [profileData, setProfileData] = useState({})
+
+  const { id } = useParams()
+  console.log(id);
+  
+
+  useEffect(() => {
+    databaseService.getProfileById(id)
+  .then(p => {
+    if (!p) {
+      // Show toast when profile not found
+      toast("Profile not found.", { type: 'info' });
+    } else {
+      setProfileData(p);
+      console.log('profile: ', p);
+    }
+  })
+  .catch(error => {
+    // Handle any errors that occur during the fetch
+    console.error('Error fetching profile:', error);
+    toast("Error fetching profile. Please try again.", { type: 'error' });
+  });
+
+  },[])
+
 
   const containerStyle = {
     display: 'flex',
@@ -115,7 +116,7 @@ const ProfileDetails = () => {
             <div style={headerStyle}>💖 Profile Details</div>
             <div style={profileSection}>
               <img
-                src="https://randomuser.me/api/portraits/men/75.jpg"
+                src={profileData.photo_url}
                 alt="Profile"
                 style={imageStyle}
               />
@@ -124,35 +125,40 @@ const ProfileDetails = () => {
                   <span style={emojiStyle}>🧑‍💼</span>
                   <span style={labelStyle}>Name:</span>
                   <span style={valueStyle}>
-                    {formData.firstName} {formData.middleName} {formData.lastName}
+                    {profileData.first_name} {profileData.middle_name} {profileData.last_name}
                   </span>
                 </div>
                 <div style={detailRow}>
                   <span style={emojiStyle}>⚧️</span>
                   <span style={labelStyle}>Gender:</span>
-                  <span style={valueStyle}>{formData.gender}</span>
+                  <span style={valueStyle}>{profileData.gender}</span>
                 </div>
                 <div style={detailRow}>
-                  <span style={emojiStyle}>🎂</span>
-                  <span style={labelStyle}>Date of Birth:</span>
-                  <span style={valueStyle}>{formData.dob}</span>
+                  <span style={emojiStyle}>🗓️</span>
+                  <span style={labelStyle}>Age:</span>
+                  <span style={valueStyle}>
+                    {new Date().getFullYear() - new Date(profileData.dob).getFullYear() -
+                      (new Date().getMonth() < new Date(profileData.dob).getMonth() ||
+                      (new Date().getMonth() === new Date(profileData.dob).getMonth() &&
+                      new Date().getDate() < new Date(profileData.dob).getDate()) ? 1 : 0)} years
+                  </span>
                 </div>
                 <div style={detailRow}>
                   <span style={emojiStyle}>💍</span>
                   <span style={labelStyle}>Marital Status:</span>
-                  <span style={valueStyle}>{formData.maritalStatus}</span>
+                  <span style={valueStyle}>{profileData.marital_status}</span>
                 </div>
                 <div style={detailRow}>
                   <span style={emojiStyle}>📏</span>
                   <span style={labelStyle}>Height:</span>
                   <span style={valueStyle}>
-                    {formData.heightFeet} ft {formData.heightInches} in
+                    {profileData.height_feet} ft {profileData.height_inches} in
                   </span>
                 </div>
                 <div style={detailRow}>
                   <span style={emojiStyle}>⚖️</span>
                   <span style={labelStyle}>Weight:</span>
-                  <span style={valueStyle}>{formData.weight}</span>
+                  <span style={valueStyle}>{profileData.weight}</span>
                 </div>
               </div>
             </div>
@@ -161,20 +167,20 @@ const ProfileDetails = () => {
             <div style={detailRow}>
               <span style={emojiStyle}>🛐</span>
               <span style={labelStyle}>Religion:</span>
-              <span style={valueStyle}>{formData.religion}</span>
+              <span style={valueStyle}>{profileData.religion}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>🧬</span>
               <span style={labelStyle}>Caste:</span>
               <span style={valueStyle}>
-                {formData.caste} ({formData.subCaste})
+                {profileData.caste} <b>sub caste:</b>({profileData.sub_caste})
               </span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>📍</span>
               <span style={labelStyle}>Location:</span>
               <span style={valueStyle}>
-                {formData.city}, {formData.state} - {formData.pincode}
+                {profileData.city}, {profileData.state} - {profileData.pincode}
               </span>
             </div>
 
@@ -182,35 +188,35 @@ const ProfileDetails = () => {
             <div style={detailRow}>
               <span style={emojiStyle}>🎓</span>
               <span style={labelStyle}>Education:</span>
-              <span style={valueStyle}>{formData.education}</span>
+              <span style={valueStyle}>{profileData.education}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>💼</span>
               <span style={labelStyle}>Occupation:</span>
-              <span style={valueStyle}>{formData.occupation}</span>
+              <span style={valueStyle}>{profileData.occupation}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>💰</span>
               <span style={labelStyle}>Income:</span>
-              <span style={valueStyle}>{formData.income}</span>
+              <span style={valueStyle}>{profileData.income}</span>
             </div>
 
             <div style={sectionTitle}>👨‍👩‍👧‍👦 Family Details</div>
             <div style={detailRow}>
               <span style={emojiStyle}>👨</span>
               <span style={labelStyle}>Father's Name:</span>
-              <span style={valueStyle}>{formData.fatherName}</span>
+              <span style={valueStyle}>{profileData.father_name}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>👩</span>
               <span style={labelStyle}>Mother's Name:</span>
-              <span style={valueStyle}>{formData.motherName}</span>
+              <span style={valueStyle}>{profileData.mother_name}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>🏡</span>
               <span style={labelStyle}>Family Status:</span>
               <span style={valueStyle}>
-                {formData.familyStatus} ({formData.familyType})
+                {profileData.family_status} ({profileData.family_type})
               </span>
             </div>
 
@@ -218,22 +224,22 @@ const ProfileDetails = () => {
             <div style={detailRow}>
               <span style={emojiStyle}>🎂</span>
               <span style={labelStyle}>Preferred Age Range:</span>
-              <span style={valueStyle}>{formData.preferredAgeRange}</span>
+              <span style={valueStyle}>{profileData.preferred_age_range}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>🛐</span>
               <span style={labelStyle}>Preferred Religion/Caste:</span>
-              <span style={valueStyle}>{formData.preferredReligionCaste}</span>
+              <span style={valueStyle}>{profileData.preferred_religion_caste}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>📍</span>
               <span style={labelStyle}>Preferred Location:</span>
-              <span style={valueStyle}>{formData.preferredLocation}</span>
+              <span style={valueStyle}>{profileData.preferred_location}</span>
             </div>
             <div style={detailRow}>
               <span style={emojiStyle}>💡</span>
               <span style={labelStyle}>Other Preferences:</span>
-              <span style={valueStyle}>{formData.otherPreferences}</span>
+              <span style={valueStyle}>{profileData.other_preferences}</span>
             </div>
           </div>
         </div>

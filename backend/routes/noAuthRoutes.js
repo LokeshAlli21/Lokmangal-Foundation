@@ -1,8 +1,8 @@
 import express from 'express';
-import { getProfiles } from '../controllers/noAuthController.js';
+import { getNoAuthProfiles } from '../controllers/noAuthController.js';
 
 const router = express.Router();
 
-router.get('/profiles', getProfiles);
+router.get('/profiles', getNoAuthProfiles);
 
 export default router;

@@ -1,8 +1,12 @@
 import express from 'express';
 import { protect } from '../middlewares/protect.js';
+import {getProfiles, getProfileById} from '../controllers/profileController.js'
 
 const router = express.Router();
 
+router.get('/get-profiles', protect, getProfiles);
+
+router.get('/profile/:id', protect, getProfileById);
 
 export default router;
 

@@ -6,7 +6,7 @@ const shuffleArray = (array) => {
   };
   
   
-  export const getProfiles = async (req, res) => {
+  export const getNoAuthProfiles = async (req, res) => {
     try {
       const { age, caste, city, lookingFor, religion } = req.query;
   
