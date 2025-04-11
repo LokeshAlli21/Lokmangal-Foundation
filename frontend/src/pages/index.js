@@ -9,6 +9,7 @@ import Plan from './Plan'
 import Setting from './Setting'
 import Logout from './Logout'
 import EditProfile from './EditProfile'
+import Profiledetails from './Profiledetails'
 
 export {
     Home,
@@ -22,4 +23,5 @@ export {
     Setting,
     Logout,
     EditProfile,
+    Profiledetails,
 }

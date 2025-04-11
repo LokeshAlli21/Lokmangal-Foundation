@@ -1,6 +1,59 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function Interests() {
+
+  const [profiles, setProfiles] = useState([ // date of  user created
+    {
+      id: 44,
+      middle_name: "Rose",
+      last_name: "Davis",
+      gender: "Female",
+      dob: "1994-08-18T18:30:00.000Z",
+      marital_status: "Single",
+      religion: "Christianity",
+      caste: "SC",
+      sub_caste: "Chamar",
+      state: "Florida",
+      city: "Miami",
+      pincode: "33101",
+      education: "B.A. in Literature",
+      occupation: "Content Writer",
+      income: "60000",
+      family_status: "Middle Class",
+      height_feet: 5,
+      date_of_user_created: "2025-04-02T00:00:00.000Z",
+      height_inches: 4,
+      photo_url: "https://randomuser.me/api/portraits/women/34.jpg",
+      family_type: "Joint",
+      preferred_age_range: "26-31",
+    },
+    {
+      id: 46,
+      middle_name: "Marie",
+      date_of_user_created: "2025-04-08T00:00:00.000Z",
+      last_name: "Moore",
+      gender: "Female",
+      dob: "1993-12-04T18:30:00.000Z",
+      marital_status: "Single",
+      religion: "Christianity",
+      caste: "OBC",
+      sub_caste: "None",
+      state: "Texas",
+      city: "Houston",
+      pincode: "77001",
+      education: "M.A. in History",
+      occupation: "Teacher",
+      income: "55000",
+      family_status: "Upper Middle Class",
+      height_feet: 5,
+      height_inches: 6,
+      photo_url: "https://randomuser.me/api/portraits/women/45.jpg",
+      family_type: "Nuclear",
+      preferred_age_range: "27-32",
+    },
+  ])
+
+  
   return (
     <section>
   <div className="db">
@@ -103,10 +156,10 @@ function Interests() {
                         data-bs-toggle="tab"
                         href="#home"
                       >
-                        New requests
+                        find more profiles
                       </a>
                     </li>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                       <a
                         className="nav-link"
                         data-bs-toggle="tab"
@@ -123,7 +176,7 @@ function Interests() {
                       >
                         Denay request
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                   {/* Tab panes */}
                   {/* Tab panes */}
@@ -132,207 +185,81 @@ function Interests() {
                       <br />
                       <div className="db-inte-prof-list">
                         <ul>
-                          <li>
-                            <div className="db-int-pro-1">
-                              {" "}
-                              <img src="images/profiles/men1.jpg" alt="" />{" "}
-                              <span className="badge bg-primary user-pla-pat">
-                                Platinum user
-                              </span>
-                            </div>
-                            <div className="db-int-pro-2">
-                              <h5>John Smith</h5>
-                              <ol className="poi">
-                                <li>
-                                  City: <strong>Illunois</strong>
-                                </li>
-                                <li>
-                                  Age: <strong>21</strong>
-                                </li>
-                                <li>
-                                  Height: <strong>5.7</strong>
-                                </li>
-                                <li>
-                                  Job: <strong>Working</strong>
-                                </li>
-                              </ol>
-                              <ol className="poi poi-date">
-                                <li>Request on: 10:30 AM, 18 August 2024</li>
-                              </ol>
-                              <a
-                                href="profile-details.html"
-                                className="cta-5"
-                                target="_blank"
-                              >
-                                View full profile
-                              </a>
-                            </div>
-                            <div className="db-int-pro-3">
-                              <button
-                                type="button"
-                                className="btn btn-success btn-sm"
-                              >
-                                Accept
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-outline-danger btn-sm"
-                              >
-                                Denay
-                              </button>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="db-int-pro-1">
-                              {" "}
-                              <img src="images/profiles/men2.jpg" alt="" />{" "}
-                              <span className="badge bg-primary user-pla-gold">
-                                Gold user
-                              </span>
-                            </div>
-                            <div className="db-int-pro-2">
-                              <h5>John Smith</h5>
-                              <ol className="poi">
-                                <li>
-                                  City: <strong>Illunois</strong>
-                                </li>
-                                <li>
-                                  Age: <strong>21</strong>
-                                </li>
-                                <li>
-                                  Height: <strong>5.7</strong>
-                                </li>
-                                <li>
-                                  Job: <strong>Working</strong>
-                                </li>
-                              </ol>
-                              <ol className="poi poi-date">
-                                <li>Request on: 10:30 AM, 18 August 2024</li>
-                              </ol>
-                              <a
-                                href="profile-details.html"
-                                className="cta-5"
-                                target="_blank"
-                              >
-                                View full profile
-                              </a>
-                            </div>
-                            <div className="db-int-pro-3">
-                              <button
-                                type="button"
-                                className="btn btn-success btn-sm"
-                              >
-                                Accept
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-outline-danger btn-sm"
-                              >
-                                Denay
-                              </button>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="db-int-pro-1">
-                              {" "}
-                              <img src="images/profiles/men3.jpg" alt="" />{" "}
-                              <span className="badge bg-primary user-pla-free">
-                                Free user
-                              </span>
-                            </div>
-                            <div className="db-int-pro-2">
-                              <h5>John Smith</h5>
-                              <ol className="poi">
-                                <li>
-                                  City: <strong>Illunois</strong>
-                                </li>
-                                <li>
-                                  Age: <strong>21</strong>
-                                </li>
-                                <li>
-                                  Height: <strong>5.7</strong>
-                                </li>
-                                <li>
-                                  Job: <strong>Working</strong>
-                                </li>
-                              </ol>
-                              <ol className="poi poi-date">
-                                <li>Request on: 10:30 AM, 18 August 2024</li>
-                              </ol>
-                              <a
-                                href="profile-details.html"
-                                className="cta-5"
-                                target="_blank"
-                              >
-                                View full profile
-                              </a>
-                            </div>
-                            <div className="db-int-pro-3">
-                              <button
-                                type="button"
-                                className="btn btn-success btn-sm"
-                              >
-                                Accept
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-outline-danger btn-sm"
-                              >
-                                Denay
-                              </button>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="db-int-pro-1">
-                              {" "}
-                              <img src="images/profiles/men4.jpg" alt="" />{" "}
-                            </div>
-                            <div className="db-int-pro-2">
-                              <h5>John Smith</h5>
-                              <ol className="poi">
-                                <li>
-                                  City: <strong>Illunois</strong>
-                                </li>
-                                <li>
-                                  Age: <strong>21</strong>
-                                </li>
-                                <li>
-                                  Height: <strong>5.7</strong>
-                                </li>
-                                <li>
-                                  Job: <strong>Working</strong>
-                                </li>
-                              </ol>
-                              <ol className="poi poi-date">
-                                <li>Request on: 10:30 AM, 18 August 2024</li>
-                              </ol>
-                              <a
-                                href="profile-details.html"
-                                className="cta-5"
-                                target="_blank"
-                              >
-                                View full profile
-                              </a>
-                            </div>
-                            <div className="db-int-pro-3">
-                              <button
-                                type="button"
-                                className="btn btn-success btn-sm"
-                              >
-                                Accept
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-outline-danger btn-sm"
-                              >
-                                Denay
-                              </button>
-                            </div>
-                          </li>
+                          
+
+
+
+
+                        {profiles.map((profile) => {
+        const birthDate = new Date(profile.dob);
+        const age = new Date().getFullYear() - birthDate.getFullYear();
+        const requestDate = new Date().toLocaleString(); // Current date-time
+
+        return (
+          <li key={profile.id}>
+            <div className="db-int-pro-1">
+              <img src={profile.photo_url} alt={`${profile.middle_name} ${profile.last_name}`} />
+            </div>
+            <div className="db-int-pro-2">
+              <h5>{`${profile.middle_name} ${profile.last_name}`}</h5>
+              <ol className="poi">
+                <li>
+                  City: <strong>{profile.city}</strong>
+                </li>
+                <li>
+                  Age: <strong>{age}</strong>
+                </li>
+                <li>
+                  Height: <strong>{`${profile.height_feet}.${profile.height_inches}`}</strong>
+                </li>
+                <li>
+                  Job: <strong>{profile.occupation}</strong>
+                </li>
+              </ol>
+              <ol className="poi poi-date">
+              <li>User since: {
+                (() => {
+                  const createdDate = new Date(profile.date_of_user_created);
+                  const now = new Date();
+                  const diffTime = Math.abs(now - createdDate);
+                  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                  const diffMonths = Math.floor(diffDays / 30);
+                  const diffYears = Math.floor(diffDays / 365);
+
+                  if (diffYears > 0) return `${diffYears} year${diffYears > 1 ? 's' : ''} `;
+                  if (diffMonths > 0) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} `;
+                  return `${diffDays} day${diffDays > 1 ? 's' : ''} `;
+                })()
+              }</li>
+              </ol>
+              <a href="profile-details.html" className="cta-5" target="_blank" rel="noopener noreferrer">
+                View full profile
+              </a>
+            </div>
+            <div className="db-int-pro-3">
+              <button
+                type="button"
+                className="btn btn-success btn-sm"
+                onClick={() => console.log('Liked profile ID:', profile.id)}
+              >
+                👍 Like
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger btn-sm"
+                onClick={() => setProfiles(prev => prev.filter(p => p.id !== profile.id))}
+              >
+                🚫 Not Interested
+              </button>
+            </div>
+          </li>
+        );
+      })}
+
                         </ul>
                       </div>
                     </div>
-                    <div id="menu1" className="container tab-pane fade">
+                    {/* <div id="menu1" className="container tab-pane fade">
                       <br />
                       <div className="db-inte-prof-list">
                         <ul>
@@ -429,7 +356,7 @@ function Interests() {
                           </li>
                         </ul>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

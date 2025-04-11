@@ -357,7 +357,7 @@ function Home() {
                   width: '100%',
                   position: 'relative',
                   borderRadius: '8px',
-                  height: "500px",
+                  height: "400px",
                   transition: 'all 0.5s ease-in-out 0s',
                   overflow: 'hidden',
                   maxHeight: '100vh',
@@ -376,14 +376,17 @@ function Home() {
                     years
                   </p>
                   <p className="text-gray-600 mb-1">📍 {profile.city}, {profile.state}</p>
-                  <p className="text-gray-600 mb-1">🎓 {profile.education}</p>
+                  {/* <p className="text-gray-600 mb-1">🎓 {profile.education}</p> */}
                   <p className="text-gray-600 mb-1">💼 {profile.occupation}</p>
                   <p className="text-gray-600 mb-1">💰 Income: {profile.income}</p>
-                  <p className="text-gray-600 mb-1">🛐 Religion: {profile.religion}</p>
-                  <p className="text-gray-600 mb-1">🧩 Caste: {profile.caste}</p>
+                  {/* <p className="text-gray-600 mb-1">🛐 Religion: {profile.religion}</p> */}
+                  {/* <p className="text-gray-600 mb-1">🧩 Caste: {profile.caste}</p> */}
                   <p className="text-gray-600 mb-1">
                     🧍 Height: {profile.height_feet}ft {profile.height_inches}in
                   </p>
+                  {/* <a href="">
+                    see full profile
+                  </a> */}
                 </div>
                 </div>
               </li>
