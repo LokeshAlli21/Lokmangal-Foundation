@@ -77,7 +77,7 @@ const shuffleArray = (array) => {
       let profiles = result.rows;
   
       // ✅ Shuffle and limit to 5
-      profiles = shuffleArray(profiles).slice(0, 5);
+      profiles = shuffleArray(profiles).slice(0, 10);
   
       res.json(profiles);
     } catch (error) {

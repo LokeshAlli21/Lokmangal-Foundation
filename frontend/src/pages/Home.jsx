@@ -6,27 +6,6 @@ function Home() {
   const [isWide, setIsWide] = useState(window.innerWidth > 1050);
   const [profiles, setProfiles] = useState();
 
-
-
-
-
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const cardWidth = 320; // Width of the card
-  const gapBetweenCards = 24; // Gap between cards
-  const totalWidth = cardWidth + gapBetweenCards; // Card width + gap between cards
-
-  const handleNext = () => {
-    setScrollPosition(scrollPosition + totalWidth); // Move right
-  };
-
-  const handlePrevious = () => {
-    setScrollPosition(scrollPosition - totalWidth); // Move left
-  };
-
-
-
-  
-
   const [formData, setFormData] = useState({
     lookingFor: "",
     age: "",
@@ -328,198 +307,10 @@ function Home() {
     </div>
   </section>
 
-  <div
-      style={{
-        position: 'relative',
-        display: 'flex',
-        overflowX: 'hidden',
-        gap: `${gapBetweenCards}px`, // Ensures space between cards
-        padding: '20px',
-        width: '100%',
-        maxWidth: '100%',
-      }}
-    >
-      {/* Previous Button */}
-      <button
-        onClick={handlePrevious}
-        style={{
-          position: 'absolute',
-          left: '0',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          backgroundColor: '#4CAF50',
-          color: '#fff',
-          border: 'none',
-          padding: '10px 16px',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          fontSize: '18px',
-          zIndex: '1', // Ensure button is above cards
-        }}
-      >
-        &lt;
-      </button>
-
-      {/* Profiles Container */}
-      <div
-        style={{
-          display: 'flex',
-          transition: 'transform 0.5s ease',
-          transform: `translateX(-${scrollPosition}px)`,
-        }}
-      >
-        {profiles && profiles.map((profile) => (
-          <div
-            key={profile.id}
-            style={{
-              flex: 'none',
-              backgroundColor: 'white',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
-              width: `${cardWidth}px`,
-              marginRight: `${gapBetweenCards}px`, // Adding space between cards
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            }}
-          >
-            <img
-              src={profile.photo_url}
-              alt={`${profile.middle_name} ${profile.last_name}`}
-              style={{
-                width: '100%',
-                height: '250px',
-                objectFit: 'cover',
-                borderTopLeftRadius: '16px',
-                borderTopRightRadius: '16px',
-              }}
-            />
-            <div style={{ padding: '16px' }}>
-              <h2
-                style={{
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  marginBottom: '12px',
-                  color: '#333',
-                  textAlign: 'center',
-                  lineHeight: '1.4',
-                }}
-              >
-                {profile.middle_name} {profile.last_name}
-              </h2>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                {profile.gender}, {Math.floor((new Date() - new Date(profile.dob)) / (365.25 * 24 * 60 * 60 * 1000))} years
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                📍 {profile.city}, {profile.state}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                🎓 {profile.education}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                💼 {profile.occupation}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                💰 Income: {profile.income}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                🛐 Religion: {profile.religion}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                🧩 Caste: {profile.caste}
-              </p>
-              <p
-                style={{
-                  color: '#4b5563',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                }}
-              >
-                🧍 Height: {profile.height_feet}ft {profile.height_inches}in
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Next Button */}
-      <button
-        onClick={handleNext}
-        style={{
-          position: 'absolute',
-          right: '0',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          backgroundColor: '#4CAF50',
-          color: '#fff',
-          border: 'none',
-          padding: '10px 16px',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          fontSize: '18px',
-          zIndex: '1', // Ensure button is above cards
-        }}
-      >
-        &gt;
-      </button>
-    </div>
-
-
 
   {/* END */}
   {/* QUICK ACCESS */}
-  {/* <section>
+  {profiles && <section>
     <div className="str home-acces-main">
       <div className="container">
         <div className="row">
@@ -529,17 +320,20 @@ function Home() {
             <span className="abo-shap-4" />
           </div>
           
-          <div className="home-tit">
+          <div className="home-tit" style={{'paddingTop': "30px"}}>
             <p>Quick Access</p>
             <h2>
-              <span>Our Services</span>
+              <span>Find your matches</span>
             </h2>
             <span className="leaf1" />
             <span className="tit-ani-" />
           </div>
+
+      
           <div className="home-acces">
-            <ul className="hom-qui-acc-sli">
-              <li>
+            <ul className="hom-qui-acc-sli" style={{display: 'flex', flexWrap: 'wrap', rowGap: '50px'}}>
+
+            {/* <li>
                 <div className="wow fadeInUp hacc hacc1" data-wow-delay="0.1s">
                   <div className="con">
                     <img src="images/icon/user.png" alt="" loading="lazy" />
@@ -548,67 +342,61 @@ function Home() {
                     <a href="all-profiles.html">View more</a>
                   </div>
                 </div>
-              </li>
-              <li>
-                <div className="wow fadeInUp hacc hacc2" data-wow-delay="0.2s">
-                  <div className="con">
-                    <img src="images/icon/gate.png" alt="" loading="lazy" />
-                    <h4>Wedding</h4>
-                    <p>1200+ Profiles</p>
-                    <a href="wedding-video.html">View more</a>
-                  </div>
+              </li> */}
+
+            {profiles && profiles.map((profile) => (
+              <li
+                key={profile.id}
+              >
+                <div className="wow fadeInUp hacc hacc1" 
+                style={{
+                  backgroundImage:`url(${profile.photo_url})`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '100%',
+                  float: 'left',
+                  width: '100%',
+                  position: 'relative',
+                  borderRadius: '8px',
+                  height: "500px",
+                  transition: 'all 0.5s ease-in-out 0s',
+                  overflow: 'hidden',
+                  maxHeight: '100vh',
+                }}data-wow-delay="0.1s">
+                <div className="con" style={{"textAlign": "start", "position": 'absolute', bottom: '0'}}>
+                  <h4>
+                  {profile.middle_name} {profile.last_name}
+                  </h4>
+                  <p className="text-gray-600 mb-1">
+                    {profile.gender},{" "}
+                    {
+                      Math.floor(
+                        (new Date() - new Date(profile.dob)) / (365.25 * 24 * 60 * 60 * 1000)
+                      )
+                    }{" "}
+                    years
+                  </p>
+                  <p className="text-gray-600 mb-1">📍 {profile.city}, {profile.state}</p>
+                  <p className="text-gray-600 mb-1">🎓 {profile.education}</p>
+                  <p className="text-gray-600 mb-1">💼 {profile.occupation}</p>
+                  <p className="text-gray-600 mb-1">💰 Income: {profile.income}</p>
+                  <p className="text-gray-600 mb-1">🛐 Religion: {profile.religion}</p>
+                  <p className="text-gray-600 mb-1">🧩 Caste: {profile.caste}</p>
+                  <p className="text-gray-600 mb-1">
+                    🧍 Height: {profile.height_feet}ft {profile.height_inches}in
+                  </p>
+                </div>
                 </div>
               </li>
-              <li>
-                <div className="wow fadeInUp hacc hacc3" data-wow-delay="0.3s">
-                  <div className="con">
-                    <img src="images/icon/couple.png" alt="" loading="lazy" />
-                    <h4>All Services</h4>
-                    <p>1200+ Profiles</p>
-                    <a href="services.html">View more</a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div className="wow fadeInUp hacc hacc4" data-wow-delay="0.4s">
-                  <div className="con">
-                    <img src="images/icon/hall.png" alt="" loading="lazy" />
-                    <h4>Join Now</h4>
-                    <p>Start for free</p>
-                    <a href="plans.html">Get started</a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div className="wow fadeInUp hacc hacc3" data-wow-delay="0.3s">
-                  <div className="con">
-                    <img
-                      src="images/icon/photo-camera.png"
-                      alt=""
-                      loading="lazy"
-                    />
-                    <h4>Photo gallery</h4>
-                    <p>1200+ Profiles</p>
-                    <a href="photo-gallery.html">View more</a>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div className="wow fadeInUp hacc hacc4" data-wow-delay="0.4s">
-                  <div className="con">
-                    <img src="images/icon/cake.png" alt="" loading="lazy" />
-                    <h4>Blog &amp; Articles</h4>
-                    <p>Start for free</p>
-                    <a href="blog.html">Get started</a>
-                  </div>
-                </div>
-              </li>
+            ))}
+
+
+              
             </ul>
           </div>
         </div>
       </div>
     </div>
-  </section> */}
+  </section> }
   {/* END */}
   {/* TRUST BRANDS */}
   <section>
