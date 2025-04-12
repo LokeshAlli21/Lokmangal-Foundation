@@ -3,10 +3,13 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import databaseService from '../backend-services/database/database';
+import { useNavigate } from 'react-router-dom';
 
 function EditProfile() {
 
   
+
+  const navigate = useNavigate()
 
   const userData = useSelector(state => state.auth.userData);
   // console.log("getting userData : ", userData);
@@ -372,6 +375,7 @@ const validateForm = () => {
     try {
       const response = await databaseService.updateProfile(userID, formattedData)
       console.log("✅ Profile update response:", response);
+      navigate('/profile')
       toast.success("Profile updated successfully")
     } catch (error) {
       console.log("error: ", error);

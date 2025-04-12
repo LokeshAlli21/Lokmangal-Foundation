@@ -212,10 +212,12 @@ function Interests() {
             <div className="db-int-pro-3">
               <button
                 type="button"
-                className="btn btn-success btn-sm"
+                className="btn btn-success btn-md"
+                style={{ color:'white',padding:'5px 10px' }}
                 onClick={() => console.log('Liked profile ID:', profile.id)}
               >
-                👍 Like
+                <i class="fa fa-heart-o " aria-hidden="true"></i> Like
+                
               </button>
               <button
                 type="button"

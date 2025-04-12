@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { pool } from '../config/db.js';
+import { supabase } from '../supabase/supabaseClient.js';
 
 export const protect = async (req, res, next) => {
   try {
@@ -13,13 +13,23 @@ export const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      const user = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
+      // Supabase query to get the user by id
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', decoded.id)
+        .single();
 
-      if (user.rows.length === 0) {
+      if (error) {
+        console.error('Supabase Error:', error);
         return res.status(401).json({ message: 'User not found' });
       }
 
-      req.user = user.rows[0]; // ✅ Now you have full user info in req.user
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+
+      req.user = user; // ✅ Now you have full user info in req.user
       next();
     } else {
       return res.status(401).json({ message: 'Not authorized, no token' });

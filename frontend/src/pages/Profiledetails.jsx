@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import databaseService from '../backend-services/database/database';
+import { useSelector } from 'react-redux';
 
 
 const ProfileDetails = () => {
+
+  const userData = useSelector(state => state.auth.userData);
+
+  const [isOwner, setIsOwner] = useState(false)
 
   const [profileData, setProfileData] = useState({})
 
@@ -27,6 +32,12 @@ const ProfileDetails = () => {
     console.error('Error fetching profile:', error);
     toast("Error fetching profile. Please try again.", { type: 'error' });
   });
+
+  if(userData.email === profileData.email){
+    setIsOwner(true)
+  } else {
+    setIsOwner(false)
+  }
 
   },[])
 
@@ -67,7 +78,7 @@ const ProfileDetails = () => {
     height: '200px',
     borderRadius: '20%',
     objectFit: 'cover',
-    border: '5px solid rgb(255, 126, 126)',
+    border: '5px solid rgb(210, 118, 84)',
     boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
   };
 
@@ -113,6 +124,30 @@ const ProfileDetails = () => {
       <div className="db" style={{ paddingTop: "40px" }}>
         <div className="container">
           <div style={containerStyle}>
+          {isOwner && (
+  <a
+    href="/edit-profile"
+    style={{
+      backgroundColor: '#616e82', // bg-blue-500
+      color: '#fff', // text-white
+      display: 'flex',
+      alignItems: 'center',
+      padding: '8px 16px', // px-4 py-2
+      borderRadius: '0.5rem', // rounded-lg
+      textDecoration: 'none', // Remove underline
+      width: 'fit-content',
+      alignSelf: 'end',
+      textAlign: 'center', // text-center
+      cursor: 'pointer', // Indicates clickable
+      transition: 'background-color 300ms ease', // transition duration-300
+    }}
+    onMouseEnter={(e) => e.target.style.backgroundColor = 'gray'} // hover:bg-blue-600
+    onMouseLeave={(e) => e.target.style.backgroundColor = '#616e82'} // bg-blue-500
+  >
+    <span style={{ marginRight: '8px' }}>🔧</span> Edit your profile
+  </a>
+)}
+
             <div style={headerStyle}>💖 Profile Details</div>
             <div style={profileSection}>
               <img

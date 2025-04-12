@@ -2,73 +2,76 @@ import bcrypt from 'bcryptjs';
 import { pool } from '../config/db.js';
 import { generateToken } from '../utils/generateToken.js';
 
+import { supabase } from '../supabase/supabaseClient.js'
+
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
-
+  
     console.log('🚀 Registering user:', req.body);
-
+  
     // Basic validations
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
+  
     if (!/^\d{10}$/.test(phone)) {
       return res.status(400).json({ message: 'Invalid phone number' });
     }
-
+  
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
-
+  
     if (password.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters' });
     }
-
+  
     // Check if email already exists
-    const emailExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (emailExists.rows.length > 0) {
+    const { data: existingEmail, error: emailError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email);
+  
+    if (emailError) throw emailError;
+  
+    if (existingEmail.length > 0) {
       return res.status(409).json({ message: 'Email is already registered' }); // 409 Conflict
     }
-
+  
     // Check if phone number already exists
-    const phoneExists = await pool.query('SELECT * FROM users WHERE phone = $1', [phone]);
-    if (phoneExists.rows.length > 0) {
-      return res.status(409).json({ message: 'Phone number is already registered' });
+    const { data: existingPhone, error: phoneError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('phone', phone);
+  
+    if (phoneError) throw phoneError;
+  
+    if (existingPhone.length > 0) {
+      return res.status(409).json({ message: 'Phone number is already registered' }); // 409 Conflict
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+  
     // Insert new user
-    const newUser = await pool.query(
-      'INSERT INTO users (name, email, phone, password) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, email, phone, hashedPassword]
-    );
-
-    console.log('✅ User registered:', newUser.rows[0]);
-
-    res.status(201).json({
-      success: true,
-      user: {
-        id: newUser.rows[0].id,
-        name: newUser.rows[0].name,
-        email: newUser.rows[0].email,
-        phone: newUser.rows[0].phone,
-        token: generateToken(newUser.rows[0].id),
-      },
-    });
-  } catch (error) {
-    console.error('❌ Error during user registration:', error);
-
-    // Optional: Check for specific database errors (like unique constraint violations)
-    if (error.code === '23505') { // PostgreSQL unique_violation error code
-      return res.status(409).json({ message: 'User already exists with given email or phone' });
-    }
-
-    res.status(500).json({ message: 'Something went wrong, please try again later' });
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert([{ name, email, phone, password: hashedPassword }])
+      .select()
+      .single();
+  
+    if (insertError) throw insertError;
+  
+    console.log('✅ User registered successfully:', newUser);
+    return res.status(201).json({ message: 'User registered successfully', user: newUser });
+  
+  } catch (err) {
+    console.error('❌ Error registering user:', err.message);
+    return res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
+  
 };
 
 export const loginUser = async (req, res, next) => {
@@ -81,32 +84,39 @@ export const loginUser = async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    // Fetch user from Supabase
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
 
-    if (user.rows.length === 0) {
+    if (error || !user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    const validPassword = await bcrypt.compare(password, user.rows[0].password);
+    // Check password
+    const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    console.log('✅ User logged in:', user.rows[0]);
+    console.log('✅ User logged in:', user);
 
     res.json({
       success: true,
       user: {
-        id: user.rows[0].id,
-        name: user.rows[0].name,
-        email: user.rows[0].email,
-        phone: user.rows[0].phone,
-        token: generateToken(user.rows[0].id),
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        token: generateToken(user.id),
       },
-      message: "User created successfully",
+      message: 'User logged in successfully',
     });
   } catch (error) {
+    console.error('Login Error:', error);
     next(error);
   }
 };
