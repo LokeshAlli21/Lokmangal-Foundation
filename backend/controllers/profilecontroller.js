@@ -1,4 +1,5 @@
-import { pool } from '../config/db.js';
+// import { pool } from '../config/db.js';
+import {supabase} from '../supabase/supabaseClient.js'
 
 // Utility to shuffle array
 const shuffleArray = (array) => {
@@ -7,8 +8,9 @@ const shuffleArray = (array) => {
 
 export const getProfiles = async (req, res) => {
   try {
-    const baseQuery = `
-      SELECT 
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
         id,
         first_name,
         middle_name,
@@ -32,20 +34,22 @@ export const getProfiles = async (req, res) => {
         photo_url,
         family_type,
         preferred_age_range
-      FROM profiles
-      LIMIT 10
-    `;
-
-    const { rows } = await pool.query(baseQuery);
-
-    // Optional: shuffle if you still want random order
-    const shuffledProfiles = shuffleArray(rows);
-
+      `)
+      .limit(10);
+  
+    if (error) {
+      console.error('Error fetching profiles:', error);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  
+    // Optional: Shuffle the results if you want random order
+    const shuffledProfiles = shuffleArray(data);
+  
     res.status(200).json(shuffledProfiles);
   } catch (error) {
     console.error('Error fetching profiles:', error);
     res.status(500).json({ message: 'Server error' });
-  }
+  }  
 };
 
 
@@ -53,8 +57,9 @@ export const getProfileById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const query = `
-      SELECT 
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
         id,
         first_name,
         middle_name,
@@ -83,21 +88,20 @@ export const getProfileById = async (req, res) => {
         height_inches,
         weight,
         photo_url
-      FROM profiles
-      WHERE id = $1
-    `;
-
-    const { rows } = await pool.query(query, [id]);
-
-    if (rows.length === 0) {
+      `)
+      .eq('id', id)
+      .single(); // ✅ because you're expecting a single row
+  
+    if (error) {
+      console.error('Error fetching profile:', error);
       return res.status(404).json({ message: 'Profile not found' });
     }
-
-    res.status(200).json(rows[0]);
+  
+    res.status(200).json(data);
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ message: 'Server error' });
-  }
+  }  
 };
 
 
@@ -105,15 +109,14 @@ export const getProfileById = async (req, res) => {
 export const getFullProfileByEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    // console.log(email);
-    
-
+  
     if (!email) {
       return res.status(400).json({ error: "Email is required." });
     }
-
-    const query = `
-      SELECT 
+  
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
         id,
         user_id,
         first_name,
@@ -150,25 +153,22 @@ export const getFullProfileByEmail = async (req, res) => {
         photo_url,
         created_at,
         updated_at
-      FROM profiles
-      WHERE email = $1
-      LIMIT 1
-    `;
-
-    const { rows } = await pool.query(query, [email]);
-
-    if (rows.length === 0) {
+      `)
+      .eq('email', email)
+      .limit(1)
+      .single(); // ✅ Fetch exactly one record
+  
+    if (error) {
+      console.error('Error fetching profile:', error);
       return res.status(404).json({ error: "Profile not found." });
     }
-
-    // console.log(rows);
-    
-    res.status(200).json(rows[0]);
-
+  
+    res.status(200).json(data);
   } catch (error) {
-    console.error("Error fetching full profile by email:", error);
-    res.status(500).json({ error: "Internal server error." });
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
+  
 };
 
 export const updateProfile = async (req, res) => {
@@ -203,6 +203,10 @@ export const updateProfile = async (req, res) => {
     mother_name,
     family_status,
     family_type,
+    height_inches,
+    height_feet,
+    weight,
+    photo_url,
     preferred_age_range,
     preferred_religion_caste,
     preferred_location,
@@ -211,25 +215,10 @@ export const updateProfile = async (req, res) => {
   } = req.body;
 
   try {
-    const r1 = await pool.query(
-      `UPDATE profiles SET
-        first_name = $1,
-        middle_name = $2,
-        last_name = $3,
-        gender = $4,
-        dob = $5,
-        marital_status = $6,
-        religion = $7,
-        caste = $8,
-        sub_caste = $9,
-        state = $10,
-        city = $11,
-        pincode = $12,
-        mobile = $13,
-        alt_mobile = $14
-      WHERE user_id = $15
-      RETURNING *`,
-      [
+    // First update block
+    const { data: updateBlock1, error: error1 } = await supabase
+      .from('profiles')
+      .update({
         first_name,
         middle_name,
         last_name,
@@ -244,28 +233,19 @@ export const updateProfile = async (req, res) => {
         pincode,
         mobile,
         alt_mobile,
-        profileId,
-      ]
-    );
-    const r2 = await pool.query(
-      `UPDATE profiles SET
-        email = $1,
-        email_verified = $2,
-        phone_verified = $3,
-        education = $4,
-        occupation = $5,
-        income = $6,
-        father_name = $7,
-        mother_name = $8,
-        family_status = $9,
-        family_type = $10,
-        preferred_age_range = $11,
-        preferred_religion_caste = $12,
-        preferred_location = $13,
-        other_preferences = $14
-      WHERE user_id = $15
-      RETURNING *`,
-      [
+      })
+      .eq('user_id', profileId)
+      .select(); // ✅ to get the returning *
+  
+    if (error1) {
+      console.error('Error in first update:', error1);
+      return res.status(500).json({ message: 'Error updating profile - block 1' });
+    }
+  
+    // Second update block
+    const { data: updateBlock2, error: error2 } = await supabase
+      .from('profiles')
+      .update({
         email,
         email_verified,
         phone_verified,
@@ -280,26 +260,28 @@ export const updateProfile = async (req, res) => {
         preferred_religion_caste,
         preferred_location,
         other_preferences,
-        profileId,
-      ]
-    );
-
-    // Merge results (optional: you can choose which to send)
-    const result = {
-      ...r1.rows[0],
-      ...r2.rows[0],
-    };
-
-    if (!result) {
-      return res.status(404).json({ message: "Profile not found." });
+        height_feet,
+        height_inches,
+        weight,
+        photo_url,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', profileId)
+      .select(); // ✅ to get the returning *
+  
+    if (error2) {
+      console.error('Error in second update:', error2);
+      return res.status(500).json({ message: 'Error updating profile - block 2' });
     }
-
+  
     res.status(200).json({
-      message: "Profile updated successfully.",
-      profile: result,
+      message: 'Profile updated successfully',
+      updatedProfile: { ...updateBlock1?.[0], ...updateBlock2?.[0] }, // ✅ Merged response
     });
+  
   } catch (error) {
-    console.error("Error updating profile:", error);
-    res.status(500).json({ message: "Internal server error." });
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error' });
   }
+  
 };

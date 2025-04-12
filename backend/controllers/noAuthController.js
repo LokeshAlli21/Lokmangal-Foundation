@@ -1,4 +1,5 @@
 import { pool } from '../config/db.js';
+import {supabase} from '../supabase/supabaseClient.js'
 
 // Utility to shuffle array
 const shuffleArray = (array) => {
@@ -9,11 +10,12 @@ const shuffleArray = (array) => {
   export const getNoAuthProfiles = async (req, res) => {
     try {
       const { age, caste, city, lookingFor, religion } = req.query;
-  
-      let baseQuery = `
-        SELECT 
+    
+      let query = supabase
+        .from('profiles')
+        .select(`
           id,
-          middle_name,
+          first_name,
           last_name,
           gender,
           dob,
@@ -33,57 +35,52 @@ const shuffleArray = (array) => {
           photo_url,
           family_type,
           preferred_age_range
-        FROM profiles
-        WHERE 1=1
-      `;
-  
-      const queryParams = [];
-      let paramIndex = 1;
-  
+        `);
+    
       // ✅ Age filter
       if (age) {
         const [minAge, maxAge] = age.split(" to ").map(Number);
-        baseQuery += ` AND EXTRACT(YEAR FROM AGE(dob)) BETWEEN $${paramIndex++} AND $${paramIndex++}`;
-        queryParams.push(minAge, maxAge);
+    
+        const today = new Date();
+        const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+        const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    
+        query = query.gte('dob', minDate.toISOString()).lte('dob', maxDate.toISOString());
       }
-  
+    
       // ✅ Caste filter
       if (caste) {
-        baseQuery += ` AND caste = $${paramIndex++}`;
-        queryParams.push(caste);
+        query = query.eq('caste', caste);
       }
-  
+    
       // ✅ City filter
       if (city) {
-        baseQuery += ` AND city = $${paramIndex++}`;
-        queryParams.push(city);
+        query = query.eq('city', city);
       }
-  
-      // ✅ Looking for (gender) filter
+    
+      // ✅ Religion filter
+      if (religion) {
+        query = query.eq('religion', religion);
+      }
+    
+      // ✅ Gender (lookingFor)
       if (lookingFor) {
-        baseQuery += ` AND gender = $${paramIndex++}`;
-        queryParams.push(lookingFor);
+        query = query.eq('gender', lookingFor);
       }
-  
-      // ✅ Religion filter (ignore if "Any")
-      if (religion && religion.toLowerCase() !== "any") {
-        baseQuery += ` AND religion = $${paramIndex++}`;
-        queryParams.push(religion);
+    
+      // Execute query
+      const { data, error } = await query;
+    
+      if (error) {
+        console.error('Supabase Query Error:', error);
+        return res.status(500).json({ message: 'Error fetching profiles', error: error.message });
       }
-  
-      // ✅ Execute the query
-      const result = await pool.query(baseQuery, queryParams);
-  
-      let profiles = result.rows;
-  
-      // ✅ Shuffle and limit to 5
-      profiles = shuffleArray(profiles).slice(0, 10);
-  
-      res.json(profiles);
+    
+      res.json(shuffleArray(data));
     } catch (error) {
-      console.error('Error fetching profiles:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
+      console.error('Server Error:', error);
+      res.status(500).json({ message: 'Server Error', error: error.message });
+    }    
   };
   
   

@@ -228,10 +228,12 @@ function Home() {
                         >
                           <option value="">धर्म (Religion)</option>
                           <option value="Any">Any</option>
-                          <option value="Hinduism">Hindu</option>
-                          <option value="Islam">Muslim</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Muslim">Muslim</option>
                           <option value="Jain">Jain</option>
-                          <option value="Christianity">Christian</option>
+                          <option value="Christian">Christian</option>
+                          <option value="Sikh">Sikh</option>
+                          <option value="Buddhist">Buddhist</option>
                         </select>
                       </div>
                     </li>
@@ -364,7 +366,7 @@ function Home() {
                 }}data-wow-delay="0.1s">
                 <div className="con" style={{"textAlign": "start", "position": 'absolute', bottom: '0'}}>
                   <h4>
-                  {profile.middle_name} {profile.last_name}
+                  {profile.first_name} {profile.last_name}
                   </h4>
                   <p className="text-gray-600 mb-1">
                     {profile.gender},{" "}

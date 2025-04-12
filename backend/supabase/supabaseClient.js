@@ -17,7 +17,8 @@ async function testConnection() {
       if (error) {
         console.error('❌ Supabase error:', error.message);
       } else {
-        console.log('✅ Supabase connected! Sample data:', data);
+        // console.log('✅ Supabase connected! Sample data:', data);
+        console.log('✅ Supabase connected!');
       }
     } catch (err) {
       console.error('❌ Error testing Supabase connection:', err.message);

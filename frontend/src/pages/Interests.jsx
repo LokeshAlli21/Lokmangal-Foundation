@@ -216,7 +216,7 @@ function Interests() {
                 style={{ color:'white',padding:'5px 10px' }}
                 onClick={() => console.log('Liked profile ID:', profile.id)}
               >
-                <i class="fa fa-heart-o " aria-hidden="true"></i> Like
+                <i className="fa fa-heart-o " aria-hidden="true"></i> Like
                 
               </button>
               <button
