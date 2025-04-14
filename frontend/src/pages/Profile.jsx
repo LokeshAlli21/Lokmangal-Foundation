@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import databaseService from '../backend-services/database/database';
 import { useSelector } from 'react-redux';
+import { useOutletContext } from 'react-router-dom';
 
 function Profile() {
+
+  const { photoUrl } = useOutletContext();
   
   const userData = useSelector(state => state.auth.userData);
   // console.log("getting userData : ", userData);
@@ -37,7 +40,7 @@ function Profile() {
         <div className="col-md-4 col-lg-3">
           <div className="db-nav">
             <div className="db-nav-pro">
-              <img src="images/profiles/12.jpg" className="img-fluid" alt="" />
+              <img src={photoUrl} className="img-fluid" alt="Profile" />
             </div>
             <div className="db-nav-list">
               <ul>
@@ -93,7 +96,7 @@ function Profile() {
               <h2 className="db-tit">Profiles status</h2>
               <div className="db-profile">
                 <div className="img">
-                  <img src="images/profiles/12.jpg" loading="lazy" alt="" />
+                  <img src={photoUrl} loading="lazy" style={{maxHeight: '500px'}} alt="Profile" />
                 </div>
                 <div className="edit">
                   <a

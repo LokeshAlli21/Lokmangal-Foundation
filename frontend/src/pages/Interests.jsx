@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import databaseService from "../backend-services/database/database"
+import { useSelector } from 'react-redux';
+import { useOutletContext } from 'react-router-dom';
 
 function Interests() {
 
+  const { photoUrl } = useOutletContext();
+
+  const userData = useSelector(state => state.auth.userData);
   const [profiles, setProfiles] = useState([])
 
   useEffect(() => {
-    databaseService.getAllProfilesWithAuth()
+    databaseService.getAllProfilesWithAuth(userData.id)
     .then(p => {
       if (!p || p.length === 0) {
         // Show toast when there are no profiles
@@ -22,7 +27,7 @@ function Interests() {
       console.error('Error fetching profiles:', error);
       toast("Error fetching profiles. Please try again.", { type: 'error' });
     });
-  },[])
+  },[userData])
   
   return (
     <section>
@@ -32,7 +37,7 @@ function Interests() {
         <div className="col-md-4 col-lg-3">
           <div className="db-nav">
             <div className="db-nav-pro">
-              <img src="images/profiles/12.jpg" className="img-fluid" alt="" />
+              <img src={photoUrl} className="img-fluid" alt="Profile" />
             </div>
             <div className="db-nav-list">
               <ul>

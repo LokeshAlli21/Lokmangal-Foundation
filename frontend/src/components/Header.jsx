@@ -1,7 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 import { useSelector } from 'react-redux';
 
-function Header() {
+function Header({photoUrl}) {
+
+  const userData = useSelector(state => state.auth.userData);
+  const [userId, setUserid] = useState(null)
+  
+  useEffect(() => {
+    // console.log(userData);
+    if(userData != null){
+      setUserid(userData.id || null)
+    } else {
+      return
+    }
+  },[userData])
 
   const authStatus = useSelector(state => state.auth.status);
 
@@ -474,9 +486,9 @@ function Header() {
                             <li>
                               <a href="/dashboard">Dashboard</a>
                             </li>
-                            <li>
-                              <a href="/profile">My profile</a>
-                            </li>
+                            {userId && <li>
+                              <a href={`/profile-details/${userId}`}>My profile</a>
+                            </li>}
                             <li>
                               <a href="/interests">Interests</a>
                             </li>
@@ -563,9 +575,9 @@ function Header() {
                     <li>
                       <a href="/dashboard">Dashboard</a>
                     </li>
-                    <li>
-                      <a href="/profile">My profile</a>
-                    </li>
+                    {userId && <li>
+                      <a href={`/profile-details/${userId}`}>My profile</a>
+                    </li>}
                     <li>
                       <a href="/interests">Interests</a>
                     </li>

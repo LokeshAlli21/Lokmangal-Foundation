@@ -13,7 +13,7 @@ const ProfileDetails = () => {
   const [profileData, setProfileData] = useState({})
 
   const { id } = useParams()
-  console.log(id);
+  // console.log(id);
   
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const ProfileDetails = () => {
       toast("Profile not found.", { type: 'info' });
     } else {
       setProfileData(p);
-      console.log('profile: ', p);
+      // console.log('profile: ', p);
     }
   })
   .catch(error => {
@@ -33,14 +33,15 @@ const ProfileDetails = () => {
     toast("Error fetching profile. Please try again.", { type: 'error' });
   });
 
-  if(userData.email === profileData.email){
-    setIsOwner(true)
-  } else {
-    setIsOwner(false)
-  }
-
   },[])
 
+  useEffect(() => {
+    if(userData.id === profileData.id){
+      setIsOwner(true)
+    } else {
+      setIsOwner(false)
+    }
+  }, [profileData])
 
   const containerStyle = {
     display: 'flex',

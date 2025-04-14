@@ -1,6 +1,10 @@
 import React from 'react'
+import { useOutletContext } from 'react-router-dom';
 
 function Chat() {
+
+  const { photoUrl } = useOutletContext();
+
   return (
     <section>
   <div className="db">
@@ -9,7 +13,7 @@ function Chat() {
         <div className="col-md-4 col-lg-3">
           <div className="db-nav">
             <div className="db-nav-pro">
-              <img src="images/profiles/12.jpg" className="img-fluid" alt="" />
+              <img src={photoUrl} className="img-fluid" alt="profile" />
             </div>
             <div className="db-nav-list">
               <ul>
@@ -177,7 +181,7 @@ function Chat() {
                     <li className="db-chat-trig">
                       <div className="db-chat-pro">
                         {" "}
-                        <img src="images/profiles/12.jpg" alt="" />{" "}
+                        <img src={photoUrl} alt="Profile" />{" "}
                       </div>
                       <div className="db-chat-bio">
                         <h5>Elizabeth Taylor</h5>

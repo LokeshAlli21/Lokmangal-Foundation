@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect } from '../middlewares/protect.js';
-import {getProfiles, getProfileById, getFullProfileByEmail, updateProfile} from '../controllers/profileController.js'
+import {getProfiles, getProfileById, getFullProfileByEmail, updateProfile, getProfilePhotoById, uploadProfileImage} from '../controllers/profileController.js'
+import {upload} from '../supabase/supabaseClient.js'
 
 const router = express.Router();
 
@@ -8,9 +9,13 @@ router.get('/get-profiles', protect, getProfiles);
 
 router.get('/profile/:id', protect, getProfileById);
 
+router.get('/profile/photo/:id', protect, getProfilePhotoById);
+
 router.post('/get-full-profile', protect, getFullProfileByEmail);
 
 router.put('/update-profile/:id', protect, updateProfile);
+
+router.post('/upload-image/:id', protect, upload.single('image'), uploadProfileImage);
 
 export default router;
 

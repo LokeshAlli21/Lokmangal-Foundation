@@ -7,13 +7,18 @@ class DatabaseService {
   }
 
   // ✅ Utility to get token
-  getAuthHeaders() {
-    const token = localStorage.getItem('authToken'); // adjust if you store token differently
-    return {
-      "Content-Type": "application/json",
+  getAuthHeaders(skipContentType = false) {
+    const token = localStorage.getItem('authToken');
+    const headers = {
       Authorization: `Bearer ${token}`,
     };
+    if (!skipContentType) {
+      headers["Content-Type"] = "application/json";
+    }
+    return headers;
   }
+  
+  
 
   // ✅ Utility to handle responses globally
   async handleResponse(response) {
@@ -48,11 +53,11 @@ class DatabaseService {
       throw error;
     }
   }
-  async getAllProfilesWithAuth() {
+  async getAllProfilesWithAuth(id) {
     try {
 
       const response = await fetch(
-        `${this.baseUrl}/api/profiles/get-profiles`,
+        `${this.baseUrl}/api/profiles/get-profiles?id=${id}`,
         {
           headers: this.getAuthHeaders(),
         }
@@ -67,6 +72,65 @@ class DatabaseService {
       throw error;
     }
   }
+
+  async getProfilePhotoById(id) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/profile/photo/${id}`, {
+        headers: this.getAuthHeaders(),
+      });
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profile photo loaded successfully!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to load profile photo: ${error.message}`);
+      throw error;
+    }
+  }
+  
+
+  async uploadImageToSupabase(userId, imageFile) {
+    try {
+      // Check if the image file is valid
+      if (!imageFile || !(imageFile instanceof File)) {
+        throw new Error("No valid image file selected.");
+      }
+  
+      console.log("userid from database service: ", userId);
+      
+      // Create a FormData object and append the image file
+      const formData = new FormData();
+      formData.append('image', imageFile); // 'image' is the field name used in API
+  
+      // Log the contents of FormData (only for debugging)
+      formData.forEach((value, key) => {
+        console.log(`${key}:`, value); // Log key-value pairs in the FormData object
+      });
+  
+      // Perform the image upload via fetch API
+      const response = await fetch(`${this.baseUrl}/api/profiles/upload-image/${userId}`, {
+        method: "POST",
+        headers: this.getAuthHeaders(true), // skip Content-Type for FormData
+        body: formData,
+      });      
+  
+      // Check if the response is ok
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to upload image.");
+      }
+  
+      // Parse the response data
+      const data = await response.json();
+      toast.success("✅ Image uploaded successfully!");
+      return data;
+  
+    } catch (error) {
+      console.error("❌ Error uploading image:", error);
+      toast.error(`❌ Failed to upload image: ${error.message}`);
+      throw error;
+    }
+  }
+  
 
 
 // ✅ Get full profile by email (POST request)

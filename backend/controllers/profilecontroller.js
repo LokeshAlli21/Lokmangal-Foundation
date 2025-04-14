@@ -8,6 +8,23 @@ const shuffleArray = (array) => {
 
 export const getProfiles = async (req, res) => {
   try {
+    const id = req.query.id;
+
+     // First, get the gender of the current profile
+      const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('gender')
+      .eq('id', id)
+      .single(); // ✅ use .single() to get single row as object
+
+    if (profileError) {
+      console.error('Error fetching profile gender:', profileError);
+      return res.status(500).json({ message: 'Server error while fetching profile gender' });
+    }
+
+    const gender = profileData.gender;
+
+    // Now fetch profiles with different gender
     const { data, error } = await supabase
       .from('profiles')
       .select(`
@@ -35,6 +52,8 @@ export const getProfiles = async (req, res) => {
         family_type,
         preferred_age_range
       `)
+      .not('gender', 'eq', gender)
+      // .not('id', 'eq', id)
       .limit(10);
   
     if (error) {
@@ -162,6 +181,8 @@ export const getFullProfileByEmail = async (req, res) => {
       console.error('Error fetching profile:', error);
       return res.status(404).json({ error: "Profile not found." });
     }
+    // console.log(data);
+    
   
     res.status(200).json(data);
   } catch (error) {
@@ -284,4 +305,80 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
   
+};
+
+export const getProfilePhotoById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('photo_url')
+      .eq('id', id)
+      .single(); // ✅ single row expected
+
+    if (error) {
+      console.error('Error fetching profile photo:', error);
+      return res.status(404).json({ message: 'Profile photo not found' });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching profile photo:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const uploadProfileImage = async (req, res) => {
+  // console.log('Upload route hit');
+  const { id } = req.params;  
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ message: 'No image file provided.' });
+  }
+
+  try {
+    const fileExt = file.originalname.split('.').pop();
+    const fileName = `profile-photos/${id}-${Date.now()}.${fileExt}`;
+
+    // 3️⃣ Upload new image to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('profile-images')
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+
+    console.log('Supabase upload data:', data);
+    if (error) {
+      console.error('Supabase upload error:', error);
+      return res.status(500).json({ message: 'Failed to upload image to Supabase.' });
+    }
+
+    // 4️⃣ Get public URL of the uploaded image
+    const { data: publicUrlData } = supabase.storage
+      .from('profile-images')
+      .getPublicUrl(fileName);
+
+    const publicUrl = publicUrlData.publicUrl;
+    console.log("public url: ", publicUrl);
+    
+
+    // 5️⃣ Update user's profile with new image URL
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ photo_url: publicUrl })
+      .eq('id', id);
+
+    if (updateError) {
+      console.error('Error updating profile:', updateError);
+      return res.status(500).json({ message: 'Failed to update profile photo URL.' });
+    }
+
+    res.status(200).json({ message: 'Image uploaded and profile updated successfully!', publicUrl });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    res.status(500).json({ message: 'Server error.' });
+  }
 };

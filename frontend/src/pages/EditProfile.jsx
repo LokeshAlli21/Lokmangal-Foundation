@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import databaseService from '../backend-services/database/database';
 import { useNavigate } from 'react-router-dom';
+import {ImageUploader} from '../components/index'
 
 function EditProfile() {
 
@@ -48,7 +49,12 @@ function EditProfile() {
   const [emailCooldown, setEmailCooldown] = useState(0);
   const [phoneCooldown, setPhoneCooldown] = useState(0);
 
+  const [img, setImg] = useState(null)
+
+  
+
   const [userID, setUserId] = useState(userData.id || myProfile.user_id || null)
+
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -105,6 +111,33 @@ function EditProfile() {
     }
   };
 
+
+  const handleImageSelect = (file) => {
+    console.log('Image selected.');
+    setImg(file)
+  };
+
+
+
+  const handleImageSubmit = async () => {
+    if (!img) {
+      toast.error("❌ Please select an image first.");
+      return;
+    }
+    
+    if(!userID){
+      setUserId(userData.id || myProfile.user_id || null)
+    }
+
+    try {
+      const response = await databaseService.uploadImageToSupabase(userID, img);
+      console.log("✅ Image upload response:", response);
+      toast.success("✅ Profile photo uploaded successfully!");
+    } catch (error) {
+      console.error("❌ Error uploading image:", error);
+      toast.error(`❌ Failed to upload image: ${error.message}`);
+    }
+  };
 
 useEffect(() =>{
   setFormData({
@@ -502,6 +535,7 @@ const validateForm = () => {
                         <label className="lb">Sub-Caste (उपजात): (Optional)</label>
                         <input type="text" name="subCaste" className="form-control" placeholder="Sub-caste (optional) / उपजात (ऐच्छिक)" value={formData.subCaste} onChange={handleChange} />
                       </div>
+                      <ImageUploader onImageSelect={handleImageSelect} onImageSubmit={handleImageSubmit} />
 
                       {/* Location Info */}
 

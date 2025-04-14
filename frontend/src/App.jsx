@@ -24,7 +24,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { login, logout} from './store/authSlice'
 
@@ -36,9 +36,12 @@ import authService from './backend-services/auth/auth';
 import 'slick-carousel';
                                 import "slick-carousel/slick/slick.css"; 
                                 import "slick-carousel/slick/slick-theme.css";
+import databaseService from './backend-services/database/database';
 
 function App() {
   const dispatch = useDispatch();
+  const storeData = useSelector(state => state.auth); 
+  const [photoUrl, setPhotoUrl] = useState(null)  
   
   useEffect(() => {
     authService.getCurrentUser()
@@ -53,11 +56,26 @@ function App() {
     .catch((error) => console.log("Login Error : ",error))
   }, [])
 
+useEffect(() => {
+  if (storeData.status) {
+    databaseService.getProfilePhotoById(storeData.userData.id)
+      .then(profilePhoto => {
+        console.log('✅ Profile photo data:', profilePhoto);
+        setPhotoUrl(profilePhoto.photo_url)
+      })
+      .catch(error => {
+        console.error('❌ Failed to load profile photo:', error);
+        toast.error(`❌ Failed to load profile photo: ${error.message}`);
+      });
+  }
+}, [storeData])
+  
+
   return (
     <>
-      <Header />
+      <Header photoUrl={photoUrl && photoUrl} />
       <ToastContainer position="bottom-right" autoClose={5000}  />
-      <Outlet />
+      <Outlet context={{ photoUrl }}   />
       <Footer />
     </>
   );
