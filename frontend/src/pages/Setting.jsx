@@ -7,7 +7,7 @@ function Setting() {
 
   return (
     <section>
-  <div className="db">
+  <div className="db" style={{marginTop: 0, padding: "50px"}}>
     <div className="container">
       <div className="row">
         <div className="col-md-4 col-lg-3">
@@ -21,12 +21,6 @@ function Setting() {
                   <a href="/dashboard">
                     <i className="fa fa-tachometer" aria-hidden="true" />
                     Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a href="user-my-matches.html">
-                    <i className="fa fa-heart" aria-hidden="true" />
-                    My-Matches
                   </a>
                 </li>
                 <li>
@@ -45,12 +39,6 @@ function Setting() {
                   <a href="/chat">
                     <i className="fa fa-commenting-o" aria-hidden="true" />
                     Chat list
-                  </a>
-                </li>
-                <li>
-                  <a href="/plan">
-                    <i className="fa fa-money" aria-hidden="true" />
-                    Plan
                   </a>
                 </li>
                 <li>
@@ -97,7 +85,7 @@ function Setting() {
                           </div>
                         </div>
                         <div className="sett-rig">
-                          <a href="#" className="set-sig-out">
+                          <a href="/log-out" className="set-sig-out">
                             Sign Out
                           </a>
                         </div>

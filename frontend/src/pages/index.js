@@ -5,7 +5,6 @@ import Dashboard from './Dashboard'
 import Profile from './Profile'
 import Interests from './Interests'
 import Chat from './Chat'
-import Plan from './Plan'
 import Setting from './Setting'
 import Logout from './Logout'
 import EditProfile from './EditProfile'
@@ -19,7 +18,6 @@ export {
     Profile,
     Interests,
     Chat,
-    Plan,
     Setting,
     Logout,
     EditProfile,

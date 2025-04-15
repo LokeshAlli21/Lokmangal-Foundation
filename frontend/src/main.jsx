@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App.jsx"
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { Home, SignUp, Login, Dashboard ,Profile , Interests, Chat, Plan, Setting, Logout, EditProfile,Profiledetails} from "./pages/index.js"
+import { Home, SignUp, Login, Dashboard ,Profile , Interests, Chat, Setting, Logout, EditProfile,Profiledetails} from "./pages/index.js"
 
 import store from "./store/store.js"
 import { Provider } from "react-redux"
@@ -65,14 +65,6 @@ const router = createBrowserRouter([
         element: (
             <AuthLayout   authentication={true}>
               <Chat />
-            </AuthLayout>
-        ),
-      },
-      {
-        path: "/plan",
-        element: (
-            <AuthLayout  authentication={true}>
-              <Plan />
             </AuthLayout>
         ),
       },

@@ -7,7 +7,7 @@ function Chat() {
 
   return (
     <section>
-  <div className="db">
+  <div className="db" style={{marginTop: 0, padding: "50px"}}>
     <div className="container">
       <div className="row">
         <div className="col-md-4 col-lg-3">
@@ -39,12 +39,6 @@ function Chat() {
                   <a href="/chat" className="act">
                     <i className="fa fa-commenting-o" aria-hidden="true" />
                     Chat list
-                  </a>
-                </li>
-                <li>
-                  <a href="/plan">
-                    <i className="fa fa-money" aria-hidden="true" />
-                    Plan
                   </a>
                 </li>
                 <li>

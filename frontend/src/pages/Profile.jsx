@@ -147,12 +147,6 @@ function Profile() {
                   </a>
                 </li>
                 <li>
-                  <a href="/plan">
-                    <i className="fa fa-money" aria-hidden="true" />
-                    Plan
-                  </a>
-                </li>
-                <li>
                   <a href="/setting">
                     <i className="fa fa-cog" aria-hidden="true" />
                     Setting

@@ -420,7 +420,7 @@ const validateForm = () => {
 
   return (
     <section>
-      <div className="login pro-edit-update">
+      <div className="login pro-edit-update" style={{marginTop: 0, padding: "50px"}}>
         <div className="container">
           <div className="row">
             <div className="inn">
@@ -524,9 +524,26 @@ const validateForm = () => {
                         </select>
                       </div>
                       <div className="form-group">
-                        <label className="lb">Religion (धर्म):</label>
-                        <input type="text" name="religion" className="form-control" placeholder="Religion / धर्म" value={formData.religion} onChange={handleChange} />
-                      </div>
+  <label className="lb">Religion (धर्म):</label>
+  <select
+    name="religion"
+    className="form-control"
+    value={formData.religion}
+    onChange={handleChange}
+  >
+    <option value="">Religion / धर्म</option>
+    <option value="Hindu">हिंदू (Hindu)</option>
+    <option value="Muslim">मुस्लिम (Muslim)</option>
+    <option value="Buddhist">बौद्ध (Buddhist)</option>
+    <option value="Jain">जैन (Jain)</option>
+    <option value="Christian">ख्रिश्चन (Christian)</option>
+    <option value="Sikh">शीख (Sikh)</option>
+    <option value="Parsi">पारशी (Parsi/Zoroastrian)</option>
+    <option value="Jewish">ज्यू (Jewish)</option>
+    <option value="Other">इतर (Other - Tribal/Indigenous)</option>
+  </select>
+</div>
+
                       <div className="form-group">
                         <label className="lb">Caste (जात):</label>
                         <input type="text" name="caste" className="form-control" placeholder="Caste / जात" value={formData.caste} onChange={handleChange} />
