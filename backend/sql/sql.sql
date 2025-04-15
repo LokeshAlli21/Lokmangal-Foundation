@@ -237,15 +237,13 @@ CREATE TABLE audit_logs (
 );
 
 --------------------------------------------------------------------------------------------------------------------------------------
---------------------------------------  Photos Table --------------------------------------
+--------------------------------------  user_wishlist Table --------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE photos (
-  photo_id SERIAL PRIMARY KEY,
+CREATE TABLE user_wishlist (
+  id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  photo_url TEXT NOT NULL,
-  upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  is_profile_picture BOOLEAN DEFAULT FALSE,
-  visibility VARCHAR(50) DEFAULT 'public',
-  photo_status VARCHAR(50) DEFAULT 'approved'
+  liked_profile_id INTEGER REFERENCES profiles(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, liked_profile_id)
 );

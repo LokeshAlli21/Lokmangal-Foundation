@@ -6,6 +6,142 @@ function Home() {
   const [isWide, setIsWide] = useState(window.innerWidth > 1050);
   const [profiles, setProfiles] = useState();
 
+
+  const religionCasteMap = {
+    any: {
+      label: "कोणताही (Any)"
+    },
+    Hindu: {
+      label: "हिंदू (Hindu)",
+      caste: [
+        { value: "Brahmin", label: "ब्राह्मण (Brahmin)" },
+        { value: "Chitpavan", label: "चित्पावन (Chitpavan)" },
+        { value: "Deshastha", label: "देशस्थ (Deshastha)" },
+        { value: "Karhade", label: "कर्‍हाडे (Karhade)" },
+        { value: "Daivajna", label: "दैवज्ञ (Daivajna)" },
+        { value: "Saraswat", label: "सारस्वत (Saraswat)" },
+        { value: "Maratha", label: "मराठा (Maratha)" },
+        { value: "KulwadiMaratha", label: "कुळवाडी मराठा (Kulwadi Maratha)" },
+        { value: "96KuliMaratha", label: "96 कुळी मराठा (96 Kuli Maratha)" },
+        { value: "Patil", label: "पाटील (Patil)" },
+        { value: "DeshasthaMaratha", label: "देशस्थ मराठा (Deshastha Maratha)" },
+        { value: "Kunbi", label: "कुणबी (Kunbi)" },
+        { value: "TiloriKunbi", label: "तिलोरी कुणबी (Tilori Kunbi)" },
+        { value: "MarathaKunbi", label: "मराठा कुणबी (Maratha Kunbi)" },
+        { value: "DhangarKunbi", label: "धानगर कुणबी (Dhangar Kunbi)" },
+        { value: "Mali", label: "माळी (Mali)" },
+        { value: "KulwadiMali", label: "कुळवाडी माळी (Kulwadi Mali)" },
+        { value: "HaldiMali", label: "हळदी माळी (Haldi Mali)" },
+        { value: "Dhangar", label: "धनगर (Dhangar)" },
+        { value: "SheliDhangar", label: "शेळीपालक धनगर (Sheli Dhangar)" },
+        { value: "GaiDhangar", label: "गायपालक धनगर (Gai Dhangar)" },
+        { value: "KurubaDhangar", label: "कुरोबा धनगर (Kuruba Dhangar)" },
+        { value: "AgriKoli", label: "आगरी-कोळी (Agri-Koli)" },
+        { value: "Agri", label: "आगरी (Agri)" },
+        { value: "Koli", label: "कोळी (Koli)" },
+        { value: "Bhandari", label: "भंडारी (Bhandari)" },
+        { value: "KshetriyaBhandari", label: "क्षेत्रीय भंडारी (Kshetriya Bhandari)" },
+        { value: "NadgaondaBhandari", label: "नाडगौंडा भंडारी (Nadgaonda Bhandari)" },
+        { value: "Koshti", label: "कोष्टी (Koshti)" },
+        { value: "DevangKoshti", label: "देवांग कोष्टी (Devang Koshti)" },
+        { value: "HalwaiKoshti", label: "हलवाई कोष्टी (Halwai Koshti)" },
+
+        { value: "Sonar", label: "सोनार (Sonar)" },
+        { value: "Lohar", label: "लोहार (Lohar)" },
+        { value: "Sutar", label: "सुतार (Sutar)" },
+        { value: "Mahar", label: "महार (Mahar)" },
+        { value: "Matang", label: "मातंग (Matang)" },
+        { value: "Teli", label: "तेली (Teli)" },
+        { value: "Lohari", label: "लोहारी (Lohari)" }
+      ]
+    },
+    Muslim: {
+      label: "मुस्लिम (Muslim)",
+      caste: [
+        { value: "Sunni", label: "सुन्नी (Sunni)" },
+        { value: "Qureshi", label: "कुरेशी (Qureshi)" },
+        { value: "Sayyad", label: "सय्यद (Sayyad)" },
+        { value: "Pathan", label: "पठाण (Pathan)" },
+        { value: "Shaikh", label: "शेख (Shaikh)" },
+        { value: "Shia", label: "शिया (Shia)" },
+        { value: "IthnaAshari", label: "इथना अशरी (Ithna Ashari)" },
+        { value: "Bohra", label: "बोहरा (Bohra)" },
+        { value: "KonkaniMuslim", label: "कोकणी मुसलमान (Konkani Muslim)" },
+
+        { value: "Malla", label: "मल्ला (Malla)" },
+        { value: "Mansuri", label: "मंसुरी (Mansuri)" },
+        { value: "Ansari", label: "अंसारी (Ansari)" },
+        { value: "Chikligar", label: "चिकलीगर (Chikligar)" }
+      ]
+    },
+    Buddhist: {
+      label: "बौद्ध (Buddhist)",
+      caste: [
+        { value: "Mahayana", label: "महायान (Mahayana)" },
+        { value: "Theravada", label: "थेरवाद (Theravada)" },
+        { value: "NavBuddha", label: "नवबौद्ध (NavBuddha)" }
+      ]
+    },
+    Jain: {
+      label: "जैन (Jain)",
+      caste: [
+        { value: "DigambarJain", label: "दिगंबर जैन (Digambar Jain)" },
+        { value: "Koshti", label: "कोष्टी (Koshti)" },
+        { value: "Porwal", label: "पोरवाल (Porwal)" },
+        { value: "Khandelwal", label: "खंडेलवाल (Khandelwal)" },
+        { value: "ShwetambarJain", label: "श्वेतांबर जैन (Shwetambar Jain)" },
+        { value: "Oswal", label: "ओसवाल (Oswal)" },
+        { value: "Mutha", label: "मुथा (Mutha)" },
+        { value: "Lodha", label: "लोढा (Lodha)" }
+      ]
+    },
+    Christian: {
+      label: "ख्रिश्चन (Christian)",
+      caste: [
+        { value: "RomanCatholic", label: "रोमन कॅथोलिक (Roman Catholic)" },
+        { value: "GoanChristian", label: "गोवन ख्रिश्चन (Goan Christian)" },
+        { value: "EastIndianChristian", label: "ईस्ट इंडियन ख्रिश्चन (East Indian Christian)" },
+        { value: "Protestant", label: "प्रोटेस्टंट (Protestant)" },
+        { value: "MarathaChristian", label: "मराठा ख्रिश्चन (Maratha Christian)" },
+        { value: "AdivasiChristian", label: "आदिवासी ख्रिश्चन (Adivasi Christian)" }
+      ]
+    },
+    Sikh: {
+      label: "शीख (Sikh)",
+      caste: [
+        { value: "JatSikh", label: "जाट शीख (Jat Sikh)" },
+        { value: "MazhabiSikh", label: "मजहबी शीख (Mazhabi Sikh)" },
+        { value: "KhatriSikh", label: "खत्री शीख (Khatri Sikh)" },
+        { value: "AroraSikh", label: "अरोरा शीख (Arora Sikh)" }
+      ]
+    },
+    Parsi: {
+      label: "पारशी (Parsi/Zoroastrian)",
+      caste: [
+        { value: "IraniParsi", label: "इराणी पारशी (Irani Parsi)" },
+        { value: "BaghdadiParsi", label: "बगदादी पारशी (Baghdadi Parsi)" }
+      ]
+    },
+    Jewish: {
+      label: "ज्यू (Jewish)",
+      caste: [
+        { value: "BeneIsraeli", label: "बेने इस्रायली (Bene Israeli)" },
+        { value: "BaghdadiJew", label: "बगदादी ज्यू (Baghdadi Jew)" }
+      ]
+    },
+    Other: {
+      label: "इतर (Other - Tribal/Indigenous)",
+      caste: [
+        { value: "Gond", label: "गोंड (Gond)" },
+        { value: "Warli", label: "वारली (Warli)" },
+        { value: "Korku", label: "कोरकू (Korku)" },
+        { value: "Bhil", label: "भील (Bhil)" }
+      ]
+    }
+  };
+
+
+
   const [formData, setFormData] = useState({
     lookingFor: "",
     age: "",
@@ -13,6 +149,31 @@ function Home() {
     caste: "",
     city: "",
   });
+
+
+
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const casteOptions = formData.religion
+    ? religionCasteMap[formData.religion]?.caste || []
+    : [];
+
+    const [isOpen, setIsOpen] = useState(false); // State to control dropdown visibility
+  
+    // Toggle dropdown visibility
+    const toggleDropdown = () => {
+      setIsOpen((prevState) => !prevState);
+    };
+  
+    const handleOptionSelect = (casteValue) => {
+      handleChange({ target: { name: 'caste', value: casteValue } });
+      setIsOpen(false); // Close dropdown after selecting an option
+    };
+
+
+
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -163,18 +324,19 @@ function Home() {
                   लोकमंगल फाउंडेशन
                 </span>
                 <h1>
-                तुमच्या मनासारखा जोडीदार येथे शोधा,
-                  <br />
-                  <b>प्रेम आणि विश्वासाच्या नव्या प्रवासाला</b> सुरुवात करा!
+                तुमच्या मनासारखा जोडीदार येथे शोधा,</h1>
+                  <h1><b>प्रेम आणि विश्वासाच्या नव्या प्रवासाला</b> सुरुवात करा!
                 </h1>
                 <p>"मिलनाचे नवसपूर्त स्थळ – हजारो मन जुळले आहेत इथे!</p>
               </div>
               <div
                 className="ban-search chosenini"
-                style={{ marginLeft: "0", marginRight: "0", width: "100%" }}
+                style={{ marginLeft: "0", marginRight: "0", width: "100%",zIndex: '100' }}
               >
-                <form onSubmit={handleSubmit}>
-                  <ul style={style}>
+                <form onSubmit={handleSubmit} >
+
+
+                <ul style={style}>
                     <li className="sr-look">
                       <div className="form-group">
                         <label>I'm looking for</label>
@@ -205,81 +367,324 @@ function Home() {
                           onChange={handleChange}
                         >
                           <option value="">वय (Age)</option>
-                          <option value="18 to 30">18 to 30</option>
-                          <option value="31 to 40">31 to 40</option>
-                          <option value="41 to 50">41 to 50</option>
-                          <option value="51 to 60">51 to 60</option>
-                          <option value="61 to 70">61 to 70</option>
-                          <option value="71 to 80">71 to 80</option>
-                          <option value="81 to 90">81 to 90</option>
-                          <option value="91 to 100">91 to 100</option>
+                          <option value="18 to 22">18 to 22</option>
+                          <option value="22 to 25">22 to 25</option>
+                          <option value="25 to 30">25 to 30</option>
+                          <option value="30 to 35">30 to 35</option>
+                          <option value="35 to 40">35 to 40</option>
+                          <option value="40 to 45">40 to 45</option>
+                          <option value="45 to 50">45 to 50</option>
+                          <option value="50 to 55">50 to 55</option>
                         </select>
                       </div>
                     </li>
 
                     <li className="sr-reli">
-                      <div className="form-group">
-                        <label>धर्म (Religion)</label>
-                        <select
-                          className="chosen-select"
-                          name="religion"
-                          value={formData.religion}
-                          onChange={handleChange}
-                        >
-                          <option value="">धर्म (Religion)</option>
-                          <option value="Any">Any</option>
-                          <option value="Hindu">Hindu</option>
-                          <option value="Muslim">Muslim</option>
-                          <option value="Jain">Jain</option>
-                          <option value="Christian">Christian</option>
-                          <option value="Sikh">Sikh</option>
-                          <option value="Buddhist">Buddhist</option>
-                        </select>
-                      </div>
-                    </li>
+  <div className="form-group">
+    <label>धर्म (Religion)</label>
+    <select
+      className="chosen-select"
+      name="religion"
+      value={formData.religion}
+      onChange={handleChange}
+    >
+      <option value="">धर्म (Religion)</option>
+      <option value="Any">कोणताही (Any)</option>
+      <option value="Hindu">हिंदू (Hindu)</option>
+      <option value="Muslim">मुस्लिम (Muslim)</option>
+      <option value="Buddhist">बौद्ध (Buddhist)</option>
+      <option value="Jain">जैन (Jain)</option>
+      <option value="Christian">ख्रिश्चन (Christian)</option>
+      <option value="Sikh">शीख (Sikh)</option>
+      <option value="Parsi">पारशी (Parsi/Zoroastrian)</option>
+      <option value="Jewish">ज्यू (Jewish)</option>
+      <option value="Other">इतर (Other - Tribal/Indigenous)</option>
+    </select>
+  </div>
+</li>
 
-                    <li className="sr-reli">
-                      <div className="form-group">
-                        <label>Caste/Sub Caste</label>
-                        <select
-                          className="chosen-select"
-                          name="caste"
-                          value={formData.caste}
-                          onChange={handleChange}
-                        >
-                          <option value="">Caste/Sub Caste</option>
-                          <option value="Any">Any</option>
-                          <option value="Hindu">Hindu</option>
-                          <option value="Muslim">Muslim</option>
-                          <option value="Jain">Jain</option>
-                          <option value="Christian">Christian</option>
-                        </select>
-                      </div>
-                    </li>
 
-                    <li className="sr-cit">
-                      <div className="form-group">
-                        <label>City</label>
-                        <select
-                          className="chosen-select"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
+
+
+
+{formData.religion !== "Any" && (
+        <li className="">
+          <div className="form-group">
+            <label>Caste/Sub Caste</label>
+
+            {/* Hidden native select */}
+            {/* <select
+              className="chosen-select"
+              name="caste"
+              value={formData.caste}
+              onChange={(e) => {
+                handleChange(e); // Pass event to handleChange for form handling
+                handleCasteDropDownelect(); // Custom function call
+              }}
+              style={{ display: "none" }}
+            >
+              <option value="">Caste/Sub Caste</option>
+              {casteOptions.map((caste) => (
+                <option key={caste.value} value={caste.value}>
+                  {caste.label}
+                </option>
+              ))}
+            </select> */}
+
+            {/* Custom dropdown */}
+            <div
+              className="chosen-container chosen-container-single chosen-with-drop"
+              style={{ width: 168 }}
+            >
+              <a
+                className="chosen-single"
+                onClick={toggleDropdown} // Toggle dropdown on click
+              >
+                <span>
+                  {casteOptions.find((option) => option.value === formData.caste)?.label || "Caste/Sub Caste"}
+                </span>
+                <div><b /></div>
+              </a>
+
+              {/* Dropdown body */}
+              {isOpen && (
+                <div className="chosen-drop">
+                  <div className="chosen-search">
+                    <input
+                      className="chosen-search-input"
+                      type="text"
+                      autoComplete="off"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)} // Handle search input change
+                      placeholder="Search Caste..."
+                    />
+                  </div>
+
+                  <ul className="chosen-results">
+                    {casteOptions
+                      .filter((caste) =>
+                        caste.label.toLowerCase().includes(searchTerm.toLowerCase()) // Filter based on search term
+                      )
+                      .map((caste) => (
+                        <li
+                          key={caste.value}
+                          className={`active-result ${formData.caste === caste.value ? 'result-selected highlighted' : ''}`}
+                          onClick={() => handleOptionSelect(caste.value)} // Handle option selection
                         >
-                          <option value="">स्थान (Location)</option>
-                          <option value="Any location">Any location</option>
-                          <option value="Chennai">Chennai</option>
-                          <option value="New york">New york</option>
-                          <option value="Perth">Perth</option>
-                          <option value="London">London</option>
-                        </select>
-                      </div>
-                    </li>
+                          {caste.label}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </li>
+      )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* {formData.religion !== "Any" &&
+  <li className="sr-cit">
+  <div className="form-group">
+    <label>Caste/Sub Caste</label>
+    <select
+      className="chosen-select"
+      name="caste"
+      value={formData.caste}
+      style={{display: "none"}} 
+      onChange={() => {
+        handleChange()
+        handleCasteDropDownelect()
+      }}
+    >
+      <option value="" >Caste/Sub Caste</option>
+      {casteOptions.map((caste) => (
+        <option key={caste.value} value={caste.value}>
+          {caste.label}
+        </option>
+      ))}
+    </select>
+
+
+    <div
+      className="chosen-container chosen-container-single chosen-with-drop chosen-container-active"
+      title=""
+      style={{ width: 168, }}
+    >
+      <a className="chosen-single">
+        <span>
+          {casteOptions.find(option => option.value === formData.caste)?.label || "Caste/Sub Caste"}
+        </span>
+        <div>
+          <b />
+        </div>
+      </a>
+      <div className="chosen-drop">
+        <div className="chosen-search">
+          <input className="chosen-search-input" type="text" autoComplete="off" />
+        </div>
+        <ul className="chosen-results">
+          {casteOptions.map((caste) => (
+            <li
+              key={caste.value}
+              className={`active-result ${formData.caste === caste.value ? 'result-selected highlighted' : ''}`}
+              onClick={() => handleChange({ target: { name: 'caste', value: caste.value } })}
+            >
+              {caste.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</li>
+} */}
+
+{/* Render Caste/Sub Caste only if the selected religion is not "Any" */}
+{/* {formData.religion !== "Any" && (
+  <li className="sr-cit">
+    <div className="form-group">
+      <label>Caste/Sub Caste</label>
+      <select
+        className="chosen-select"
+        name="caste"
+        value={formData.caste}
+        onChange={handleChange}
+      >
+        <option value="">Caste/Sub Caste</option>
+        {formData.religion && religionCasteMap[formData.religion]?.caste?.map((caste) => (
+          <option key={caste.value} value={caste.value}>
+            {caste.label}
+          </option>
+        ))}
+      </select>
+
+
+<div
+  className="chosen-container chosen-container-single chosen-with-drop chosen-container-active"
+  title=""
+  style={{ width: 168 }}
+>
+  <a className="chosen-single">
+    <span>Caste/Sub Caste</span>
+    <div>
+      <b />
+    </div>
+  </a>
+  <div className="chosen-drop">
+    <div className="chosen-search">
+      <input className="chosen-search-input" type="text" autoComplete="off" />
+    </div>
+    <ul className="chosen-results">
+      <li 
+        className="active-result result-selected highlighted"
+        data-option-array-index={0}
+      >
+        caste1
+      </li>
+      <li className="active-result" data-option-array-index={1}>
+      caste2
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+    </div>
+  </li>
+)} */}
+
+
+<li className="sr-cit">
+  <div className="form-group">
+    <label>City</label>
+    <select
+      className="chosen-select"
+      name="city"
+      value={formData.city}
+      onChange={handleChange}
+    >
+      <option value="">स्थान (Location)</option>
+      <option value="Any">Any location</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Pune">Pune</option>
+      <option value="Nagpur">Nagpur</option>
+      <option value="Nashik">Nashik</option>
+      <option value="Aurangabad">Aurangabad</option>
+      <option value="Solapur">Solapur</option>
+      <option value="Thane">Thane</option>
+      <option value="Akola">Akola</option>
+      <option value="Kolhapur">Kolhapur</option>
+      <option value="Chandrapur">Chandrapur</option>
+      <option value="Amravati">Amravati</option>
+      <option value="Sangli">Sangli</option>
+      <option value="Satara">Satara</option>
+      <option value="Jalgaon">Jalgaon</option>
+      <option value="Kalyan">Kalyan</option>
+      <option value="Ulhasnagar">Ulhasnagar</option>
+      <option value="Nanded">Nanded</option>
+      <option value="Bhusawal">Bhusawal</option>
+      <option value="Ratnagiri">Ratnagiri</option>
+      <option value="Latur">Latur</option>
+      <option value="Parbhani">Parbhani</option>
+      <option value="Chinchwad">Chinchwad</option>
+      <option value="Jalna">Jalna</option>
+      <option value="Dombivli">Dombivli</option>
+      <option value="Panvel">Panvel</option>
+      <option value="Vasai-Virar">Vasai-Virar</option>
+      <option value="Khopoli">Khopoli</option>
+      <option value="Miraj">Miraj</option>
+      <option value="Bhandara">Bhandara</option>
+      <option value="Yavatmal">Yavatmal</option>
+      <option value="Wardha">Wardha</option>
+      <option value="Sindhudurg">Sindhudurg</option>
+      <option value="Rajasthan">Rajasthan</option>
+      <option value="Sindhudurg">Sindhudurg</option>
+    </select>
+  </div>
+</li>
 
                     <li className="sr-btn">
                       <input type="submit" value="Search" />
                     </li>
                   </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </form>
               </div>
             </div>
@@ -419,11 +824,11 @@ function Home() {
             <span className="tit-ani-" />
           </div>
           <div className="slid-inn cus-revi">
-            <ul className="slider3">
+            <ul className="" style={{display: 'flex',justifyContent: 'center', alignContent: 'center' , flexWrap: 'nowrap', overflowX: 'visible', overflowY: 'visible'}} >
               <li>
-                <div className="cus-revi-box">
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
                   <div className="revi-im">
-                    <img src="images/user/1.jpg" alt="" loading="lazy" />
+                    <img src="images/user/1.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -436,9 +841,9 @@ function Home() {
                 </div>
               </li>
               <li>
-                <div className="cus-revi-box">
+                <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
                   <div className="revi-im">
-                    <img src="images/user/2.jpg" alt="" loading="lazy" />
+                    <img src="images/user/2.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -451,9 +856,9 @@ function Home() {
                 </div>
               </li>
               <li>
-                <div className="cus-revi-box">
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
                   <div className="revi-im">
-                    <img src="images/user/3.jpg" alt="" loading="lazy" />
+                    <img src="images/user/3.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -466,9 +871,9 @@ function Home() {
                 </div>
               </li>
               <li>
-                <div className="cus-revi-box">
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
                   <div className="revi-im">
-                    <img src="images/user/5.jpg" alt="" loading="lazy" />
+                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -481,9 +886,9 @@ function Home() {
                 </div>
               </li>
               <li>
-                <div className="cus-revi-box">
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
                   <div className="revi-im">
-                    <img src="images/user/5.jpg" alt="" loading="lazy" />
+                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -606,11 +1011,6 @@ function Home() {
                 <p>
                 आतापर्यंत हजारो मन जुळवणारा महाराष्ट्राचं सर्वोत्तम विवाह मंच! येथे तुमच्या स्वप्नातील जोडीदार शोधा आणि नव्या आयुष्याच्या प्रवासाला सुरूवात करा!
                 </p>
-                <p>
-                  {" "}
-                  <a href="plans.html">Click here to</a> Start you matrimony
-                  service now.
-                </p>
               </div>
               <div className="ab-wel-tit-1">
                 <p>
@@ -720,7 +1120,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>नोंदणी करा (Register)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     तुमच्या स्वप्नातील जोडीदार शोधण्यासाठी पहिली पाहिरी  – मोफत नोंदणी!"
                     (First step to your dream partner – Register for free!)
@@ -735,7 +1135,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>तुमचा जोडीदार शोधा (Find Your Match)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     तुमच्या आवडीनुसार प्रोफाइल्स ब्राउज करा आणि योग्य जोडीदार निवडा.
 (Browse profiles based on your preferences and find the right match!)
@@ -770,7 +1170,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>आवड दर्शवा (Send Interest)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     तुमच्या आवडीनुसार जोडीदार निवडा आणि संवाद सुरू करा.
 (Express interest in a suitable match and start a conversation!)
@@ -785,7 +1185,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>प्रोफाइल माहिती अद्यतनित करा (Get Profile Information)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     तुमचे प्रोफाइल पूर्ण करा आणि जुळवणीसाठी अधिक संधी मिळवा.
                     (Complete your profile to increase your chances of getting the best matches!)
@@ -812,7 +1212,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>संवाद वाढवा आणि भेटी घ्या (Start Meetups)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     ऑनलाइन संवाद साधा, फोनवर बोला आणि प्रत्यक्ष भेटी घ्या.
                     (Connect online, talk over the phone, and plan personal meetings)
@@ -827,7 +1227,7 @@ function Home() {
                     data-ani="animate__fadeInUp"
                   >
                     <h5>लग्नाची गाठ बांधा! (Getting Married)</h5>
-                    <span>Timing: 7:00 PM</span>
+                    
                     <p>
                     एकमेकांना जाणून घ्या, कुटुंबांचा आशीर्वाद घ्या आणि नवीन प्रवास सुरू करा!
 (Get to know each other, seek family blessings, and start your new journey!)
@@ -1142,182 +1542,8 @@ function Home() {
   </section> */}
   {/* END */}
   {/* GALLERY START */}
-  <section>
-    <div className="wedd-gall home-wedd-gall">
-      <div className="">
-        <div className="gall-inn">
-          <div className="home-tit">
-            <p>collections</p>
-            <h2>
-              <span>Photo gallery</span>
-            </h2>
-            <span className="leaf1" />
-            <span className="tit-ani-" />
-          </div>
-          <div className="col-sm-6 col-md-2">
-            <div
-              className="gal-im animate animate__animated animate__slow"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/1.jpg"
-                className="gal-siz-1"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/9.jpg"
-                className="gal-siz-2"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-3">
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/3.jpg"
-                className="gal-siz-2"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/4.jpg"
-                className="gal-siz-1"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-2">
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/5.jpg"
-                className="gal-siz-1"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/6.jpg"
-                className="gal-siz-2"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-3">
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/7.jpg"
-                className="gal-siz-2"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/gallery/8.jpg"
-                className="gal-siz-1"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-2">
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/couples/9.jpg"
-                className="gal-siz-2"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-            <div
-              className="gal-im animate animate__animated animate__slower"
-              data-ani="animate__flipInX"
-            >
-              <img
-                src="images/couples/11.jpg"
-                className="gal-siz-1"
-                alt=""
-                loading="lazy"
-              />
-              <div className="txt">
-                <span>Wedding</span>
-                <h4>Bride &amp; Groom</h4>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
+
   {/* END */}
   {/* BLOG POSTS START */}
   <section>
@@ -1425,3 +1651,73 @@ function Home() {
 }
 
 export default Home
+
+const styles = {
+  form: {
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '20px',
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  },
+  ul: {
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '20px',
+  },
+  li: {
+    flex: '1 1 250px',
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  },
+  label: {
+    fontWeight: '600',
+    marginBottom: '4px',
+    color: '#333',
+    fontSize: '14px',
+  },
+  selectWrapper: {
+    position: 'relative',
+  },
+  select: {
+    width: '100%',
+    padding: '10px 40px 10px 12px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    appearance: 'none',
+    backgroundColor: '#fff',
+    fontSize: '14px',
+    color: '#333',
+    cursor: 'pointer',
+    transition: 'border-color 0.3s, box-shadow 0.3s',
+  },
+  arrow: {
+    position: 'absolute',
+    right: '12px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    pointerEvents: 'none',
+    color: '#666',
+    fontSize: '12px',
+  },
+  button: {
+    marginTop: '20px',
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#4CAF50',
+    color: '#fff',
+    fontSize: '16px',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
+  },
+};

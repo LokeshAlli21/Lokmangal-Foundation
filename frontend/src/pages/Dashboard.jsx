@@ -1,8 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
+import databaseService from "../backend-services/database/database"
+import { useSelector } from 'react-redux';
 import { useOutletContext } from 'react-router-dom';
 
 function Dashboard() {
     const { photoUrl } = useOutletContext();
+
+
+    const userData = useSelector(state => state.auth.userData);
+    
+    const [wishlist, setWishlist] = useState([]);
+
+    // useEffect(() => {
+    // if (userData.id) {
+    //     databaseService.getUserWishlist(userData.id)
+    //     .then((list) => {
+    //         setWishlist(list)
+    //     })
+    //     .catch(console.error);
+    // }
+    // }, [userData]);
+      
   return (
     <section>
         <div className="db">
@@ -62,151 +81,89 @@ function Dashboard() {
                 </div>
                 </div>
                 <div className="col-md-8 col-lg-9">
-                <div className="col-md-12 db-sec-com db-new-pro-main">
-                    <h2 className="db-tit">New Profiles Matches</h2>
-                    <ul className="slider">
-                    <li>
-                        <div className="db-new-pro">
-                        <img
-                            src="images/profiles/16.jpg"
-                            alt=""
-                            className="profile"
-                        />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <div className="pro-ave" title="User currently available">
-                            <span className="pro-ave-yes" />
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img src="images/profiles/2.jpg" alt="" className="profile" />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img src="images/profiles/3.jpg" alt="" className="profile" />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img src="images/profiles/4.jpg" alt="" className="profile" />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img
-                            src="images/profiles/5.jpeg"
-                            alt=""
-                            className="profile"
-                        />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img src="images/profiles/6.jpg" alt="" className="profile" />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <div className="pro-ave" title="User currently available">
-                            <span className="pro-ave-yes" />
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="db-new-pro">
-                        <img
-                            src="images/profiles/14.jpg"
-                            alt=""
-                            className="profile"
-                        />
-                        <div>
-                            <h5>Julia ann</h5>
-                            <span className="city">New york</span>
-                            <span className="age">22 Years old</span>
-                        </div>
-                        <div className="pro-ave" title="User currently available">
-                            <span className="pro-ave-yes" />
-                        </div>
-                        <a
-                            href="profile-details.html"
-                            className="fclick"
-                            target="_blank"
-                        >
-                            &nbsp;
-                        </a>
-                        </div>
-                    </li>
-                    </ul>
-                </div>
+                <div className="db-inte-prof-list">
+                <h2 className="db-tit">
+                <i className="fa fa-heart" aria-hidden="true"> <b>Liked Profiles</b></i> 
+                     </h2>
+                        <ul>
+                          
+                          {/* {wishlist.length === 0 && 
+                          <li>
+                          <h2>No liked profiles</h2>
+                        </li>
+} */}
+
+
+                        {wishlist.map((arrItem) => {
+        const birthDate = new Date(arrItem.profiles.dob);
+        const age = new Date().getFullYear() - birthDate.getFullYear();
+        const requestDate = new Date().toLocaleString(); // Current date-time
+
+        return (
+          <li key={arrItem.profiles.id}>
+            <div className="db-int-pro-1">
+              <img
+               src={arrItem.profiles.photo_url} alt={`${arrItem.profiles.first_name} ${arrItem.profiles.last_name}`} 
+               style={{height: '150px'}}
+               />
+            </div>
+            <div className="db-int-pro-2">
+              <h5>{`${arrItem.profiles.first_name} ${arrItem.profiles.last_name}`}</h5>
+              <ol className="poi">
+                <li>
+                  City: <strong>{arrItem.profiles.city}</strong>
+                </li>
+                <li>
+                  Age: <strong>{age}</strong>
+                </li>
+                <li>
+                  Height: <strong>{`${arrItem.profiles.height_feet}.${arrItem.profiles.height_inches}`}</strong>
+                </li>
+                <li>
+                  Job: <strong>{arrItem.profiles.occupation}</strong>
+                </li>
+              </ol>
+              <ol className="poi poi-date">
+              <li>User since: {
+                (() => {
+                  const createdDate = new Date(arrItem.profiles.created_at);
+                  const now = new Date();
+                  const diffTime = Math.abs(now - createdDate);
+                  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                  const diffMonths = Math.floor(diffDays / 30);
+                  const diffYears = Math.floor(diffDays / 365);
+
+                  if (diffYears > 0) return `${diffYears} year${diffYears > 1 ? 's' : ''} `;
+                  if (diffMonths > 0) return `${diffMonths} month${diffMonths > 1 ? 's' : ''} `;
+                  return `${diffDays} day${diffDays > 1 ? 's' : ''} `;
+                })()
+              }</li>
+              </ol>
+              <a href={`/profile-details/${arrItem.profiles.id}`} className="cta-5" target="_blank" rel="noopener noreferrer">
+                View full profile
+              </a>
+            </div>
+            <div className="db-int-pro-3">
+            <button
+                type="button"
+                className="btn btn-primary btn-md"
+                style={{ color: 'white', padding: '6px 12px', backgroundColor: '#007bff', border: 'none', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                onClick={() => handleLikes(profile.id)}
+                >
+                <i className="fa fa-comments" aria-hidden="true"></i> Chat
+                </button>
+
+            </div> 
+          </li>
+        );
+      })}
+
+                        </ul>
+                      </div>
+                {/* <div className="col-md-12 db-sec-com db-new-pro-main">
+                    
+                    
+                </div> */}
                 <div className="row">
                     <div className="col-md-12 col-lg-6 col-xl-4 db-sec-com">
                     <h2 className="db-tit">Profiles status</h2>

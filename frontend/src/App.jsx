@@ -60,7 +60,7 @@ useEffect(() => {
   if (storeData.status) {
     databaseService.getProfilePhotoById(storeData.userData.id)
       .then(profilePhoto => {
-        console.log('✅ Profile photo data:', profilePhoto);
+        // console.log('✅ Profile photo data:', profilePhoto);
         setPhotoUrl(profilePhoto.photo_url)
       })
       .catch(error => {

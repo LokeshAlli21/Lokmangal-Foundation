@@ -11,6 +11,23 @@ function Interests() {
   const userData = useSelector(state => state.auth.userData);
   const [profiles, setProfiles] = useState([])
 
+  const handleLikes = (likedProfileId) => {
+    if (!likedProfileId) {
+      toast.info("❌ No profile ID provided");
+      return;
+    }
+  
+    databaseService.addToWishlist(userData.id, likedProfileId)
+      .then(() => {
+        toast.success("✅ Profile added to your wishlist!");
+      })
+      .catch((error) => {
+        toast.error(`❌ Failed to add to wishlist: ${error.message}`);
+      });
+  };
+  
+  
+
   useEffect(() => {
     databaseService.getAllProfilesWithAuth(userData.id)
     .then(p => {
@@ -219,7 +236,7 @@ function Interests() {
                 type="button"
                 className="btn btn-success btn-md"
                 style={{ color:'white',padding:'5px 10px' }}
-                onClick={() => console.log('Liked profile ID:', profile.id)}
+                onClick={() => handleLikes(profile.id)} 
               >
                 <i className="fa fa-heart-o " aria-hidden="true"></i> Like
                 

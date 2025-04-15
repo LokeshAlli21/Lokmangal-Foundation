@@ -226,6 +226,47 @@ async getCurrentUserProfileByEmail(email) {
     }
   }
 
+  async addToWishlist(userId, likedProfileId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/add-user-wishlist`, {
+        method: "POST",
+        headers: {
+          ...this.getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, likedProfileId }),
+      });
+  
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profile added to wishlist!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to add to wishlist: ${error.message}`);
+      throw error;
+    }
+  }
+  
+  async getUserWishlist(userId) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/user-wishlist/${userId}`, {
+        method: "GET",
+        headers: {
+          ...this.getAuthHeaders(),
+        },
+      });
+  
+      const data = await this.handleResponse(response);
+      // console.log(data);
+      
+      toast.success("✅ Wishlist fetched successfully!");
+      return data.wishlist;
+    } catch (error) {
+      toast.error(`❌ Failed to fetch wishlist: ${error.message}`);
+      throw error;
+    }
+  }
+  
+
   // ✅ Delete profile by profile ID
   async deleteProfile(profileId) {
     try {

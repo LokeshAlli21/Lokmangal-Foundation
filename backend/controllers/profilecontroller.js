@@ -382,3 +382,69 @@ export const uploadProfileImage = async (req, res) => {
     res.status(500).json({ message: 'Server error.' });
   }
 };
+
+export const addUserWishlist = async (req, res) => {
+  try {
+    const { userId, likedProfileId } = req.body;
+
+    if (!userId || !likedProfileId) {
+      return res.status(400).json({ error: 'userId and likedProfileId are required' });
+    }
+
+    const { data, error } = await supabase
+      .from('user_wishlist')
+      .insert([{ user_id: userId, liked_profile_id: likedProfileId }]);
+
+    if (error) {
+      // Handle unique constraint error
+      if (error.code === '23505') {
+        return res.status(400).json({ error: 'Profile already in wishlist' });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.status(201).json({ message: 'Profile added to wishlist', data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const getUserWishlist = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from("user_wishlist")
+      .select(`
+        id,
+        created_at,
+        liked_profile_id,
+        profiles (
+          id,
+          first_name,
+          last_name,
+          city,
+          height_feet,
+          photo_url,
+          height_inches,
+          created_at,
+          dob,
+          occupation
+        )
+      `)
+      .eq("user_id", userId);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log(data);
+    
+
+    res.status(200).json({ wishlist: data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
