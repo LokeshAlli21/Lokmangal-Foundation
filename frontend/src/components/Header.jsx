@@ -104,10 +104,10 @@ function Header({photoUrl}) {
         <div className="lhs">
           <ul>
             <li>
-              <a href="about.html">About</a>
+              <a href="/about">About</a>
             </li>
             <li>
-              <a href="contact.html">Contact</a>
+              <a href="/contact">Contact</a>
             </li>
             <li></li>
           </ul>
@@ -457,10 +457,10 @@ function Header({photoUrl}) {
           <a href="photo-gallery-1.html">Photo gallery 1</a>
         </li>
         <li>
-          <a href="contact.html">Contact</a>
+          <a href="/contact">Contact</a>
         </li>
         <li>
-          <a href="about.html">About</a>
+          <a href="/about">About</a>
         </li>
         <li>
           <a href="blog.html">Blog</a>
