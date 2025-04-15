@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify';
 import databaseService from "../backend-services/database/database"
 
@@ -152,6 +152,131 @@ function Home() {
 
 
 
+
+  const sliderRef = useRef(null);
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+
+    if (!slider) return;
+
+    // Duplicate the content
+    slider.innerHTML += slider.innerHTML;
+
+    let scrollPos = 0;
+    const scrollSpeed = 1; // pixels per frame
+
+    const scroll = () => {
+      if (!slider) return;
+
+      scrollPos += scrollSpeed;
+      slider.scrollLeft = scrollPos;
+
+      if (scrollPos >= slider.scrollWidth / 2) {
+        // Reset without visible jump
+        scrollPos = 0;
+        slider.scrollLeft = 0;
+      }
+
+      requestAnimationFrame(scroll);
+    };
+
+    requestAnimationFrame(scroll);
+  }, []);
+
+  const listStyle = {
+    display: 'flex',
+    // whiteSpace: 'nowrap',
+    height:'450px',
+    overflow: 'hidden',
+  };
+
+  const slideStyle = {
+    minWidth: '350px',
+    // height: '200px',
+    // marginRight: '10px',
+    // background: '#ddd',
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // fontSize: '24px',
+    // borderRadius: '8px',
+    flexShrink: 0,
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    const slider = listRef.current;
+    if (!slider) return;
+
+    // Duplicate the content
+    slider.innerHTML += slider.innerHTML;
+
+    let scrollPos = 0;
+    const scrollSpeed = 1; // Adjust scroll speed here
+
+    const scroll = () => {
+      if (!slider) return;
+
+      scrollPos += scrollSpeed;
+      slider.scrollLeft = scrollPos;
+
+      if (scrollPos >= slider.scrollWidth / 2) {
+        scrollPos = 0;
+        slider.scrollLeft = 0;
+      }
+
+      requestAnimationFrame(scroll);
+    };
+
+    requestAnimationFrame(scroll);
+  }, []);
+
+  const coupleListStyle = {
+    display: 'flex',
+    overflowX: 'hidden',
+    overflowY: 'hidden',
+    whiteSpace: 'nowrap',
+  };
+
+  const itemStyle = {
+    // minWidth: '250px', // adjust as needed
+    // height: '150px',
+    marginRight: '10px',
+    // background: '#f2f2f2',
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // fontSize: '18px',
+    // borderRadius: '20px',
+    flexShrink: 0,
+  };
+
+
+  const [isHovered, setIsHovered] = useState(false);
+
+  const imageStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    transition: 'transform 300ms',
+    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+  };
+
+  
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -315,7 +440,7 @@ function Home() {
   {/* BANNER & SEARCH */}
   <section>
     <div className="str">
-      <div className="hom-head">
+      <div className="hom-head" style={{marginTop: '0px'}}>
         <div className="container">
           <div className="row">
             <div className="hom-ban">
@@ -823,12 +948,12 @@ function Home() {
             <span className="leaf1" />
             <span className="tit-ani-" />
           </div>
-          <div className="slid-inn cus-revi">
-            <ul className="" style={{display: 'flex',justifyContent: 'center', alignContent: 'center' , flexWrap: 'nowrap', overflowX: 'visible', overflowY: 'visible'}} >
-              <li>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
-                  <div className="revi-im">
-                    <img src="images/user/1.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+          <div className="slid-inn cus-revi flexslider" style={{ overflow: 'hidden', width: '100%' }}>
+            <ul className="slides" ref={sliderRef} style={listStyle}>
+              <li style={slideStyle}>
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                  <div className="revi-im" style={{position: 'relative', top:'-20px'}}>
+                    <img src="images/user/1.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -840,10 +965,10 @@ function Home() {
                   <span>सोलापूर (Solapur)</span>
                 </div>
               </li>
-              <li>
-                <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
-                  <div className="revi-im">
-                    <img src="images/user/2.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+              <li style={slideStyle}>
+                <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                  <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
+                    <img src="images/user/2.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -855,10 +980,10 @@ function Home() {
                   <span>नाशिक (Nashik)</span>
                 </div>
               </li>
-              <li>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
-                  <div className="revi-im">
-                    <img src="images/user/3.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+              <li style={slideStyle}>
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                  <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
+                    <img src="images/user/3.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -870,10 +995,10 @@ function Home() {
                   <span>कोल्हापूर (Kolhapur)</span>
                 </div>
               </li>
-              <li>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
-                  <div className="revi-im">
-                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+              <li style={slideStyle}>
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                  <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
+                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -885,10 +1010,10 @@ function Home() {
                   <span>पुणे (Pune)</span>
                 </div>
               </li>
-              <li>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray"}} >
-                  <div className="revi-im">
-                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '30%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
+              <li style={slideStyle}>
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                  <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
+                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -902,11 +1027,11 @@ function Home() {
               </li>
             </ul>
           </div>
-          <div className="cta-full-wid">
+          {/* <div className="cta-full-wid">
             <a href="#!" className="cta-dark">
               More customer reviews
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -1004,8 +1129,8 @@ function Home() {
           <div className="col-lg-6">
             <div className="ab-wel-rhs">
               <div className="ab-wel-tit">
-                <h2>स्वागत आहे! लोकमंगल</h2>
-                <h2>
+                <h2 style={{fontSize:'50px'}}>स्वागत आहे! लोकमंगल</h2>
+                <h2 style={{fontSize:'50px'}}>
                  फाउंडेशन मॅट्रिमोनीमध्ये<em>जिथे परंपरा आणि प्रेम जुळते!</em>
                 </h2>
                 <p>
@@ -1267,119 +1392,33 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="hom-coup-test">
-        <ul className="couple-sli">
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/6.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+      <div className="hom-coup-test" style={{ overflow: 'hidden', width: '100%' }}>
+        <ul className="couple-sli" ref={listRef} style={coupleListStyle}>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/6.jpg" alt="" loading="lazy" style={imageStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)} />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/7.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/7.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/8.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/8.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/9.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/9.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/10.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/10.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/3.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/3.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/4.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding-video.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/4.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
-          <li>
-            <div className="hom-coup-box">
-              <span className="leaf" />
-              <img src="images/couples/5.jpg" alt="" loading="lazy" />
-              <div className="bx">
-                <h4>
-                  Dany &amp; July <span>New York</span>
-                </h4>
-                <a href="wedding.html" className="sml-cta cta-dark">
-                  View more
-                </a>
-              </div>
-            </div>
+          <li style={itemStyle} className='overflow-hidden rounded-md'>
+              <img src="images/couples/5.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
         </ul>
       </div>

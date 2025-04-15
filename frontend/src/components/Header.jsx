@@ -24,7 +24,42 @@ function Header({photoUrl}) {
       }
   
       console.log('Final auth status:', authStatus);
-  }, [authStatus]);
+  }, [userData]);
+
+  const [isFixed, setIsFixed] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsFixed(window.scrollY > 150);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
+  const [isMobileFixed, setIsMobileFixed] = useState(false);
+
+  useEffect(() => {
+    const checkWidth = () => {
+      const isMobile = window.innerWidth <= 900;
+      setIsMobileFixed(isFixed && isMobile);
+    };
+
+    checkWidth(); // Initial check
+    window.addEventListener("resize", checkWidth);
+
+    return () => window.removeEventListener("resize", checkWidth);
+  }, [isFixed]);
+
+  const dynamicStyle = {
+    position: isFixed ? (isMobileFixed ? "fixed" : "fixed") : "relative",
+    top: isFixed ? 0 : "auto",
+    zIndex: isFixed ? 200 : "200",
+    padding: '10px 0px',
+    animation: isFixed ? "menuact 0.3s ease-in-out" : "none",
+  };
+
   
 
   return (
@@ -68,11 +103,6 @@ function Header({photoUrl}) {
       <div className="row">
         <div className="lhs">
           <ul>
-            <li>
-              <a href="#!" className="ser-open">
-                <i className="fa fa-search" aria-hidden="true" />
-              </a>
-            </li>
             <li>
               <a href="about.html">About</a>
             </li>
@@ -120,7 +150,7 @@ function Header({photoUrl}) {
   </div>
   {/* END HEADER & MENU */}
   {/* HEADER & MENU */}
-  <div className="menu-pop menu-pop1">
+  <div className="menu-pop menu-pop1" style={{zIndex: '250'}}>
     <span className="menu-pop-clo">
       <i className="fa fa-times" aria-hidden="true" />
     </span>
@@ -213,7 +243,7 @@ function Header({photoUrl}) {
   </div>
   {/* END HEADER & MENU */}
   {/* HEADER & MENU */}
-  <div className="menu-pop menu-pop2">
+  <div className="menu-pop menu-pop2" style={{zIndex: '250'}}>
     <span className="menu-pop-clo">
       <i className="fa fa-times" aria-hidden="true" />
     </span>
@@ -265,60 +295,26 @@ function Header({photoUrl}) {
           </li>
         </ul>
       </div>
-      <div className="late-news">
-        <h4>Latest news</h4>
-        <ul>
-          <li>
-            <div className="rel-pro-img">
-              <img src="images/couples/1.jpg" alt="" loading="lazy" />
-            </div>
-            <div className="rel-pro-con">
-              <h5>Long established fact that a reader distracted</h5>
-              <span className="ic-date">12 Dec 2023</span>
-            </div>
-            <a href="blog-detail.html" className="fclick" />
-          </li>
-          <li>
-            <div className="rel-pro-img">
-              <img src="images/couples/3.jpg" alt="" loading="lazy" />
-            </div>
-            <div className="rel-pro-con">
-              <h5>Long established fact that a reader distracted</h5>
-              <span className="ic-date">12 Dec 2023</span>
-            </div>
-            <a href="blog-detail.html" className="fclick" />
-          </li>
-          <li>
-            <div className="rel-pro-img">
-              <img src="images/couples/4.jpg" alt="" loading="lazy" />
-            </div>
-            <div className="rel-pro-con">
-              <h5>Long established fact that a reader distracted</h5>
-              <span className="ic-date">12 Dec 2023</span>
-            </div>
-            <a href="blog-detail.html" className="fclick" />
-          </li>
-        </ul>
-      </div>
+
       {/* HELP BOX */}
-      <div className="prof-rhs-help">
+      {/* <div className="prof-rhs-help">
         <div className="inn">
           <h3>Tell us your Needs</h3>
           <p>Tell us what kind of service you are looking for.</p>
           <a href="enquiry.html">Register for free</a>
         </div>
-      </div>
+      </div> */}
       {/* END HELP BOX */}
     </div>
   </div>
   {/* END HEADER & MENU */}
   {/* HEADER & MENU */}
-  <div className="hom-top">
+  <div className="hom-top" style={dynamicStyle} >
     <div className="container">
       <div className="row">
-        <div className="hom-nav">
+        <div className="hom-nav" style={{display: 'flex', alignItems: 'center'}}>
           {/* LOGO */}
-          <div className="logo">
+          <div className="logo"  style={{display: 'flex', alignItems: 'center'}}>
             <span className="menu desk-menu">
               <i />
               <i />
@@ -335,233 +331,10 @@ function Header({photoUrl}) {
           </div>
           {/* TOP MENU */}
           <div className="bl">
-            <ul>
-              <li className="smenu-pare">
-                <span className="smenu">Explore</span>
-                <div className="smenu-open smenu-box">
-                  <div className="container">
-                    <div className="row">
-                      <h4 className="tit">Explore category</h4>
-                      <ul>
-                        <li>
-                          <div className="menu-box menu-box-2">
-                            <h5>
-                              Browse profiles{" "}
-                              <span>1200+ Verified profiles</span>
-                            </h5>
-                            <span className="explor-cta">More details</span>
-                            <a href="all-profiles.html" className="fclick" />
-                          </div>
-                        </li>
-                        <li>
-                          <div className="menu-box menu-box-1">
-                            <h5>
-                              Wedding page <span>Make reservation</span>
-                            </h5>
-                            <span className="explor-cta">More details</span>
-                            <a href="wedding.html" className="fclick" />
-                          </div>
-                        </li>
-                        <li>
-                          <div className="menu-box menu-box-3">
-                            <h5>
-                              All Services<span>Lorem ipsum dummy</span>
-                            </h5>
-                            <span className="explor-cta">More details</span>
-                            <a href="services.html" className="fclick" />
-                          </div>
-                        </li>
-                        <li>
-                          <div className="menu-box menu-box-4">
-                            <h5>
-                              Join Now <span>Lorem ipsum dummy</span>
-                            </h5>
-                            <span className="explor-cta">More details</span>
-                            <a href="plans.html" className="fclick" />
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li className="smenu-pare">
-                <span className="smenu">All pages</span>
-                <div className="smenu-open smenu-multi">
-                  <div className="container">
-                    <div className="row">
-                      <div className="multi-col">
-                        <div className="inn">
-                          <h4>Page sets 1</h4>
-                          <ul>
-                            <li>
-                              <a href="all-profiles.html">All profiles</a>
-                            </li>
-                            <li>
-                              <a href="profile-details.html">Profile details</a>
-                            </li>
-                            <li>
-                              <a href="wedding.html">Wedding</a>
-                            </li>
-                            <li>
-                              <a href="wedding-video.html">Wedding video</a>
-                            </li>
-                            <li>
-                              <a href="services.html">Our Services</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="multi-col">
-                        <div className="inn">
-                          <h4>Page sets 2</h4>
-                          <ul>
-                            <li>
-                              <a href="plans.html">Pricing plans</a>
-                            </li>
-                            <li>
-                              <a href="/login">Login</a>
-                            </li>
-                            <li>
-                              <a href="/signup">Sign-up</a>
-                            </li>
-                            <li>
-                              <a href="photo-gallery.html">Photo gallery</a>
-                            </li>
-                            <li>
-                              <a href="photo-gallery-1.html">Photo gallery 1</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="multi-col">
-                        <div className="inn">
-                          <h4>Page sets 3</h4>
-                          <ul>
-                            <li>
-                              <a href="contact.html">Contact</a>
-                            </li>
-                            <li>
-                              <a href="about.html">About</a>
-                            </li>
-                            <li>
-                              <a href="blog.html">Blog</a>
-                            </li>
-                            <li>
-                              <a href="blog-detail.html">Blog detail</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="multi-col">
-                        <div className="inn">
-                          <h4>Page sets 4</h4>
-                          <ul>
-                            <li>
-                              <a href="enquiry.html">Ask your doubts</a>
-                            </li>
-                            <li>
-                              <a href="make-reservation.html">
-                                Make Reservation
-                              </a>
-                            </li>
-                            <li>
-                              <a href="faq.html">FAQ</a>
-                            </li>
-                            <li>
-                              <a href="coming-soon.html" target="_blank">
-                                Coming soon
-                              </a>
-                            </li>
-                            <li>
-                              <a href="404.html">404</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="multi-col full">
-                        <div className="inn">
-                          <h4>User dashboard pages</h4>
-                          <ul>
-                            <li>
-                              <a href="/dashboard">Dashboard</a>
-                            </li>
-                            {userId && <li>
-                              <a href={`/profile-details/${userId}`}>My profile</a>
-                            </li>}
-                            <li>
-                              <a href="/interests">Interests</a>
-                            </li>
-                            <li>
-                              <a href="/chat">Chat lists</a>
-                            </li>
-                            <li>
-                              <a href="/plan">My plan details</a>
-                            </li>
-                            <li>
-                              <a href="/setting">Profile settings</a>
-                            </li>
-                            <li>
-                              <a href="/edit-profile">
-                                Edit full profile
-                              </a>
-                            </li>
-                            <li>
-                              <a href="/login">Sign in</a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <li className="smenu-pare">
-                <span className="smenu">Top pages</span>
-                <div className="smenu-open smenu-single">
-                  <ul>
-                    <li>
-                      <a href="all-profiles.html">All profiles</a>
-                    </li>
-                    <li>
-                      <a href="profile-details.html">Profile details</a>
-                    </li>
-                    <li>
-                      <a href="wedding.html">Wedding</a>
-                    </li>
-                    <li>
-                      <a href="blog.html">Blog</a>
-                    </li>
-                    <li>
-                      <a href="blog-detail.html">Blog detail</a>
-                    </li>
-                    <li>
-                      <a href="about.html">About</a>
-                    </li>
-                    <li>
-                      <a href="contact.html">Contact</a>
-                    </li>
-                    <li>
-                      <a href="photo-gallery.html">Photo gallery</a>
-                    </li>
-                    <li>
-                      <a href="photo-gallery-1.html">Photo gallery 1</a>
-                    </li>
-                    {authStatus? "" : <>
-                      <li>
-                      <a href="/login">Login</a>
-                    </li>
-                    <li>
-                      <a href="/signup">Sign-up</a>
-                    </li></>}
-                    <li>
-                      <a href="plans.html">Pricing plans</a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
+            <ul style={{float: 'right'}}>
+              
               <li>
-                <a href="plans.html">Plans</a>
+                <a href="/">Home</a>
               </li>
               {authStatus? "" :
               <li>
@@ -570,22 +343,19 @@ function Header({photoUrl}) {
             }
               <li className="smenu-pare">
                 <span className="smenu">Dashboard</span>
-                <div className="smenu-open smenu-single">
+                <div className="smenu-open smenu-single" style={{zIndex: "150"}}>
                   <ul>
                     <li>
                       <a href="/dashboard">Dashboard</a>
                     </li>
                     {userId && <li>
-                      <a href={`/profile-details/${userId}`}>My profile</a>
+                      <a href={`/profile`}>My profile</a>
                     </li>}
                     <li>
                       <a href="/interests">Interests</a>
                     </li>
                     <li>
                       <a href="/chat">Chat lists</a>
-                    </li>
-                    <li>
-                      <a href="/plan">My plan details</a>
                     </li>
                     <li>
                       <a href="/setting">Profile settings</a>
@@ -617,9 +387,6 @@ function Header({photoUrl}) {
           {/*MOBILE MENU*/}
           <div className="mob-menu">
             <div className="mob-me-ic">
-              <span className="ser-open mobile-ser">
-                <img src="images/icon/search.svg" alt="" />
-              </span>
               <span className="mobile-exprt" data-mob="dashbord">
                 <img src="images/icon/users.svg" alt="" />
               </span>
@@ -635,7 +402,7 @@ function Header({photoUrl}) {
   </div>
   {/* END HEADER & MENU */}
   {/* MOBILE MENU POPUP */}
-  <div className="mob-me-all mobile_menu">
+  <div className="mob-me-all mobile_menu" style={{zIndex: '200'}}>
     <div className="mob-me-clo">
       <img src="images/icon/close.svg" alt="" />
     </div>
@@ -814,7 +581,7 @@ function Header({photoUrl}) {
   </div>
   {/* END MOBILE MENU POPUP */}
   {/* MOBILE USER PROFILE MENU POPUP */}
-  <div className="mob-me-all dashbord_menu">
+  <div className="mob-me-all dashbord_menu" style={{zIndex: '200'}}>
     <div className="mob-me-clo">
       <img src="images/icon/close.svg" alt="" />
     </div>

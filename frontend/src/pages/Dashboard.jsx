@@ -12,19 +12,19 @@ function Dashboard() {
     
     const [wishlist, setWishlist] = useState([]);
 
-    // useEffect(() => {
-    // if (userData.id) {
-    //     databaseService.getUserWishlist(userData.id)
-    //     .then((list) => {
-    //         setWishlist(list)
-    //     })
-    //     .catch(console.error);
-    // }
-    // }, [userData]);
+    useEffect(() => {
+    if (userData.id) {
+        databaseService.getUserWishlist(userData.id)
+        .then((list) => {
+            setWishlist(list)
+        })
+        .catch(console.error);
+    }
+    }, [userData]);
       
   return (
     <section>
-        <div className="db">
+        <div className="db" style={{marginTop: '0px', paddingTop: '50px'}}>
             <div className="container">
             <div className="row">
                 <div className="col-md-4 col-lg-3">
@@ -81,17 +81,19 @@ function Dashboard() {
                 </div>
                 </div>
                 <div className="col-md-8 col-lg-9">
-                <div className="db-inte-prof-list">
+                <div className="db-inte-prof-list" style={{borderRadius: '10px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',backgroundColor: 'white',
+    padding: '30px',}}>
                 <h2 className="db-tit">
                 <i className="fa fa-heart" aria-hidden="true"> <b>Liked Profiles</b></i> 
                      </h2>
                         <ul>
                           
-                          {/* {wishlist.length === 0 && 
+                          {wishlist.length === 0 && 
                           <li>
                           <h2>No liked profiles</h2>
                         </li>
-} */}
+}
 
 
                         {wishlist.map((arrItem) => {
@@ -164,135 +166,8 @@ function Dashboard() {
                     
                     
                 </div> */}
-                <div className="row">
-                    <div className="col-md-12 col-lg-6 col-xl-4 db-sec-com">
-                    <h2 className="db-tit">Profiles status</h2>
-                    <div className="db-pro-stat">
-                        <h6>Profile completion</h6>
-                        <div className="dropdown">
-                        <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i className="fa fa-ellipsis-h" aria-hidden="true" />
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Edid profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                View profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Profile visibility settings
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="db-pro-pgog">
-                        <span>
-                            <b className="count">90</b>%
-                        </span>
-                        </div>
-                        <ul className="pro-stat-ic">
-                        <li>
-                            <span>
-                            <i className="fa fa-heart-o like" aria-hidden="true" />
-                            <b>12</b>Likes
-                            </span>
-                        </li>
-                        <li>
-                            <span>
-                            <i className="fa fa-eye view" aria-hidden="true" />
-                            <b>12</b>Views
-                            </span>
-                        </li>
-                        <li>
-                            <span>
-                            <i
-                                className="fa fa-handshake-o inte"
-                                aria-hidden="true"
-                            />
-                            <b>12</b>Interests
-                            </span>
-                        </li>
-                        <li>
-                            <span>
-                            <i
-                                className="fa fa-hand-pointer-o clic"
-                                aria-hidden="true"
-                            />
-                            <b>12</b>Clicks
-                            </span>
-                        </li>
-                        </ul>
-                    </div>
-                    </div>
-                    <div className="col-md-12 col-lg-6 col-xl-4 db-sec-com">
-                    <h2 className="db-tit">Plan details</h2>
-                    <div className="db-pro-stat">
-                        <h6 className="tit-top-curv">Standard plan</h6>
-                        <div className="dropdown">
-                        <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i className="fa fa-ellipsis-h" aria-hidden="true" />
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Edid profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                View profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Plan change
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Download invoice now
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="db-plan-card">
-                        <img src="images/icon/plan.png" alt="" />
-                        </div>
-                        <div className="db-plan-detil">
-                        <ul>
-                            <li>
-                            Plan name: <strong>Standard</strong>
-                            </li>
-                            <li>
-                            Validity: <strong>6 Months</strong>
-                            </li>
-                            <li>
-                            Valid till <strong>24 June 2024</strong>
-                            </li>
-                            <li>
-                            <a href="" className="cta-3">
-                                Upgrade now
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="col-lg-12 col-xl-4 db-sec-com">
+                <div className="row" style={{marginTop: '30px'}}>
+                    <div className="col-lg-12 db-sec-com">
                     <h2 className="db-tit">Recent chat list</h2>
                     <div className="db-pro-stat">
                         <div className="db-inte-prof-list db-inte-prof-chat">
@@ -338,7 +213,7 @@ function Dashboard() {
                     </div>
                     </div>
                 </div>
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-md-12 db-sec-com">
                     <h2 className="db-tit">Interest request</h2>
                     <div className="db-pro-stat">
@@ -403,8 +278,6 @@ function Dashboard() {
                             </a>
                             </li>
                         </ul>
-                        {/* Tab panes */}
-                        {/* Tab panes */}
                         <div className="tab-content">
                             <div id="home" className="container tab-pane active">
                             <br />
@@ -718,7 +591,7 @@ function Dashboard() {
                         <canvas id="Chart_leads" />
                     </div>
                     </div>
-                </div>
+                </div> */}
                 </div>
             </div>
             </div>

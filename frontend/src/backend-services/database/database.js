@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import env from '../../env/env';
 import { toast } from "react-toastify";
 
@@ -79,7 +80,7 @@ class DatabaseService {
         headers: this.getAuthHeaders(),
       });
       const data = await this.handleResponse(response);
-      toast.success("✅ Profile photo loaded successfully!");
+      // toast.success("✅ Profile photo loaded successfully!");
       return data;
     } catch (error) {
       toast.error(`❌ Failed to load profile photo: ${error.message}`);
@@ -146,7 +147,7 @@ async getCurrentUserProfileByEmail(email) {
     });
 
     const data = await this.handleResponse(response);
-    toast.success("✅ Your profile is loaded successfully!");
+    // toast.success("✅ Your profile is loaded successfully!");
     // console.log("data:", data);
     
     return data;
@@ -227,6 +228,8 @@ async getCurrentUserProfileByEmail(email) {
   }
 
   async addToWishlist(userId, likedProfileId) {
+    console.log("see : ", userId, likedProfileId);
+  
     try {
       const response = await fetch(`${this.baseUrl}/api/profiles/add-user-wishlist`, {
         method: "POST",
@@ -237,14 +240,30 @@ async getCurrentUserProfileByEmail(email) {
         body: JSON.stringify({ userId, likedProfileId }),
       });
   
-      const data = await this.handleResponse(response);
+      const data = await response.json();
+  
+      if (!response.ok) {
+        if (data?.error === 'Profile already in wishlist') {
+          toast.info("ℹ️ Profile already in wishlist.");
+        } else if (data?.error) {
+          toast.error(`❌ ${data.error}`);
+        } else {
+          toast.error("❌ Something went wrong.");
+        }
+        throw new Error(data.error || "Request failed");
+      }
+  
       toast.success("✅ Profile added to wishlist!");
       return data;
+  
     } catch (error) {
-      toast.error(`❌ Failed to add to wishlist: ${error.message}`);
+      console.error("Add to wishlist error:", error);
+      if (!error.message.includes("already")) {
+        toast.error(`❌ Failed to add to wishlist: ${error.message}`);
+      }
       throw error;
     }
-  }
+  }  
   
   async getUserWishlist(userId) {
     try {

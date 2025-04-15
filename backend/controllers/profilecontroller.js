@@ -386,6 +386,8 @@ export const uploadProfileImage = async (req, res) => {
 export const addUserWishlist = async (req, res) => {
   try {
     const { userId, likedProfileId } = req.body;
+    
+    
 
     if (!userId || !likedProfileId) {
       return res.status(400).json({ error: 'userId and likedProfileId are required' });
@@ -412,6 +414,8 @@ export const addUserWishlist = async (req, res) => {
 
 export const getUserWishlist = async (req, res) => {
   const { userId } = req.params;
+  // console.log(userId);
+  
 
   try {
     const { data, error } = await supabase
