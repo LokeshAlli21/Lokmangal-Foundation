@@ -122,7 +122,7 @@ const ProfileDetails = () => {
 
   return (
     <section>
-      <div className="db" style={{ paddingTop: "40px" }}>
+      <div className="db" style={{marginTop: 0, padding: "40px"}}>
         <div className="container">
           <div style={containerStyle}>
           {isOwner && (

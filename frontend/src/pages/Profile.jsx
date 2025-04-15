@@ -112,7 +112,7 @@ function Profile() {
 
   return (
     <section>
-  <div className="db" style={{paddingTop: "50px", marginTop: "0px"}}>
+  <div className="db" style={{paddingTop: "40px", marginTop: "0px"}}>
     <div className="container">
       <div className="row">
         <div className="col-md-4 col-lg-3">

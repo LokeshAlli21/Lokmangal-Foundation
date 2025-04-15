@@ -686,14 +686,14 @@ const validateForm = () => {
 
 <div className="form-group">
   <label className="lb">Annual Income (वार्षिक उत्पन्न):</label>
-  <select name="annualIncome" className="form-control" value={formData.annualIncome} onChange={handleChange}>
-    <option value="">Select Income Range / उत्पन्न श्रेणी निवडा</option>
-    <option value="Below 2 Lakh">Below 2 Lakh</option>
-    <option value="2 - 5 Lakh">2 - 5 Lakh</option>
-    <option value="5 - 10 Lakh">5 - 10 Lakh</option>
-    <option value="10 - 20 Lakh">10 - 20 Lakh</option>
-    <option value="Above 20 Lakh">Above 20 Lakh</option>
-  </select>
+  <input
+    type="text"
+    name="annualIncome"
+    className="form-control"
+    placeholder="Enter Income / उत्पन्न लिहा"
+    value={formData.annualIncome}
+    onChange={handleChange}
+  />
 </div>
 
 <br />

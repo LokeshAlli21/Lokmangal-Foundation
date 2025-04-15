@@ -7,7 +7,7 @@ function Setting() {
 
   return (
     <section>
-  <div className="db" style={{marginTop: 0, padding: "50px"}}>
+  <div className="db" style={{marginTop: 0, padding: "40px"}}>
     <div className="container">
       <div className="row">
         <div className="col-md-4 col-lg-3">

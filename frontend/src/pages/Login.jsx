@@ -67,7 +67,7 @@ function Login() {
     <>
       {/* LOGIN */}
       <section>
-        <div className="login">
+        <div className="login"  style={{marginTop: 0, padding: "40px"}}>
           <div className="container">
             <div className="row">
               <div className="inn">

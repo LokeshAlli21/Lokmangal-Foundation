@@ -107,11 +107,9 @@ function Header({photoUrl}) {
               <a href="about.html">About</a>
             </li>
             <li>
-              <a href="faq.html">FAQ</a>
-            </li>
-            <li>
               <a href="contact.html">Contact</a>
             </li>
+            <li></li>
           </ul>
         </div>
         <div className="rhs">
@@ -156,7 +154,7 @@ function Header({photoUrl}) {
     </span>
     <div className="inn">
       <img
-        src="images/logo-b.png"
+        src="https://shadi.lokmangal.website/assets/images/lokmangal-foundation.png"
         alt=""
         loading="lazy"
         className="logo-brand-only"
@@ -322,7 +320,7 @@ function Header({photoUrl}) {
             </span>
             <a href="/" className="logo-brand">
               <img
-                src="images/logo-b.png"
+                src="https://shadi.lokmangal.website/assets/images/lokmangal-foundation.png"
                 alt=""
                 loading="lazy"
                 className="ic-logo"
@@ -475,9 +473,6 @@ function Header({photoUrl}) {
         </li>
         <li>
           <a href="make-reservation.html">Make Reservation</a>
-        </li>
-        <li>
-          <a href="faq.html">FAQ</a>
         </li>
         <li>
           <a href="coming-soon.html" target="_blank">
