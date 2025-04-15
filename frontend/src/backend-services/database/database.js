@@ -74,6 +74,8 @@ class DatabaseService {
     }
   }
 
+  async getAllProfilesByFilter(filters = {}){}
+
   async getProfilePhotoById(id) {
     try {
       const response = await fetch(`${this.baseUrl}/api/profiles/profile/photo/${id}`, {
