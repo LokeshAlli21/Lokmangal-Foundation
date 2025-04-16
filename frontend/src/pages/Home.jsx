@@ -436,55 +436,55 @@ function Home() {
 
 
 
-  // const images = [
-  //   "images/ban-bg.jpg",
-  //   "images/banner.jpg",
-  // ];
+  const images = [
+    "images/ban-bg.jpg",
+    "images/banner.jpg",
+  ];
 
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  //   }, 8000); // Change every 8s (4s zoom in + 4s zoom out)
-  //   return () => clearInterval(interval);
-  // }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000); // Change every 8s (4s zoom in + 4s zoom out)
+    return () => clearInterval(interval);
+  }, []);
 
-  // // Dynamically change the background image based on currentImageIndex
-  // const homHeadStyle = {
-  //   marginTop: "0",
-  //   backgroundImage: `url(images/ban-bg.jpg)`,
-  //   // animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
-  // };
+  // Dynamically change the background image based on currentImageIndex
+  const homHeadStyle = {
+    marginTop: "0",
+    backgroundImage: `url(${images[currentImageIndex]})`,
+    animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
+  };
 
 
 
   return (
     <>
-      {/* <style>
+      <style>
         {`
           @keyframes zoomInOut {
             0% {
               background-size: 100%;
               background-position: center;
             }
-            // 50% {
-            //   background-size: 130%;
-            //   background-position: center;
-            // }
-            100% {
+            50% {
               background-size: 130%;
+              background-position: center;
+            }
+            100% {
+              background-size: 100%;
               background-position: center;
             }
           }
         `}
-      </style> */}
+      </style>
   {/* END USER PROFILE MENU POPUP */}
   {/* BANNER & SEARCH */}
   <section>
     <div className="str ">
     
-      <div className="hom-head " style={{marginTop: 0}}>
+      <div className="hom-head " style={homHeadStyle}>
         <div className="container">
           <div className="row">
             <div className="hom-ban">
