@@ -256,6 +256,7 @@ function Home() {
     minWidth: '300px', // adjust as needed
     height: '400px',
     marginRight: '10px',
+    
     // background: '#f2f2f2',
     // display: 'flex',
     // alignItems: 'center',
@@ -269,8 +270,8 @@ function Home() {
   const [isHovered, setIsHovered] = useState(false);
 
   const imageStyle = {
-    width: '100%',
-    height: '100%',
+    maxWidth: '300px',
+    height: '400px',
     objectFit: 'cover',
     transition: 'transform 300ms',
     transform: isHovered ? 'scale(1.1)' : 'scale(1)',
