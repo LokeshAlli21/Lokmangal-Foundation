@@ -1150,7 +1150,7 @@ function Home() {
   {/* END */}
   {/* ABOUT START */}
   <section>
-    <div className="ab-wel">
+    <div className="ab-wel" style={{backgroundColor: 'rgb(254, 252, 244)'}}>
       <div className="container">
         <div className="row">
           <div className="col-lg-6">
