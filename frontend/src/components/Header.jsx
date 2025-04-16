@@ -55,7 +55,7 @@ function Header({photoUrl}) {
   const dynamicStyle = {
     position: isFixed ? (isMobileFixed ? "fixed" : "fixed") : "relative",
     top: isFixed ? 0 : "auto",
-    zIndex: isFixed ? 200 : "200",
+    zIndex: isFixed ? 200 : "auto",
     padding: '10px 0px',
     animation: isFixed ? "menuact 0.3s ease-in-out" : "none",
   };
@@ -103,41 +103,41 @@ function Header({photoUrl}) {
       <div className="row">
         <div className="lhs">
           <ul>
-            <li>
+            {/* <li>
               <a href="/about">About</a>
             </li>
             <li>
               <a href="/contact">Contact</a>
             </li>
-            <li></li>
+            <li></li> */}
           </ul>
         </div>
         <div className="rhs">
           <ul>
             <li>
-              <a href="tel:+9704462944">
+              <a href="tel:+919923404583">
                 <i className="fa fa-phone" aria-hidden="true" />
-                &nbsp;+01 5312 5312
+                &nbsp;+91 9923404583
               </a>
             </li>
             <li>
-              <a href="mailto:info@example.com">
+              <a href="lokmangalgroups@gmail.com">
                 <i className="fa fa-envelope-o" aria-hidden="true" />
-                &nbsp; help@company.com
+                &nbsp; lokmangalgroups@gmail.com
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://www.facebook.com/lokmangalfoundation/">
                 <i className="fa fa-facebook" aria-hidden="true" />
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://twitter.com/LokmangalFound">
                 <i className="fa fa-twitter" aria-hidden="true" />
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://shadi.lokmangal.website/+919923404583">
                 <i className="fa fa-whatsapp" aria-hidden="true" />
               </a>
             </li>
@@ -241,70 +241,7 @@ function Header({photoUrl}) {
   </div>
   {/* END HEADER & MENU */}
   {/* HEADER & MENU */}
-  <div className="menu-pop menu-pop2" style={{zIndex: '250'}}>
-    <span className="menu-pop-clo">
-      <i className="fa fa-times" aria-hidden="true" />
-    </span>
-    <div className="inn">
-      <div className="menu-pop-help">
-        <h4>Support Team</h4>
-        <div className="user-pro">
-          <img src="images/profiles/1.jpg" alt="" loading="lazy" />
-        </div>
-        <div className="user-bio">
-          <h5>Ashley emyy</h5>
-          <span>Senior personal advisor</span>
-          <a href="enquiry.html" className="btn btn-primary btn-sm">
-            Ask your doubts
-          </a>
-        </div>
-      </div>
-      <div className="menu-pop-soci">
-        <ul>
-          <li>
-            <a href="#!">
-              <i className="fa fa-facebook" aria-hidden="true" />
-            </a>
-          </li>
-          <li>
-            <a href="#!">
-              <i className="fa fa-twitter" aria-hidden="true" />
-            </a>
-          </li>
-          <li>
-            <a href="#!">
-              <i className="fa fa-whatsapp" aria-hidden="true" />
-            </a>
-          </li>
-          <li>
-            <a href="#!">
-              <i className="fa fa-linkedin" aria-hidden="true" />
-            </a>
-          </li>
-          <li>
-            <a href="#!">
-              <i className="fa fa-youtube-play" aria-hidden="true" />
-            </a>
-          </li>
-          <li>
-            <a href="#!">
-              <i className="fa fa-instagram" aria-hidden="true" />
-            </a>
-          </li>
-        </ul>
-      </div>
 
-      {/* HELP BOX */}
-      {/* <div className="prof-rhs-help">
-        <div className="inn">
-          <h3>Tell us your Needs</h3>
-          <p>Tell us what kind of service you are looking for.</p>
-          <a href="enquiry.html">Register for free</a>
-        </div>
-      </div> */}
-      {/* END HELP BOX */}
-    </div>
-  </div>
   {/* END HEADER & MENU */}
   {/* HEADER & MENU */}
   <div className="hom-top" style={dynamicStyle} >
@@ -313,11 +250,11 @@ function Header({photoUrl}) {
         <div className="hom-nav" style={{display: 'flex', alignItems: 'center'}}>
           {/* LOGO */}
           <div className="logo"  style={{display: 'flex', alignItems: 'center'}}>
-            <span className="menu desk-menu">
+            {/* <span className="menu desk-menu">
               <i />
               <i />
               <i />
-            </span>
+            </span> */}
             <a href="/" className="logo-brand">
               <img
                 src="https://shadi.lokmangal.website/assets/images/lokmangal-foundation.png"
@@ -328,7 +265,7 @@ function Header({photoUrl}) {
             </a>
           </div>
           {/* TOP MENU */}
-          <div className="bl">
+          <div className="bl" style={{padding: '0 40px', flex:'1'}}>
             <ul style={{float: 'right'}}>
               
               <li>
@@ -370,10 +307,42 @@ function Header({photoUrl}) {
                   </ul>
                 </div>
               </li>
+              {!authStatus? "" :
+              <li>
+              <a href="/log-out">Logout</a>
+              </li>
+            }
             </ul>
           </div>
           {/* USER PROFILE */}
-          <div className="al">
+          <div style={{display: 'flex' , flexWrap:'wrap', alignItems: 'center', columnGap: '15px' }}>
+           <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
+
+           <img
+            style={{height: '50px', width: '50px', objectFit: 'cover',
+               border: '1px solid rgb(118, 69, 8)',
+               borderRadius: '50%'
+              }}
+             src="../images/subhash bapu deshmukh.png" alt="subhash bapu deshmukh" /> 
+             <div style={{display: 'flex' , flexDirection: 'column', alignItems: 'start', columnGap: '0px', rowGap: '0px', height: '35px' }}>
+              <h5 style={{fontSize: '12px',whiteSpace: 'nowrap'}}><b>श्री. सुभाष (बापू) <br /> देशमुख</b></h5>
+              {/* <h6 style={{fontSize: '10px'}}><b>BJP: </b>आमदार (सोलपूर)</h6> */}
+             </div>
+           </div>
+            <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
+            <img
+            style={{height: '50px', width: '50px', objectFit: 'cover',
+               border: '1px solid rgb(118, 69, 8)',
+               borderRadius: '50%'
+              }}
+             src="../images/rohan deshmukh.png" alt="subhash bapu deshmukh" />
+             <div style={{display: 'flex' , flexDirection: 'column', alignItems: 'start', columnGap: '0px', rowGap: '0px' ,height: '35px'  }}>
+              <h5 style={{fontSize: '12px',  whiteSpace: 'nowrap'}}><b>श्री. रोहन सुभाष <br />   देशमुख</b></h5>
+              {/* <h6 style={{fontSize: '10px'}}><b>BJP: </b>कार्यकर्ता</h6> */}
+             </div>
+            </div>
+          </div>
+          {/* <div className="al">
             <div className="head-pro">
               <img src="images/profiles/1.jpg" alt="" loading="lazy" />
               <b>Advisor</b>
@@ -381,7 +350,7 @@ function Header({photoUrl}) {
               <h4>Ashley emyy</h4>
               <span className="fclick" />
             </div>
-          </div>
+          </div> */}
           {/*MOBILE MENU*/}
           <div className="mob-menu">
             <div className="mob-me-ic">

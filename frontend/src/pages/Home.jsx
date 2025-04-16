@@ -253,8 +253,8 @@ function Home() {
   };
 
   const itemStyle = {
-    // minWidth: '250px', // adjust as needed
-    // height: '150px',
+    minWidth: '300px', // adjust as needed
+    height: '400px',
     marginRight: '10px',
     // background: '#f2f2f2',
     // display: 'flex',
@@ -1148,7 +1148,7 @@ function Home() {
                     <div>
                       <i className="fa fa-phone" aria-hidden="true" />
                       <h4>
-                        Enquiry <em>+01 2242 3366</em>
+                        Enquiry <em>+91 9923404583</em>
                       </h4>
                     </div>
                   </li>
@@ -1156,7 +1156,7 @@ function Home() {
                     <div>
                       <i className="fa fa-envelope-o" aria-hidden="true" />
                       <h4>
-                        Get Support <em>info@example.com</em>
+                        Get Support <em>lokmangalgroups@gmail.com</em>
                       </h4>
                     </div>
                   </li>
@@ -1661,10 +1661,10 @@ function Home() {
                 fringilla.Lorem Ipsum is simply dummy text of the printing and
                 typesetting industry.
               </p>
-              <a href="sign-up.html" className="cta-3">
+              <a href="/signup" className="cta-3">
                 Register Now
               </a>
-              <a href="sign-up.html" className="cta-4">
+              <a href="/signup" className="cta-4">
                 Help &amp; Support
               </a>
             </div>

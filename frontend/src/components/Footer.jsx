@@ -8,39 +8,33 @@ function Footer() {
     <div className="container">
       <div className="row foot-supp">
         <h2>
-          <span>Free support:</span> +92 (8800) 68 - 8960
+          <span>Free support:</span> +91 9923404583
           &nbsp;&nbsp;|&nbsp;&nbsp; <span>Email:</span>
-          info@example.com
+          lokmangalgroups@gmail.com
         </h2>
       </div>
       <div className="row wed-foot-link wed-foot-link-1">
         <div className="col-md-4">
           <h4>Get In Touch</h4>
-          <p>Address: 3812 Lena Lane City Jackson Mississippi</p>
+          <p>Address: Lokmangal Foundation \n 13-A, Sahyadri Nagar, Near Old Hotagi Naka, Vikas Nagar, Solapur - 413003</p>
           <p>
-            Phone: <a href="tel:+917904462944">+92 (8800) 68 - 8960</a>
+            Phone: <a href="tel:+919923404583">+91 9923404583</a>
           </p>
           <p>
-            Email: <a href="mailto:info@example.com">info@example.com</a>
+            Email: <a href="mailto:lokmangalgroups@gmail.com">lokmangalgroups@gmail.com</a>
           </p>
         </div>
         <div className="col-md-4">
           <h4>HELP &amp; SUPPORT</h4>
           <ul>
             <li>
-              <a href="about-us.html">About company</a>
+              <a href="/about">About company</a>
             </li>
             <li>
-              <a href="#!">Contact us</a>
+              <a href="/contact">Contact us</a>
             </li>
             <li>
-              <a href="#!">Feedback</a>
-            </li>
-            <li>
-              <a href="about-us.html#faq">FAQs</a>
-            </li>
-            <li>
-              <a href="about-us.html#testimonials">Testimonials</a>
+              <a href="#">Feedback</a>
             </li>
           </ul>
         </div>
@@ -48,22 +42,22 @@ function Footer() {
           <h4>SOCIAL MEDIA</h4>
           <ul>
             <li>
-              <a href="#!">
+              <a href="https://www.linkedin.com/company/lokmangalfoundation/">
                 <img src="images/social/1.png" alt="" loading="lazy" />
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://twitter.com/LokmangalFound">
                 <img src="images/social/2.png" alt="" loading="lazy" />
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://www.facebook.com/lokmangalfoundation/">
                 <img src="images/social/3.png" alt="" loading="lazy" />
               </a>
             </li>
             <li>
-              <a href="#!">
+              <a href="https://www.youtube.com/channel/UCk4QgXC_Qr6UtkHx9Tbm8yA?view_as=subscriberv">
                 <img src="images/social/5.png" alt="" loading="lazy" />
               </a>
             </li>
@@ -74,7 +68,7 @@ function Footer() {
         <p>
           Company name Site - Trusted by over thousands of Boys &amp; Girls for
           successfull marriage.{" "}
-          <a href="sign-up.html" className="btn btn-primary btn-sm">
+          <a href="/signup" className="btn btn-primary btn-sm">
             Join us today !
           </a>
         </p>
@@ -88,7 +82,7 @@ function Footer() {
       <div className="container">
         <div className="row">
           <p>
-            Copyright © <span id="cry">2025</span>{" "}
+            Copyright © <span id="">2025</span>{" "}
             <a href="#!" target="_blank">
             https://shadi.lokmangal.website/
             </a>{" "}
