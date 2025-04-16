@@ -193,7 +193,7 @@ function Home() {
 
   const slideStyle = {
     minWidth: '350px',
-    maxHeight: '500px',
+    height: '400px',
     // marginRight: '10px',
     // background: '#ddd',
     // display: 'flex',
@@ -253,8 +253,8 @@ function Home() {
   };
 
   const itemStyle = {
-    minWidth: '300px', // adjust as needed
-    height: '400px',
+    minWidth: '350px', // adjust as needed
+    maxHeight: '500px',
     marginRight: '10px',
     
     // background: '#f2f2f2',
@@ -484,7 +484,7 @@ function Home() {
   <section>
     <div className="str ">
     
-      <div className="hom-head " style={{marginTop: 0, zIndex: '10'}}>
+      <div className="hom-head " style={{marginTop: 0}}>
         <div className="container">
           <div className="row">
             <div className="hom-ban">
@@ -1150,7 +1150,7 @@ function Home() {
   {/* END */}
   {/* ABOUT START */}
   <section>
-    <div className="ab-wel" style={{backgroundColor: 'rgb(254, 252, 244)'}}>
+    <div className="ab-wel" style={{}}>
       <div className="container">
         <div className="row">
           <div className="col-lg-6">
