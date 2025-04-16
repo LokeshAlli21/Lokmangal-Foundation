@@ -436,32 +436,32 @@ function Home() {
 
 
 
-  const images = [
-    "images/ban-bg.jpg",
-    "images/banner.jpg",
-  ];
+  // const images = [
+  //   "images/ban-bg.jpg",
+  //   "images/banner.jpg",
+  // ];
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 8000); // Change every 8s (4s zoom in + 4s zoom out)
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  //   }, 8000); // Change every 8s (4s zoom in + 4s zoom out)
+  //   return () => clearInterval(interval);
+  // }, []);
 
-  // Dynamically change the background image based on currentImageIndex
-  const homHeadStyle = {
-    marginTop: "0",
-    backgroundImage: `url(images/ban-bg.jpg)`,
-    // animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
-  };
+  // // Dynamically change the background image based on currentImageIndex
+  // const homHeadStyle = {
+  //   marginTop: "0",
+  //   backgroundImage: `url(images/ban-bg.jpg)`,
+  //   // animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
+  // };
 
 
 
   return (
     <>
-      <style>
+      {/* <style>
         {`
           @keyframes zoomInOut {
             0% {
@@ -478,7 +478,7 @@ function Home() {
             }
           }
         `}
-      </style>
+      </style> */}
   {/* END USER PROFILE MENU POPUP */}
   {/* BANNER & SEARCH */}
   <section>
