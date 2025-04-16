@@ -484,7 +484,7 @@ function Home() {
   <section>
     <div className="str ">
     
-      <div className="hom-head " style={{marginTop: 0}}>
+      <div className="hom-head " style={{marginTop: 0, zIndex: '10'}}>
         <div className="container">
           <div className="row">
             <div className="hom-ban">
