@@ -193,7 +193,7 @@ function Home() {
 
   const slideStyle = {
     minWidth: '350px',
-    height: '400px',
+    maxHeight: '500px',
     // marginRight: '10px',
     // background: '#ddd',
     // display: 'flex',
