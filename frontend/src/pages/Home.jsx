@@ -271,7 +271,7 @@ function Home() {
 
   const imageStyle = {
     maxWidth: '300px',
-    height: '400px',
+    height: '500px',
     objectFit: 'cover',
     transition: 'transform 300ms',
     transform: isHovered ? 'scale(1.1)' : 'scale(1)',
@@ -1396,30 +1396,28 @@ function Home() {
       <div className="hom-coup-test" style={{ overflow: 'hidden', width: '100%' }}>
         <ul className="couple-sli" ref={listRef} style={coupleListStyle}>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/6.jpg" alt="" loading="lazy" style={imageStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)} />
+              <img src="images/couples/6.jpg" alt="" loading="lazy" style={imageStyle} />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/7.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/7.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/8.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/8.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/9.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/9.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/10.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/10.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/3.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/3.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/4.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/4.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
           <li style={itemStyle} className='overflow-hidden rounded-md'>
-              <img src="images/couples/5.jpg" alt="" loading="lazy" className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
+              <img src="images/couples/5.jpg" alt="" loading="lazy"  style={imageStyle}  className='w-full h-full object-cover transition-transform duration-300 hover:scale-110' />
           </li>
         </ul>
       </div>
