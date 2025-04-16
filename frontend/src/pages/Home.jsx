@@ -446,7 +446,7 @@ function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 4000); // Change every 8s (4s zoom in + 4s zoom out)
+    }, 8000); // Change every 8s (4s zoom in + 4s zoom out)
     return () => clearInterval(interval);
   }, []);
 
