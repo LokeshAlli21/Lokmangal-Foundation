@@ -979,7 +979,7 @@ function Home() {
   {/* END */}
   {/* TRUST BRANDS */}
   <section>
-    <div className="hom-cus-revi" style={{ backgroundColor: '#fefcf4'}}>
+    <div className="hom-cus-revi" style={{ backgroundColor: '#fefcf4', paddingTop: '150px'}}>
       <div className="container">
         <div className="row">
           <div className="home-tit">

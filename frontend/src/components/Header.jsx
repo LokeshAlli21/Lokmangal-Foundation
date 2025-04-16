@@ -66,7 +66,7 @@ function Header({photoUrl}) {
     position: isFixed ? (isMobileFixed ? "fixed" : "fixed") : "relative",
     top: isFixed ? 0 : "auto",
     zIndex: isFixed ? 200 : "auto",
-    padding: '10px 0px',
+    padding: '15px 0px',
     animation: isFixed ? "menuact 0.3s ease-in-out" : "none",
   };
 
