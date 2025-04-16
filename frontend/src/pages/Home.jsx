@@ -193,7 +193,7 @@ function Home() {
 
   const slideStyle = {
     minWidth: '350px',
-    // height: '200px',
+    height: '400px',
     // marginRight: '10px',
     // background: '#ddd',
     // display: 'flex',
@@ -952,7 +952,7 @@ function Home() {
           <div className="slid-inn cus-revi flexslider" style={{ overflow: 'hidden', width: '100%' }}>
             <ul className="slides" ref={sliderRef} style={listStyle}>
               <li style={slideStyle}>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im" style={{position: 'relative', top:'-20px'}}>
                     <img src="images/user/1.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
@@ -967,7 +967,7 @@ function Home() {
                 </div>
               </li>
               <li style={slideStyle}>
-                <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
                     <img src="images/user/2.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
@@ -982,7 +982,7 @@ function Home() {
                 </div>
               </li>
               <li style={slideStyle}>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
                     <img src="images/user/3.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
@@ -997,7 +997,7 @@ function Home() {
                 </div>
               </li>
               <li style={slideStyle}>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
                     <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
@@ -1012,7 +1012,7 @@ function Home() {
                 </div>
               </li>
               <li style={slideStyle}>
-                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px'}} >
+                <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
                     <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
                     <i className="cir-com cir-1" />

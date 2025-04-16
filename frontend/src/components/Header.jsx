@@ -119,25 +119,25 @@ function Header({photoUrl}) {
     <div className="container">
       <div className="row">
         <div className="lhs">
-          <ul>
-            {/* <li>
+          {/* <ul>
+            <li>
               <a href="/about">About</a>
             </li>
             <li>
               <a href="/contact">Contact</a>
             </li>
-            <li></li> */}
-          </ul>
+            <li></li>
+          </ul> */}
         </div>
         <div className="rhs">
-          <ul>
-            <li>
+          <ul style={{flexWrap: 'nowrap', display: 'flex'}}>
+            <li style={{whiteSpace: 'nowrap'}}>
               <a href="tel:+919923404583">
                 <i className="fa fa-phone" aria-hidden="true" />
                 &nbsp;+91 9923404583
               </a>
             </li>
-            <li>
+            <li style={{whiteSpace: 'nowrap'}}>
               <a href="lokmangalgroups@gmail.com">
                 <i className="fa fa-envelope-o" aria-hidden="true" />
                 &nbsp; lokmangalgroups@gmail.com
@@ -299,9 +299,7 @@ function Header({photoUrl}) {
             }
             {authStatus &&
               <>
-              <li>
-              <a  onClick={handleLogOut}>Logout</a>
-              </li>
+              
               
               
               <li className="smenu-pare">
@@ -334,6 +332,10 @@ function Header({photoUrl}) {
                     }
                   </ul>
                 </div>
+              </li>
+
+              <li style={{marginLeft: '25px'}}>
+              <a  onClick={handleLogOut}>Logout</a>
               </li>
               
               </>
@@ -420,7 +422,7 @@ function Header({photoUrl}) {
         </li>
       </ul> */}
       <h4>
-        <i className="fa fa-align-center" aria-hidden="true" /> See other
+        <i className="fa fa-align-center" aria-hidden="true" /> See more
       </h4>
       <ul>
         <li>
