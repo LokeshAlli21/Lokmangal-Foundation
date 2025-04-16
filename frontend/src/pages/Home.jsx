@@ -432,16 +432,59 @@ function Home() {
     };
     
   }, []);
-  
-  
+
+
+
+
+  const images = [
+    "images/ban-bg.jpg",
+    "images/banner.jpg",
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 8000); // Change every 8s (4s zoom in + 4s zoom out)
+    return () => clearInterval(interval);
+  }, []);
+
+  // Dynamically change the background image based on currentImageIndex
+  const homHeadStyle = {
+    marginTop: "0",
+    backgroundImage: `url(${images[currentImageIndex]})`,
+    animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
+  };
+
+
 
   return (
     <>
+      <style>
+        {`
+          @keyframes zoomInOut {
+            0% {
+              background-size: 100%;
+              background-position: center;
+            }
+            // 50% {
+            //   background-size: 130%;
+            //   background-position: center;
+            // }
+            100% {
+              background-size: 130%;
+              background-position: center;
+            }
+          }
+        `}
+      </style>
   {/* END USER PROFILE MENU POPUP */}
   {/* BANNER & SEARCH */}
   <section>
-    <div className="str">
-      <div className="hom-head" style={{marginTop: '0px'}}>
+    <div className="str ">
+    
+      <div className="hom-head " style={homHeadStyle}>
         <div className="container">
           <div className="row">
             <div className="hom-ban">
@@ -954,7 +997,7 @@ function Home() {
               <li style={slideStyle}>
                 <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im" style={{position: 'relative', top:'-20px'}}>
-                    <img src="images/user/1.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+                    <img src="images/user/1.png" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -969,7 +1012,7 @@ function Home() {
               <li style={slideStyle}>
                 <div className="cus-revi-box"  style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
-                    <img src="images/user/2.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+                    <img src="images/user/2.png" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -984,7 +1027,7 @@ function Home() {
               <li style={slideStyle}>
                 <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
-                    <img src="images/user/3.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+                    <img src="images/user/3.png" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -999,7 +1042,7 @@ function Home() {
               <li style={slideStyle}>
                 <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
-                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
+                    <img src="images/user/4.png" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}} alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -1014,7 +1057,7 @@ function Home() {
               <li style={slideStyle}>
                 <div className="cus-revi-box" style={{boxShadow: "7px 6px 0px 3px lightgray", padding: '35px', height: '100%'}} >
                   <div className="revi-im"  style={{position: 'relative', top:'-20px'}}>
-                    <img src="images/user/5.jpg" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
+                    <img src="images/user/5.png" style={{clipPath: 'none', borderRadius: '50%', boxShadow: '#aeaeae 2px 8px 12px 0px'}}  alt="" loading="lazy" />
                     <i className="cir-com cir-1" />
                     <i className="cir-com cir-2" />
                     <i className="cir-com cir-3" />
@@ -1046,9 +1089,10 @@ function Home() {
           <div className="row">
             <div className="hom-ban">
               <div className="ban-tit">
-                <span>
+                {/* <span>
                   <i className="no1">#1</i> Wedding Website
-                </span>
+                </span> */}
+                <br />
                 <h2>आम्हाला का निवडावे?</h2>
                 <p>आईवडिलांच्या पसंतीस पात्र, तरुणाईच्या मनाजोगते!</p>
               </div>
@@ -1600,44 +1644,42 @@ function Home() {
             <ul>
               <li>
                 <div className="blog-box">
-                  <img src="images/blog/1.jpg" alt="" loading="lazy" />
-                  <span>Wedding - Johnny</span>
-                  <h2>Wedding arrangements</h2>
+                  <img src="images/blog/blog1.jpg" alt="" loading="lazy" />
+                  <span>26 to 31 January, 2018</span>
+                  <h2>Shivputra Shambhu Raje Mahanatya</h2>
                   <p>
-                    It is a long established fact that a reader will be
-                    distracted by the readable content.
+                  A historical drama featuring Dr. Amol Kolhe as Shambhu Raje and 250 actors was arranged for all.
                   </p>
-                  <a href="blog-details.html" className="cta-dark">
+                  {/* <a href="blog-details.html" className="cta-dark">
                     <span>Read more</span>
-                  </a>
+                  </a> */}
                 </div>
               </li>
               <li>
                 <div className="blog-box">
-                  <img src="images/blog/2.jpg" alt="" loading="lazy" />
-                  <span>Wedding - Johnny</span>
-                  <h2>Wedding arrangements</h2>
+                  <img src="images/blog/blog2.jpg" alt="" loading="lazy" />
+                  <span>18 February, 2018</span>
+                  <h2>Samudayik Vivah Sohala</h2>
                   <p>
-                    It is a long established fact that a reader will be
-                    distracted by the readable content.
+                  As per every year, Community Wedding Event was held in Osmanabad where hundreds of couples got married.
                   </p>
-                  <a href="blog-details.html" className="cta-dark">
+                  {/* <a href="blog-details.html" className="cta-dark">
                     <span>Read more</span>
-                  </a>
+                  </a> */}
                 </div>
               </li>
               <li>
                 <div className="blog-box">
-                  <img src="images/blog/3.jpg" alt="" loading="lazy" />
-                  <span>Wedding - Johnny</span>
-                  <h2>Invitation cards</h2>
+                  <img src="images/blog/blog3.jpg" alt="" loading="lazy" />
+                  <span>9 September, 2018</span>
+                  <h2>Lokmangal Shikshak Ratna Puraskar</h2>
                   <p>
-                    It is a long established fact that a reader will be
-                    distracted by the readable content.
+                  Mrs. Lilatai Koti received Lokmangal's Dr. Abdul Kalam Award. Eleven teachers and two schools received various awards.
+
                   </p>
-                  <a href="blog-details.html" className="cta-dark">
+                  {/* <a href="blog-details.html" className="cta-dark">
                     <span>Read more</span>
-                  </a>
+                  </a> */}
                 </div>
               </li>
             </ul>
@@ -1652,7 +1694,7 @@ function Home() {
     <div className="str count">
       <div className="container">
         <div className="row">
-          <div className="fot-ban-inn">
+          {/* <div className="fot-ban-inn">
             <div className="lhs">
               <h2>Find your perfect Match now</h2>
               <p>
@@ -1667,7 +1709,7 @@ function Home() {
                 Help &amp; Support
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -66,11 +66,7 @@ function Footer() {
       </div>
       <div className="row foot-count">
         <p>
-          Company name Site - Trusted by over thousands of Boys &amp; Girls for
-          successfull marriage.{" "}
-          <a href="/signup" className="btn btn-primary btn-sm">
-            Join us today !
-          </a>
+         Developed by OSKAR TECHNOLOGY
         </p>
       </div>
     </div>
