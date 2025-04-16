@@ -1,21 +1,23 @@
-import React, { useEffect, useId, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 
 function Header({photoUrl}) {
 
   const userData = useSelector(state => state.auth.userData);
   const [userId, setUserid] = useState(null)
+  const [authStatus, setAuthStatus] = useState(useSelector(state => state.auth.status))
   
   useEffect(() => {
     // console.log(userData);
     if(userData != null){
       setUserid(userData.id || null)
+      setAuthStatus(true)
     } else {
       return
     }
   },[userData])
 
-  const authStatus = useSelector(state => state.auth.status);
+  // authStatus = useSelector(state => state.auth.status);
 
   useEffect(() => {
       if (authStatus === null) {
@@ -271,11 +273,22 @@ function Header({photoUrl}) {
               <li>
                 <a href="/">Home</a>
               </li>
-              {authStatus? "" :
+              {!authStatus &&
+             <>
               <li>
               <a href="/signup">Register</a>
               </li>
+              <li>
+              <a href="/login">Login</a>
+              </li></>
             }
+            {authStatus &&
+              <>
+              <li>
+              <a href="/log-out">Logout</a>
+              </li>
+              
+              
               <li className="smenu-pare">
                 <span className="smenu">Dashboard</span>
                 <div className="smenu-open smenu-single" style={{zIndex: "150"}}>
@@ -307,15 +320,15 @@ function Header({photoUrl}) {
                   </ul>
                 </div>
               </li>
-              {!authStatus? "" :
-              <li>
-              <a href="/log-out">Logout</a>
-              </li>
+              
+              </>
             }
+              
+              
             </ul>
           </div>
           {/* USER PROFILE */}
-          <div style={{display: 'flex' , flexWrap:'wrap', alignItems: 'center', columnGap: '15px' }}>
+          <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '15px' }}>
            <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
 
            <img
@@ -354,9 +367,9 @@ function Header({photoUrl}) {
           {/*MOBILE MENU*/}
           <div className="mob-menu">
             <div className="mob-me-ic">
-              <span className="mobile-exprt" data-mob="dashbord">
+              {/* <span className="mobile-exprt" data-mob="dashbord">
                 <img src="images/icon/users.svg" alt="" />
-              </span>
+              </span> */}
               <span className="mobile-menu" data-mob="mobile">
                 <img src="images/icon/menu.svg" alt="" />
               </span>
@@ -374,7 +387,7 @@ function Header({photoUrl}) {
       <img src="images/icon/close.svg" alt="" />
     </div>
     <div className="mv-bus">
-      <h4>
+      {/* <h4>
         <i className="fa fa-globe" aria-hidden="true" /> EXPLORE CATEGORY
       </h4>
       <ul>
@@ -390,69 +403,41 @@ function Header({photoUrl}) {
         <li>
           <a href="plans.html">Join Now</a>
         </li>
-      </ul>
+      </ul> */}
       <h4>
-        <i className="fa fa-align-center" aria-hidden="true" /> All Pages
+        <i className="fa fa-align-center" aria-hidden="true" /> See other
       </h4>
       <ul>
         <li>
-          <a href="all-profiles.html">All profiles</a>
+          <a href="/interests">See other profiles</a>
         </li>
         <li>
-          <a href="profile-details.html">Profile details</a>
+          <a href="/dashboard">Dashboard</a>
         </li>
         <li>
-          <a href="wedding.html">Wedding</a>
+          <a href="/profile">Profile details</a>
         </li>
+
+        {!authStatus && 
+        <>
         <li>
-          <a href="wedding-video.html">Wedding video</a>
-        </li>
-        <li>
-          <a href="services.html">Our Services</a>
-        </li>
-        <li>
-          <a href="plans.html">Pricing plans</a>
-        </li>
-        <li>
-          <a href="/login">Login</a>
-        </li>
-        <li>
-          <a href="/signup">Sign-up</a>
-        </li>
-        <li>
-          <a href="photo-gallery.html">Photo gallery</a>
-        </li>
-        <li>
-          <a href="photo-gallery-1.html">Photo gallery 1</a>
-        </li>
+        <a href="/signup">Sign Up</a>
+      </li>
+      <li>
+      <a href="/login">Login</a>
+    </li></>
+        }
+        
+        
+        
         <li>
           <a href="/contact">Contact</a>
         </li>
         <li>
           <a href="/about">About</a>
         </li>
-        <li>
-          <a href="blog.html">Blog</a>
-        </li>
-        <li>
-          <a href="blog-detail.html">Blog detail</a>
-        </li>
-        <li>
-          <a href="enquiry.html">Ask your doubts</a>
-        </li>
-        <li>
-          <a href="make-reservation.html">Make Reservation</a>
-        </li>
-        <li>
-          <a href="coming-soon.html" target="_blank">
-            Coming soon
-          </a>
-        </li>
-        <li>
-          <a href="404.html">404</a>
-        </li>
       </ul>
-      <div className="menu-pop-help">
+      {/* <div className="menu-pop-help">
         <h4>Support Team</h4>
         <div className="user-pro">
           <img src="images/profiles/1.jpg" alt="" loading="lazy" />
@@ -540,7 +525,7 @@ function Header({photoUrl}) {
           <p>Tell us what kind of service you are looking for.</p>
           <a href="enquiry.html">Register for free</a>
         </div>
-      </div>
+      </div> */}
     </div>
   </div>
   {/* END MOBILE MENU POPUP */}
