@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import authService from '../backend-services/auth/auth';
-import { login as authLogin } from '../store/authSlice';
+import { login } from '../store/authSlice';
 
 function Login() {
   const navigate = useNavigate();
@@ -37,18 +37,23 @@ function Login() {
       console.log("session: ",session);
 
       if (session) {
-
-        const userData = await authService.getCurrentUser()
-        // if(userData){
-        //   dispatch(authLogin(userData))
-        // }
-
-        console.log('✅ Login Success:', userData);
-
-        alert('Login successful!');
-        navigate('/'); 
-        window.scrollTo(0, 0);
+        console.log("🟢 Session OK");
+        const userData = await authService.getCurrentUser();
+        console.log("👤 Got user data:", userData);
+      
+        if (userData) {
+          dispatch(login(userData));
+          // alert('Login successful!');
+          setTimeout(() => {
+            navigate('/');
+            window.scrollTo(0, 0);
+          }, 100); // 100ms delay
+          
+        } else {
+          console.log("⚠️ No user data");
+        }
       }
+      
     } catch (error) {
       console.error('❌ Login Failed:', error);
 

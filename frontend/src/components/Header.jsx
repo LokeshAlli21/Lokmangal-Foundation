@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 
+import { useNavigate } from 'react-router-dom';
+
 function Header({photoUrl}) {
 
-  const userData = useSelector(state => state.auth.userData);
-  const [userId, setUserid] = useState(null)
-  const [authStatus, setAuthStatus] = useState(useSelector(state => state.auth.status))
+  const navigate = useNavigate();
+
+  const userData = useSelector((state) => state.auth.userData);
+  const authStatusFromStore = useSelector((state) => state.auth.status);
+  const [userId, setUserid] = useState(null);
+
+  const [authStatus, setAuthStatus] = useState(authStatusFromStore);
   
   useEffect(() => {
-    // console.log(userData);
-    if(userData != null){
-      setUserid(userData.id || null)
-      setAuthStatus(true)
+    if (userData != null) {
+      setUserid(userData.id || null);
+      setAuthStatus(true);
     } else {
-      return
+      setAuthStatus(false);
     }
-  },[userData])
-
-  // authStatus = useSelector(state => state.auth.status);
+  }, [userData]);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setAuthStatus(token && true)
+  },[])
 
   useEffect(() => {
       if (authStatus === null) {
@@ -62,6 +70,13 @@ function Header({photoUrl}) {
     animation: isFixed ? "menuact 0.3s ease-in-out" : "none",
   };
 
+
+  const handleLogOut = () => {
+    const confirmLogout = window.confirm('Are you sure you want to logout?');
+    if (confirmLogout) {
+      navigate('/log-out')
+    }
+  }
   
 
   return (
@@ -156,7 +171,7 @@ function Header({photoUrl}) {
     </span>
     <div className="inn">
       <img
-        src="https://shadi.lokmangal.website/assets/images/lokmangal-foundation.png"
+        src="../images/logo-b.png"
         alt=""
         loading="lazy"
         className="logo-brand-only"
@@ -259,7 +274,7 @@ function Header({photoUrl}) {
             </span> */}
             <a href="/" className="logo-brand">
               <img
-                src="https://shadi.lokmangal.website/assets/images/lokmangal-foundation.png"
+                src="../images/logo-b.png"
                 alt=""
                 loading="lazy"
                 className="ic-logo"
@@ -285,7 +300,7 @@ function Header({photoUrl}) {
             {authStatus &&
               <>
               <li>
-              <a href="/log-out">Logout</a>
+              <a  onClick={handleLogOut}>Logout</a>
               </li>
               
               
