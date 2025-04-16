@@ -453,8 +453,8 @@ function Home() {
   // Dynamically change the background image based on currentImageIndex
   const homHeadStyle = {
     marginTop: "0",
-    backgroundImage: `url(${images[currentImageIndex]})`,
-    animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
+    backgroundImage: `url(images/ban-bg.jpg)`,
+    // animation: "zoomInOut 8s ease-in-out infinite", // Animation for zoom effect
   };
 
 
