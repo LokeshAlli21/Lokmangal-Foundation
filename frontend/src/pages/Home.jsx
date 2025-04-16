@@ -253,7 +253,7 @@ function Home() {
   };
 
   const itemStyle = {
-    minWidth: '350px', // adjust as needed
+    minWidth: '400px', // adjust as needed
     maxHeight: '500px',
     marginRight: '10px',
     
