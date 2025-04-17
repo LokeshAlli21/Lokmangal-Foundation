@@ -192,7 +192,7 @@ function Home() {
   };
 
   const slideStyle = {
-    minWidth: '350px',
+    // minWidth: '350px',
     height: '400px',
     // marginRight: '10px',
     // background: '#ddd',
