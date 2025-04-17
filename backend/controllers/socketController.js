@@ -5,13 +5,14 @@ const userSocketMap = {}; // userId => socket.id
 export const registerSocketEvents = (socket, io) => {
   console.log('📲 Registered socket:', socket.id);
 
-  // 🧠 JOIN
+  // 🧠 JOIN - User joins the socket and stores their socket ID for communication
   socket.on('join', ({ userId }) => {
     userSocketMap[userId] = socket.id;
     console.log(`👤 User ${userId} joined with socket ID: ${socket.id}`);
+    io.emit('user-status', { userId, status: 'online' }); // Notify other users of the online status
   });
 
-  // 🧠 SEND MESSAGE
+  // 🧠 SEND MESSAGE - Handling sending messages and storing them in DB
   socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
     console.log('📨 Message received on socket from', sender_id, 'to', receiver_id);
 
@@ -24,6 +25,7 @@ export const registerSocketEvents = (socket, io) => {
 
       let conversation_id;
 
+      // Creating new conversation if not exists
       if (!existingConversation && !convError) {
         const { data: newConv, error: newConvErr } = await supabase
           .from('conversations')
@@ -45,6 +47,7 @@ export const registerSocketEvents = (socket, io) => {
       } else {
         conversation_id = existingConversation?.conversation_id;
 
+        // Increment unread count if conversation exists
         const { error: incrementErr } = await supabase.rpc('increment_unread_count', {
           conv_id: conversation_id,
         });
@@ -53,12 +56,14 @@ export const registerSocketEvents = (socket, io) => {
           console.error('❌ Error incrementing unread count:', incrementErr.message);
         }
 
+        // Update last message timestamp
         await supabase
           .from('conversations')
           .update({ last_message_at: new Date() })
           .eq('conversation_id', conversation_id);
       }
 
+      // Insert message into the database
       const { data: insertedMessage, error: messageErr } = await supabase
         .from('messages')
         .insert({
@@ -66,6 +71,7 @@ export const registerSocketEvents = (socket, io) => {
           receiver_id,
           message_content,
           conversation_id,
+          status: 'delivered' // Initially set the message as delivered
         })
         .select()
         .single();
@@ -94,7 +100,7 @@ export const registerSocketEvents = (socket, io) => {
     }
   });
 
-  // 🧠 MARK AS READ
+  // 🧠 MARK AS READ - Mark a conversation as read when user opens it
   socket.on('open-conversation', async ({ conversation_id, user_id }) => {
     try {
       const { error } = await supabase.rpc('mark_conversation_as_read', {
@@ -111,13 +117,20 @@ export const registerSocketEvents = (socket, io) => {
       console.log(`✅ Conversation ${conversation_id} marked as read by user ${user_id}`);
       socket.emit('conversation-read', { conversation_id });
 
+      // Change the message status to 'seen' when conversation is opened
+      await supabase
+        .from('messages')
+        .update({ status: 'seen' })
+        .eq('conversation_id', conversation_id)
+        .eq('receiver_id', user_id);
+
     } catch (err) {
       console.error('🔥 open-conversation error:', err.message);
       socket.emit('error-message', { error: 'Something went wrong' });
     }
   });
 
-  // 🧠 LOAD PAST MESSAGES WITH PAGINATION
+  // 🧠 LOAD PAST MESSAGES WITH PAGINATION - Load older messages for the conversation
   socket.on('load-messages', async ({ conversation_id, page = 1, pageSize = 20 }) => {
     try {
       const offset = (page - 1) * pageSize;
@@ -157,12 +170,13 @@ export const registerSocketEvents = (socket, io) => {
     }
   });
 
-  // 🧠 DISCONNECT
+  // 🧠 DISCONNECT - Handle user disconnection and notify other users
   socket.on('disconnect', () => {
     for (const [userId, socketId] of Object.entries(userSocketMap)) {
       if (socketId === socket.id) {
         delete userSocketMap[userId];
         console.log(`❌ User ${userId} disconnected`);
+        io.emit('user-status', { userId, status: 'offline' }); // Notify other users of the offline status
         break;
       }
     }
