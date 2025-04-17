@@ -10,7 +10,11 @@ function Chat() {
 
   const [messageContent, setMessageContent] = useState('');
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalMessages, setTotalMessages] = useState(0);
 
+  // Load past messages when the component mounts
   useEffect(() => {
     socket.emit('join', { userId });
 
@@ -18,11 +22,14 @@ function Chat() {
       setMessages((prev) => [...prev, message]);
     });
 
+    socket.emit('load-messages', { conversation_id: receiverId, page: 1, pageSize: 20 });
+
     return () => {
       socket.off('receive-message');
     };
-  }, [userId]);
+  }, [userId, receiverId]);
 
+  // Handle message sending
   const handleSend = () => {
     if (!receiverId || !messageContent.trim()) return;
 
@@ -37,6 +44,40 @@ function Chat() {
     setMessages((prev) => [...prev, newMessage]);
     setMessageContent('');
   };
+
+  // Load more messages when the user scrolls up
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollTop === 0 && messages.length < totalMessages) {
+      setPage((prev) => prev + 1);
+      socket.emit('load-messages', {
+        conversation_id: receiverId,
+        page: page + 1,
+        pageSize: 20,
+      });
+    }
+  };
+
+  // Mark conversation as read when opened
+  const markAsRead = () => {
+    socket.emit('open-conversation', {
+      conversation_id: receiverId,
+      user_id: userId,
+    });
+  };
+
+  // Listen to the loaded messages event
+  useEffect(() => {
+    socket.on('messages-loaded', ({ messages: newMessages, totalCount }) => {
+      setMessages((prev) => [...newMessages, ...prev]);
+      setTotalMessages(totalCount);
+      setLoading(false);
+    });
+
+    return () => {
+      socket.off('messages-loaded');
+    };
+  }, [page]);
 
   return (
     <div
@@ -65,6 +106,7 @@ function Chat() {
       </h2>
 
       <div
+        onScroll={handleScroll}
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -75,6 +117,8 @@ function Chat() {
           backgroundColor: '#fafafa',
         }}
       >
+        {loading && <p style={{ textAlign: 'center', color: '#888' }}>Loading more messages...</p>}
+
         {messages.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888' }}>No messages yet</p>
         ) : (

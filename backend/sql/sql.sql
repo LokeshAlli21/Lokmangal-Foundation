@@ -247,8 +247,9 @@ CREATE TABLE messages (
   sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   message_content TEXT NOT NULL,
-  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   is_read BOOLEAN DEFAULT FALSE,
+  status TEXT DEFAULT 'delivered', -- ✅ NEW COLUMN
   conversation_id INTEGER REFERENCES conversations(conversation_id) ON DELETE CASCADE
 );
 
