@@ -170,6 +170,49 @@ export const registerSocketEvents = (socket, io) => {
     }
   });
 
+// 🧠 LOAD USER CONVERSATIONS - Fetch all chats the user is part of
+socket.on('load-conversations', async ({ user_id }) => {
+  try {
+    const { data: conversations, error } = await supabase
+      .from('conversations')
+      .select(`
+        conversation_id,
+        last_message_at,
+        unread_count,
+        sender:sender_id (
+          id,
+          name,
+          profiles (
+            photo_url
+          )
+        ),
+        receiver:receiver_id (
+          id,
+          name,
+          profiles (
+            photo_url
+          )
+        ),
+        messages (
+          message_content,
+          created_at
+        )
+      `)
+      .or(`sender_id.eq.${user_id},receiver_id.eq.${user_id}`)
+      .order('last_message_at', { ascending: false });
+
+    if (error) {
+      console.error('❌ Error loading conversations:', error.message);
+      return socket.emit('error-message', { error: 'Could not load conversations' });
+    }
+
+    socket.emit('conversations-loaded', { conversations: conversations });
+  } catch (err) {
+    console.error('🔥 Unexpected error in load-conversations:', err.message);
+    socket.emit('error-message', { error: 'Something went wrong while loading conversations' });
+  }
+});
+
   // 🧠 DISCONNECT - Handle user disconnection and notify other users
   socket.on('disconnect', () => {
     for (const [userId, socketId] of Object.entries(userSocketMap)) {

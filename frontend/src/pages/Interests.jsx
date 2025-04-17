@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import databaseService from "../backend-services/database/database"
 import { useSelector } from 'react-redux';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 function Interests() {
 
   const { photoUrl } = useOutletContext();
+
+  const navigate = useNavigate()
 
   const userData = useSelector(state => state.auth.userData);
   const [profiles, setProfiles] = useState([])
@@ -242,6 +244,12 @@ function Interests() {
       });
   };
   
+
+
+
+const handleChat = (id) => {
+  navigate(`/chat/${id}`)
+}
 
   
   
@@ -586,7 +594,7 @@ function Interests() {
                 View full profile
               </a>
             </div>
-            <div className="db-int-pro-3">
+            <div className="db-int-pro-3" style={{display: 'flex', flexDirection: 'column',height: '100%', rowGap: '10px', alignContent: 'center', alignItems: 'center'}}>
               <button
                 type="button"
                 className="btn btn-success btn-md"
@@ -598,7 +606,16 @@ function Interests() {
               </button>
               <button
                 type="button"
+                className="btn btn-primary btn-md"
+                style={{ color: 'white', padding: '6px 12px', backgroundColor: '#007bff', border: 'none', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                onClick={() => handleChat(profile.id)}
+                >
+                <i className="fa fa-comments" aria-hidden="true"></i> Chat
+                </button>
+              <button
+                type="button"
                 className="btn btn-danger btn-sm"
+                style={{alignSelf: 'flex-end', bottom: '0px',}}
                 onClick={() => setProfiles(prev => prev.filter(p => p.id !== profile.id))}
               >
                 🚫 Not Interested

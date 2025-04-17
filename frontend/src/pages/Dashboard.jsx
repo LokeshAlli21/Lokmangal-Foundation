@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import databaseService from "../backend-services/database/database"
 import { useSelector } from 'react-redux';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 function Dashboard() {
     const { photoUrl } = useOutletContext();
 
 
+    const navigate = useNavigate()
+
     const userData = useSelector(state => state.auth.userData);
     
     const [wishlist, setWishlist] = useState([]);
+
+    const handleChat = (id) => {
+        navigate(`/chat/${id}`)
+      }
 
     useEffect(() => {
     if (userData.id) {
@@ -144,7 +150,7 @@ function Dashboard() {
                 type="button"
                 className="btn btn-primary btn-md"
                 style={{ color: 'white', padding: '6px 12px', backgroundColor: '#007bff', border: 'none', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '5px' }}
-                onClick={() => handleLikes(profile.id)}
+                onClick={() => handleChat(arrItem.profiles.id)}
                 >
                 <i className="fa fa-comments" aria-hidden="true"></i> Chat
                 </button>
