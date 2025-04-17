@@ -1,10 +1,10 @@
 import React from 'react'
 import { useOutletContext } from 'react-router-dom';
 
-function Chat() {
-
+function ChatList() {
   const { photoUrl } = useOutletContext();
 
+  
   return (
     <section>
   <div className="db" style={{marginTop: 0, padding: "50px"}}>
@@ -36,7 +36,7 @@ function Chat() {
                   </a>
                 </li>
                 <li>
-                  <a href="/chat" className="act">
+                  <a href="/chat-list" className="act">
                     <i className="fa fa-commenting-o" aria-hidden="true" />
                     Chat list
                   </a>
@@ -227,8 +227,7 @@ function Chat() {
     </div>
   </div>
 </section>
-
   )
 }
 
-export default Chat
+export default ChatList

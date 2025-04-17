@@ -1,21 +1,24 @@
-// socketController.js
 import { supabase } from '../supabase/supabaseClient.js';
 
-
+const userSocketMap = {}; // 🗺️ userId => socket.id
 
 export const registerSocketEvents = (socket, io) => {
   console.log('📲 Registered socket:', socket.id);
 
-  // Handle sending messages
+  // 🧠 Step 1: Identify user and map their socket
+  socket.on('join', ({ userId }) => {
+    userSocketMap[userId] = socket.id;
+    console.log(`👤 User ${userId} joined with socket ID: ${socket.id}`);
+  });
+
+  // 💬 Step 2: Handle sending messages
   socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
     try {
-      const { error } = await supabase.from('messages').insert([
-        {
-          sender_id,
-          receiver_id,
-          message_content,
-        },
-      ]);
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([{ sender_id, receiver_id, message_content }])
+        .select()
+        .single(); // includes message_id, timestamp, etc.
 
       if (error) {
         console.error('❌ DB Insert Error:', error.message);
@@ -23,13 +26,14 @@ export const registerSocketEvents = (socket, io) => {
         return;
       }
 
-      // Emit the message to the receiver (can be improved using rooms if needed)
-      io.emit('receive-message', {
-        sender_id,
-        receiver_id,
-        message_content,
-        timestamp: new Date().toISOString(),
-      });
+      const receiverSocketId = userSocketMap[receiver_id]; // 🎯 Only that user
+
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit('receive-message', data);
+        console.log(`📨 Message delivered to user ${receiver_id}`);
+      } else {
+        console.log(`📭 User ${receiver_id} is offline or not connected`);
+      }
 
       console.log(`📤 Message sent from ${sender_id} to ${receiver_id}`);
     } catch (err) {
@@ -38,8 +42,14 @@ export const registerSocketEvents = (socket, io) => {
     }
   });
 
-  // Handle disconnection
+  // 🔌 Step 3: Handle disconnection
   socket.on('disconnect', () => {
-    console.log('❌ Disconnected:', socket.id);
+    for (const [userId, socketId] of Object.entries(userSocketMap)) {
+      if (socketId === socket.id) {
+        delete userSocketMap[userId];
+        console.log(`❌ User ${userId} disconnected`);
+        break;
+      }
+    }
   });
 };

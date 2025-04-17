@@ -141,7 +141,7 @@ function Profile() {
                   </a>
                 </li>
                 <li>
-                  <a href="/chat">
+                  <a href="/chat-list">
                     <i className="fa fa-commenting-o" aria-hidden="true" />
                     Chat list
                   </a>

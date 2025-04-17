@@ -1,13 +1,16 @@
 // socket.js
 import { Server } from 'socket.io';
 import { registerSocketEvents } from '../controllers/socketController.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 let io;
 
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL,
+      origin: process.env.FRONTEND_ORIGIN_URL,
       methods: ['GET', 'POST'],
     },
   });

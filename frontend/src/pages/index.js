@@ -4,7 +4,7 @@ import Login from './Login'
 import Dashboard from './Dashboard'
 import Profile from './Profile'
 import Interests from './Interests'
-import Chat from './Chat'
+import ChatList from './ChatList'
 import Setting from './Setting'
 import Logout from './Logout'
 import EditProfile from './EditProfile'
@@ -19,7 +19,7 @@ export {
     Dashboard,
     Profile,
     Interests,
-    Chat,
+    ChatList,
     Setting,
     Logout,
     EditProfile,

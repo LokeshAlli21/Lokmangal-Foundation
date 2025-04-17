@@ -316,7 +316,7 @@ function Header({photoUrl}) {
                       <a href="/interests">Interests</a>
                     </li>
                     <li>
-                      <a href="/chat">Chat lists</a>
+                      <a href="/chat-list">Chat lists</a>
                     </li>
                     <li>
                       <a href="/setting">Profile settings</a>
