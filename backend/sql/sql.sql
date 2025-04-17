@@ -204,12 +204,49 @@ CREATE TABLE profile_views (
 --------------------------------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE conversations (
-  id SERIAL PRIMARY KEY,
-  user1_id INTEGER REFERENCES users(id),
-  user2_id INTEGER REFERENCES users(id),
-  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  conversation_id SERIAL PRIMARY KEY,
+  sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  unread_count INTEGER DEFAULT 0,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(sender_id, receiver_id) -- Ensures one entry per conversation between two users
 );
+
+-- ✅ 1. Supabase SQL: Increment unread count (RPC function)
+
+create or replace function increment_unread_count(conv_id integer)
+returns void as $$
+begin
+  update conversations
+  set unread_count = unread_count + 1,
+      updated_at = current_timestamp
+  where conversation_id = conv_id;
+end;
+$$ language plpgsql;
+
+
+
+-- ✅ 2. Supabase SQL: Reset unread count and mark messages as read
+
+create or replace function mark_conversation_as_read(conv_id integer, user_id integer)
+returns void as $$
+begin
+  -- Mark all unread messages as read for this user
+  update messages
+  set is_read = true
+  where conversation_id = conv_id
+    and receiver_id = user_id
+    and is_read = false;
+
+  -- Reset unread_count to 0
+  update conversations
+  set unread_count = 0,
+      updated_at = current_timestamp
+  where conversation_id = conv_id;
+end;
+$$ language plpgsql;
+
 
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------- messages ✅ (chat messages) -------------------------------------------------------------------
@@ -221,7 +258,8 @@ CREATE TABLE messages (
   receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   message_content TEXT NOT NULL,
   timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  is_read BOOLEAN DEFAULT FALSE
+  is_read BOOLEAN DEFAULT FALSE,
+  conversation_id INTEGER REFERENCES conversations(conversation_id) ON DELETE CASCADE
 );
 
 --------------------------------------------------------------------------------------------------------------------------------------
