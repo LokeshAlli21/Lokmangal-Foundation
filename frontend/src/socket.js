@@ -1,7 +1,8 @@
 // src/socket.js
 import { io } from 'socket.io-client';
+import env from './env/env';
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
+const socket = io(env.backendUrl, {
   transports: ['websocket'],
 });
 

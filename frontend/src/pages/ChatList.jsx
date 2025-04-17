@@ -4,6 +4,7 @@ import { useOutletContext } from 'react-router-dom';
 function ChatList() {
   const { photoUrl } = useOutletContext();
 
+  const id = 6 // reciever id
   
   return (
     <section>
@@ -64,6 +65,23 @@ function ChatList() {
               <div className="db-pro-stat">
                 <div className="db-chat">
                   <ul>
+                    <li className="db-chat-trig">
+                      <div className="db-chat-pro">
+                        {" "}
+                        <img src="images/profiles/1.jpg" alt="" />{" "}
+                      </div>
+                      <div className="db-chat-bio">
+                        <h5>new</h5>
+                        <span>see </span>
+                      </div>
+                      <div className="db-chat-info">
+                        <div className="time new">
+                          <span className="timer"></span>
+                          <span className="cont"></span>
+                        </div>
+                      </div>
+                      <a href={`/chat/${id}`}> see chat</a>
+                    </li>
                     <li className="db-chat-trig">
                       <div className="db-chat-pro">
                         {" "}

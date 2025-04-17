@@ -13,6 +13,7 @@ export const registerSocketEvents = (socket, io) => {
 
   // 💬 Step 2: Handle sending messages
   socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
+    console.log('chat message is got successful in websocket: \n ',sender_id, receiver_id, message_content);
     try {
       const { data, error } = await supabase
         .from('messages')
