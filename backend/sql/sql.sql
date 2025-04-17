@@ -188,16 +188,6 @@ AFTER UPDATE OF email, mobile ON profiles
 FOR EACH ROW
 EXECUTE PROCEDURE sync_user_after_profile_update();
 
---------------------------------------------------------------------------------------------------------------------------------------
--------------------------------------- profile_views ✅ (to limit profile views) ----------------------------------------------------
---------------------------------------------------------------------------------------------------------------------------------------
-
-CREATE TABLE profile_views (
-  id SERIAL PRIMARY KEY,
-  viewer_user_id INTEGER REFERENCES users(id),
-  viewed_profile_id INTEGER REFERENCES profiles(id),
-  viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------- conversations ✅ (for chat feature) -----------------------------------------------------------
@@ -266,13 +256,13 @@ CREATE TABLE messages (
 -------------------------------------- maudit_logs (optional, for tracking changes and actions) --------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------
 
-CREATE TABLE audit_logs (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  action VARCHAR(255),
-  details TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE audit_logs (
+--   id SERIAL PRIMARY KEY,
+--   user_id INTEGER REFERENCES users(id),
+--   action VARCHAR(255),
+--   details TEXT,
+--   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
 --------------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------  user_wishlist Table --------------------------------------------------------------------------

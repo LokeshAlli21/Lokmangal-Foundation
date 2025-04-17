@@ -5,16 +5,17 @@ const userSocketMap = {}; // userId => socket.id
 export const registerSocketEvents = (socket, io) => {
   console.log('📲 Registered socket:', socket.id);
 
+  // 🧠 JOIN
   socket.on('join', ({ userId }) => {
     userSocketMap[userId] = socket.id;
     console.log(`👤 User ${userId} joined with socket ID: ${socket.id}`);
   });
 
+  // 🧠 SEND MESSAGE
   socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
     console.log('📨 Message received on socket from', sender_id, 'to', receiver_id);
 
     try {
-      // Step 1: Check if conversation exists between sender and receiver
       let { data: existingConversation, error: convError } = await supabase
         .from('conversations')
         .select('conversation_id')
@@ -23,7 +24,6 @@ export const registerSocketEvents = (socket, io) => {
 
       let conversation_id;
 
-      // Step 2: Create conversation if it doesn't exist
       if (!existingConversation && !convError) {
         const { data: newConv, error: newConvErr } = await supabase
           .from('conversations')
@@ -45,7 +45,6 @@ export const registerSocketEvents = (socket, io) => {
       } else {
         conversation_id = existingConversation?.conversation_id;
 
-        // Step 3: Update unread count using RPC
         const { error: incrementErr } = await supabase.rpc('increment_unread_count', {
           conv_id: conversation_id,
         });
@@ -54,14 +53,12 @@ export const registerSocketEvents = (socket, io) => {
           console.error('❌ Error incrementing unread count:', incrementErr.message);
         }
 
-        // Optional: update last_message_at timestamp
         await supabase
           .from('conversations')
           .update({ last_message_at: new Date() })
           .eq('conversation_id', conversation_id);
       }
 
-      // Step 4: Insert the message
       const { data: insertedMessage, error: messageErr } = await supabase
         .from('messages')
         .insert({
@@ -78,10 +75,14 @@ export const registerSocketEvents = (socket, io) => {
         return socket.emit('error-message', { error: 'Message not sent' });
       }
 
-      // Step 5: Deliver the message
       const receiverSocketId = userSocketMap[receiver_id];
+      const messageWithConversationId = {
+        ...insertedMessage,
+        conversation_id,
+      };
+
       if (receiverSocketId) {
-        io.to(receiverSocketId).emit('receive-message', insertedMessage);
+        io.to(receiverSocketId).emit('receive-message', messageWithConversationId);
         console.log(`📬 Message delivered to user ${receiver_id}`);
       } else {
         console.log(`📭 User ${receiver_id} is offline or not connected`);
@@ -93,7 +94,7 @@ export const registerSocketEvents = (socket, io) => {
     }
   });
 
-  // ✅ Mark conversation as read when opened
+  // 🧠 MARK AS READ
   socket.on('open-conversation', async ({ conversation_id, user_id }) => {
     try {
       const { error } = await supabase.rpc('mark_conversation_as_read', {
@@ -115,42 +116,48 @@ export const registerSocketEvents = (socket, io) => {
       socket.emit('error-message', { error: 'Something went wrong' });
     }
   });
-    // ✅ Load past messages with pagination
-    socket.on('load-messages', async ({ conversation_id, page = 1, pageSize = 20 }) => {
-      try {
-        const offset = (page - 1) * pageSize;
-  
-        const { data: messages, error } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('conversation_id', conversation_id)
-          .order('created_at', { ascending: false })
-          .range(offset, offset + pageSize - 1);
-  
-        if (error) {
-          console.error('❌ Error loading messages:', error.message);
-          return socket.emit('error-message', { error: 'Could not load messages' });
-        }
-  
-        socket.emit('messages-loaded', {
-          conversation_id,
-          messages
-        });
-  
-        console.log(`📜 Sent page ${page} of messages for conversation ${conversation_id}`);
-  
-      } catch (err) {
-        console.error('🔥 load-messages error:', err.message);
-        socket.emit('error-message', { error: 'Something went wrong while loading messages' });
+
+  // 🧠 LOAD PAST MESSAGES WITH PAGINATION
+  socket.on('load-messages', async ({ conversation_id, page = 1, pageSize = 20 }) => {
+    try {
+      const offset = (page - 1) * pageSize;
+
+      console.log(`📥 Loading messages for conversation ${conversation_id} | Page: ${page} | Offset: ${offset}`);
+
+      const { data: messages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversation_id)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + pageSize - 1);
+
+      const { count: totalCount, error: countError } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('conversation_id', conversation_id);
+
+      if (error || countError) {
+        console.error('❌ Error loading messages or count:', error?.message || countError?.message);
+        return socket.emit('error-message', { error: 'Could not load messages' });
       }
-    });
-  
 
+      socket.emit('messages-loaded', {
+        conversation_id,
+        messages,
+        totalCount,
+        currentPage: page,
+        pageSize,
+      });
 
+      console.log(`📜 Sent page ${page} of messages for conversation ${conversation_id} (Total: ${totalCount})`);
 
+    } catch (err) {
+      console.error('🔥 load-messages error:', err.message);
+      socket.emit('error-message', { error: 'Something went wrong while loading messages' });
+    }
+  });
 
-
-
+  // 🧠 DISCONNECT
   socket.on('disconnect', () => {
     for (const [userId, socketId] of Object.entries(userSocketMap)) {
       if (socketId === socket.id) {
