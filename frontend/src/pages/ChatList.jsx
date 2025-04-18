@@ -26,21 +26,26 @@ function ChatList() {
       const transformed = conversations.map((conv) => {
         // Determine if current user is sender or receiver
         const isSender = conv.sender?.id === userId;
-        const otherUser = isSender ? conv.receiver : conv.sender;
   
-        if (!otherUser) return null; // Skip if otherUser is invalid
+        if (!conv) return null; // Skip if conv is invalid
   
         // Get the latest message (assuming messages are sorted or just pick the last)
         const lastMessageObj = conv.messages?.[conv.messages.length - 1] || {};
   
         return {
+          isSender: isSender,
           conversation_id: conv.conversation_id,
           last_message_at: conv.last_message_at,
           unread_count: conv.unread_count || 0,
-          user: {
-            id: otherUser.id,
-            name: otherUser.name,
-            photo_url: otherUser.profiles?.[0]?.photo_url || '', // Safely access profile photo
+          sender: {
+            id: conv.sender.id,
+            name: conv.sender.name,
+            photo_url: conv.sender.profiles?.[0]?.photo_url || '', // Safely access profile photo
+          },
+          receiver: {
+            id: conv.receiver.id,
+            name: conv.receiver.name,
+            photo_url: conv.receiver.profiles?.[0]?.photo_url || '', // Safely access profile photo
           },
           last_message: lastMessageObj.message_content || '',
           last_message_time: lastMessageObj.created_at || '',
@@ -116,7 +121,7 @@ function ChatList() {
               <div className="db-pro-stat">
                 <div className="db-chat">
                   <ul>
-{conversationList.map((conv) => (
+{/* {conversationList.map((conv) => (
     <li key={conv.conversation_id} className="db-chat-trig" onClick={() => {
       navigate(`/chat/${conv.user.id}`)
     }}>
@@ -141,7 +146,60 @@ function ChatList() {
         </div>
       </div>
     </li>
-  ))}
+  ))} */}
+
+
+
+                
+{conversationList.map((conv) => {
+  const isSender = conv.isSender;
+  const user = isSender ? conv.receiver : conv.sender;
+  const name = user?.name || 'Unknown';
+  const photo = user?.photo_url || 'images/profiles/default.jpg';
+
+  const hasUnread = conv.unread_count > 0 && !isSender;
+  const lastMessageText = conv.last_message?.trim() || '';
+  const lastMessage = lastMessageText
+    ? isSender
+      ? `You: ${lastMessageText}`
+      : lastMessageText
+    : 'No messages yet';
+
+  // Format date: if today -> HH:MM, else -> DD MMM
+  const messageDate = new Date(conv.last_message_time);
+  const now = new Date();
+  const isToday = messageDate.toDateString() === now.toDateString();
+  const timeLabel = isToday
+    ? messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : messageDate.toLocaleDateString([], { day: '2-digit', month: 'short' });
+
+  return (
+    <li
+      key={conv.conversation_id}
+      className="db-chat-trig"
+      onClick={() => navigate(`/chat/${user.id}`)}
+    >
+      <div className="db-chat-pro">
+        <img src={photo} alt={name} />
+      </div>
+
+      <div className="db-chat-bio">
+        <h5>{name}</h5>
+        <span style={{ fontWeight: hasUnread ? 'bold' : 'normal' }}>
+          {lastMessage}
+        </span>
+      </div>
+
+      <div className="db-chat-info">
+        <div className={`time ${hasUnread ? 'new' : ''}`}>
+          <span className="timer">{timeLabel}</span>
+          {hasUnread && <span className="cont">{conv.unread_count}</span>}
+        </div>
+      </div>
+    </li>
+  );
+})}
+
                     
                   </ul>
                 </div>

@@ -443,7 +443,7 @@ export const getUserWishlist = async (req, res) => {
       throw error;
     }
 
-    console.log(data);
+    // console.log(data);
     
 
     res.status(200).json({ wishlist: data });

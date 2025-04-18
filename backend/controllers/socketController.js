@@ -12,123 +12,124 @@ export const registerSocketEvents = (socket, io) => {
     io.emit('user-status', { userId, status: 'online' }); // Notify other users of the online status
   });
 
-  // 🧠 SEND MESSAGE - Handling sending messages and storing them in DB
-  socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
-    console.log('📨 Message received on socket from', sender_id, 'to', receiver_id);
+// 🧠 SEND MESSAGE - Handling sending messages and storing them in DB
+socket.on('send-message', async ({ sender_id, receiver_id, message_content }) => {
+  console.log('📨 Message received on socket from', sender_id, 'to', receiver_id);
 
-    try {
-      let { data: existingConversation, error: convError } = await supabase
+  try {
+    let { data: existingConversation, error: convError } = await supabase
+      .from('conversations')
+      .select('conversation_id')
+      .or(`and(sender_id.eq.${sender_id},receiver_id.eq.${receiver_id}),and(sender_id.eq.${receiver_id},receiver_id.eq.${sender_id})`)
+      .maybeSingle();
+
+    let conversation_id;
+
+    // Creating new conversation if not exists
+    if (!existingConversation && !convError) {
+      const { data: newConv, error: newConvErr } = await supabase
         .from('conversations')
-        .select('conversation_id')
-        .or(`and(sender_id.eq.${sender_id},receiver_id.eq.${receiver_id}),and(sender_id.eq.${receiver_id},receiver_id.eq.${sender_id})`)
-        .maybeSingle();
-
-      let conversation_id;
-
-      // Creating new conversation if not exists
-      if (!existingConversation && !convError) {
-        const { data: newConv, error: newConvErr } = await supabase
-          .from('conversations')
-          .insert({
-            sender_id,
-            receiver_id,
-            last_message_at: new Date(),
-            unread_count: 1,
-          })
-          .select('conversation_id')
-          .single();
-
-        if (newConvErr) {
-          console.error('❌ Error creating conversation:', newConvErr.message);
-          return socket.emit('error-message', { error: 'Could not create conversation' });
-        }
-
-        conversation_id = newConv.conversation_id;
-      } else {
-        conversation_id = existingConversation?.conversation_id;
-
-        // Increment unread count if conversation exists
-        const { error: incrementErr } = await supabase.rpc('increment_unread_count', {
-          conv_id: conversation_id,
-        });
-
-        if (incrementErr) {
-          console.error('❌ Error incrementing unread count:', incrementErr.message);
-        }
-
-        // Update last message timestamp
-        await supabase
-          .from('conversations')
-          .update({ last_message_at: new Date() })
-          .eq('conversation_id', conversation_id);
-      }
-
-      // Insert message into the database
-      const { data: insertedMessage, error: messageErr } = await supabase
-        .from('messages')
         .insert({
           sender_id,
           receiver_id,
-          message_content,
-          conversation_id,
-          status: 'delivered' // Initially set the message as delivered
+          last_message_at: new Date(),
+          unread_count: 1,
         })
-        .select()
+        .select('conversation_id')
         .single();
 
-      if (messageErr) {
-        console.error('❌ DB Insert Error:', messageErr.message);
-        return socket.emit('error-message', { error: 'Message not sent' });
+      if (newConvErr) {
+        console.error('❌ Error creating conversation:', newConvErr.message);
+        return socket.emit('error-message', { error: 'Could not create conversation' });
       }
 
-      const receiverSocketId = userSocketMap[receiver_id];
-      const messageWithConversationId = {
-        ...insertedMessage,
-        conversation_id,
-      };
+      conversation_id = newConv.conversation_id;
+    } else {
+      conversation_id = existingConversation?.conversation_id;
 
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit('receive-message', messageWithConversationId);
-        console.log(`📬 Message delivered to user ${receiver_id}`);
-      } else {
-        console.log(`📭 User ${receiver_id} is offline or not connected`);
-      }
-
-    } catch (err) {
-      console.error('🔥 send-message error:', err.message);
-      socket.emit('error-message', { error: 'Something went wrong' });
-    }
-  });
-
-  // 🧠 MARK AS READ - Mark a conversation as read when user opens it
-  socket.on('open-conversation', async ({ conversation_id, user_id }) => {
-    try {
-      const { error } = await supabase.rpc('mark_conversation_as_read', {
+      // Increment unread count if conversation exists
+      const { error: incrementErr } = await supabase.rpc('increment_unread_count', {
         conv_id: conversation_id,
-        user_id: user_id,
       });
 
-      if (error) {
-        console.error('❌ Failed to mark messages read:', error.message);
-        socket.emit('error-message', { error: 'Failed to mark as read' });
-        return;
+      if (incrementErr) {
+        console.error('❌ Error incrementing unread count:', incrementErr.message);
       }
 
-      console.log(`✅ Conversation ${conversation_id} marked as read by user ${user_id}`);
-      socket.emit('conversation-read', { conversation_id });
-
-      // Change the message status to 'seen' when conversation is opened
+      // Update last message timestamp
       await supabase
-        .from('messages')
-        .update({ status: 'seen' })
-        .eq('conversation_id', conversation_id)
-        .eq('receiver_id', user_id);
-
-    } catch (err) {
-      console.error('🔥 open-conversation error:', err.message);
-      socket.emit('error-message', { error: 'Something went wrong' });
+        .from('conversations')
+        .update({ last_message_at: new Date() })
+        .eq('conversation_id', conversation_id);
     }
-  });
+
+    // Insert message into the database
+    const { data: insertedMessage, error: messageErr } = await supabase
+      .from('messages')
+      .insert({
+        sender_id,
+        receiver_id,
+        message_content,
+        conversation_id,
+        status: 'delivered' // Initially set the message as delivered
+      })
+      .select()
+      .single();
+
+    if (messageErr) {
+      console.error('❌ DB Insert Error:', messageErr.message);
+      return socket.emit('error-message', { error: 'Message not sent' });
+    }
+
+    const receiverSocketId = userSocketMap[receiver_id];
+    const messageWithConversationId = {
+      ...insertedMessage,
+      conversation_id,
+    };
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('receive-message', messageWithConversationId);
+      console.log(`📬 Message delivered to user ${receiver_id}`);
+    } else {
+      console.log(`📭 User ${receiver_id} is offline or not connected`);
+    }
+
+  } catch (err) {
+    console.error('🔥 send-message error:', err.message);
+    socket.emit('error-message', { error: 'Something went wrong' });
+  }
+});
+
+
+// 🧠 MARK AS READ - Mark a conversation as read when user opens it
+socket.on('open-conversation', async ({ conversation_id, user_id }) => {
+  try {
+    const { error } = await supabase.rpc('mark_conversation_as_read', {
+      conv_id: conversation_id,
+      user_id: user_id,
+    });
+
+    if (error) {
+      console.error('❌ Failed to mark messages read:', error.message);
+      socket.emit('error-message', { error: 'Failed to mark as read' });
+      return;
+    }
+
+    console.log(`✅ Conversation ${conversation_id} marked as read by user ${user_id}`);
+    socket.emit('conversation-read', { conversation_id });
+
+    // Change the message status to 'seen' when conversation is opened
+    await supabase
+      .from('messages')
+      .update({ status: 'seen' })  // This will mark all unread messages as seen
+      .eq('conversation_id', conversation_id)
+      .eq('receiver_id', user_id);
+
+  } catch (err) {
+    console.error('🔥 open-conversation error:', err.message);
+    socket.emit('error-message', { error: 'Something went wrong' });
+  }
+});
 
   // 🧠 LOAD PAST MESSAGES WITH PAGINATION - Load older messages for the conversation
   socket.on('load-messages', async ({ conversation_id, page = 1, pageSize = 20 }) => {
@@ -212,6 +213,43 @@ socket.on('load-conversations', async ({ user_id }) => {
     socket.emit('error-message', { error: 'Something went wrong while loading conversations' });
   }
 });
+
+// 🧠 LOAD FULL CHAT HISTORY BETWEEN TWO USERS
+socket.on('load-chat-history', async ({ user1_id, user2_id }) => {
+  try {
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select('conversation_id')
+      .or(`and(sender_id.eq.${user1_id},receiver_id.eq.${user2_id}),and(sender_id.eq.${user2_id},receiver_id.eq.${user1_id})`)
+      .maybeSingle();
+
+    if (convError || !conversation) {
+      return socket.emit('chat-history', { messages: [], error: 'No conversation found' });
+    }
+
+    const { data: messages, error: messageError } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('conversation_id', conversation.conversation_id)
+      .order('created_at', { ascending: true }); // ascending = oldest first
+
+    if (messageError) {
+      console.error('❌ Error fetching messages:', messageError.message);
+      return socket.emit('error-message', { error: 'Could not load chat history' });
+    }
+
+    socket.emit('chat-history', {
+      conversation_id: conversation.conversation_id,
+      messages,
+    });
+
+    console.log(`📚 Loaded full chat history between ${user1_id} and ${user2_id}`);
+  } catch (err) {
+    console.error('🔥 load-chat-history error:', err.message);
+    socket.emit('error-message', { error: 'Something went wrong loading chat history' });
+  }
+});
+
 
   // 🧠 DISCONNECT - Handle user disconnection and notify other users
   socket.on('disconnect', () => {

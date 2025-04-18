@@ -1,35 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import socket from '../socket';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
+import socket from "../socket";
+import { useSelector } from "react-redux";
 
 function Chat() {
   const userData = useSelector((state) => state.auth.userData);
   const userId = userData.id;
   const { id: receiverId } = useParams();
 
-  const [messageContent, setMessageContent] = useState('');
+  const [messageContent, setMessageContent] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalMessages, setTotalMessages] = useState(0);
 
-  // Load past messages when the component mounts
-  useEffect(() => {
-    socket.emit('join', { userId });
+  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
-    socket.on('receive-message', (message) => {
-      setMessages((prev) => [...prev, message]);
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    socket.emit("join", { userId });
+
+    // Load chat history when component mounts
+    socket.emit("load-chat-history", {
+      user1_id: userId,
+      user2_id: receiverId,
     });
 
-    socket.emit('load-messages', { conversation_id: receiverId, page: 1, pageSize: 20 });
+    socket.on("chat-history", ({ conversation_id, messages }) => {
+      setMessages(messages); // Update your state to show in UI
+      scrollToBottom();
+    });
+
+    // Receive a new message
+    socket.on("receive-message", (message) => {
+      setMessages((prev) => [...prev, message]);
+      scrollToBottom();
+    });
+
+    // Load older messages when scrolling to the top
+    socket.emit("load-messages", {
+      conversation_id: receiverId,
+      page: 1,
+      pageSize: 20,
+    });
 
     return () => {
-      socket.off('receive-message');
+      socket.off("receive-message");
+      socket.off("chat-history");
     };
   }, [userId, receiverId]);
 
-  // Handle message sending
   const handleSend = () => {
     if (!receiverId || !messageContent.trim()) return;
 
@@ -38,19 +64,20 @@ function Chat() {
       receiver_id: parseInt(receiverId),
       message_content: messageContent,
       timestamp: new Date().toISOString(),
+      is_read: false, // ✅ mark message initially unread
     };
 
-    socket.emit('send-message', newMessage);
+    socket.emit("send-message", newMessage);
     setMessages((prev) => [...prev, newMessage]);
-    setMessageContent('');
+    setMessageContent("");
+    scrollToBottom();
   };
 
-  // Load more messages when the user scrolls up
   const handleScroll = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    const { scrollTop } = e.target;
     if (scrollTop === 0 && messages.length < totalMessages) {
       setPage((prev) => prev + 1);
-      socket.emit('load-messages', {
+      socket.emit("load-messages", {
         conversation_id: receiverId,
         page: page + 1,
         pageSize: 20,
@@ -58,69 +85,77 @@ function Chat() {
     }
   };
 
-  // Mark conversation as read when opened
   const markAsRead = () => {
-    socket.emit('open-conversation', {
+    socket.emit("open-conversation", {
       conversation_id: receiverId,
       user_id: userId,
     });
   };
 
-  // Listen to the loaded messages event
   useEffect(() => {
-    socket.on('messages-loaded', ({ messages: newMessages, totalCount }) => {
-      setMessages((prev) => [...newMessages, ...prev]);
+    socket.on("messages-loaded", ({ messages: newMessages, totalCount }) => {
+      setMessages((prev) => [...newMessages.reverse(), ...prev]);
       setTotalMessages(totalCount);
       setLoading(false);
+      scrollToBottom();
     });
 
     return () => {
-      socket.off('messages-loaded');
+      socket.off("messages-loaded");
     };
   }, [page]);
+
+  useEffect(() => {
+    markAsRead();
+  }, [receiverId]);
 
   return (
     <div
       style={{
-        maxWidth: '600px',
-        margin: '20px auto',
-        padding: '20px',
-        borderRadius: '16px',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '80vh',
+        maxWidth: "600px",
+        margin: "20px auto",
+        padding: "20px",
+        borderRadius: "16px",
+        backgroundColor: "#ffffff",
+        boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+        display: "flex",
+        flexDirection: "column",
+        height: "80vh",
       }}
     >
       <h2
         style={{
-          textAlign: 'center',
-          fontSize: '24px',
-          fontWeight: '700',
-          marginBottom: '20px',
-          color: '#333',
+          textAlign: "center",
+          fontSize: "24px",
+          fontWeight: "700",
+          marginBottom: "20px",
+          color: "#333",
         }}
       >
         Chat with User {receiverId}
       </h2>
 
       <div
+        ref={messagesContainerRef}
         onScroll={handleScroll}
         style={{
           flex: 1,
-          overflowY: 'auto',
-          padding: '10px',
-          marginBottom: '20px',
-          border: '1px solid #eee',
-          borderRadius: '10px',
-          backgroundColor: '#fafafa',
+          overflowY: "auto",
+          padding: "10px",
+          marginBottom: "20px",
+          border: "1px solid #eee",
+          borderRadius: "10px",
+          backgroundColor: "#fafafa",
         }}
       >
-        {loading && <p style={{ textAlign: 'center', color: '#888' }}>Loading more messages...</p>}
+        {loading && (
+          <p style={{ textAlign: "center", color: "#888" }}>
+            Loading more messages...
+          </p>
+        )}
 
         {messages.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#888' }}>No messages yet</p>
+          <p style={{ textAlign: "center", color: "#888" }}>No messages yet</p>
         ) : (
           messages.map((msg, index) => {
             const isSender = msg.sender_id === userId;
@@ -128,74 +163,93 @@ function Chat() {
               <div
                 key={index}
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: isSender ? 'flex-end' : 'flex-start',
-                  marginBottom: '12px',
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: isSender ? "flex-end" : "flex-start",
+                  marginBottom: "12px",
                 }}
               >
                 <div
                   style={{
-                    backgroundColor: isSender ? '#007bff' : '#e1f3d8',
-                    color: isSender ? '#fff' : '#000',
-                    padding: '10px 14px',
-                    borderRadius: '12px',
-                    maxWidth: '75%',
-                    wordBreak: 'break-word',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                    backgroundColor: isSender ? "#007bff" : "#e1f3d8",
+                    color: isSender ? "#fff" : "#000",
+                    padding: "10px 14px",
+                    borderRadius: "12px",
+                    maxWidth: "75%",
+                    wordBreak: "break-word",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
                   }}
                 >
-                  <strong style={{ fontSize: '13px' }}>
-                    {isSender ? 'You' : `User ${msg.sender_id}`}
+                  <strong style={{ fontSize: "13px" }}>
+                    {isSender ? "You" : `User ${msg.sender_id}`}
                   </strong>
-                  <div style={{ marginTop: '4px', fontSize: '15px' }}>
+                  <div style={{ marginTop: "4px", fontSize: "15px" }}>
                     {msg.message_content}
                   </div>
                   <div
                     style={{
-                      fontSize: '11px',
-                      marginTop: '6px',
-                      textAlign: 'right',
-                      color: isSender ? '#dcdcdc' : '#666',
+                      fontSize: "11px",
+                      marginTop: "6px",
+                      textAlign: "right",
+                      color: isSender ? "#dcdcdc" : "#666",
                     }}
                   >
                     {new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
+                    {isSender && (
+                      <div
+                        style={{
+                          fontSize: "10px",
+                          marginTop: "2px",
+                          textAlign: "right",
+                          color: msg.is_read ? "#28a745" : "#999",
+                        }}
+                      >
+                        {msg.is_read ? "Read" : "Sent"}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })
         )}
+        <div ref={messagesEndRef} />
       </div>
 
-      <div style={{ display: 'flex', gap: '10px' }}>
+      <div style={{ display: "flex", gap: "10px" }}>
         <textarea
           rows="2"
           placeholder="Type your message..."
           value={messageContent}
           onChange={(e) => setMessageContent(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
           style={{
             flex: 1,
-            padding: '10px',
-            fontSize: '16px',
-            borderRadius: '10px',
-            border: '1px solid #ccc',
-            resize: 'none',
+            padding: "10px",
+            fontSize: "16px",
+            borderRadius: "10px",
+            border: "1px solid #ccc",
+            resize: "none",
           }}
         />
         <button
           onClick={handleSend}
           style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            padding: '10px 16px',
-            fontSize: '16px',
-            borderRadius: '10px',
-            cursor: 'pointer',
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "10px",
+            fontSize: "16px",
+            cursor: "pointer",
           }}
         >
           Send
