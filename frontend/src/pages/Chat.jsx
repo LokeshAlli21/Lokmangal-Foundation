@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import socket from "../socket";
 import { useSelector } from "react-redux";
+import socket from "../socket";
 
 function Chat() {
   const userData = useSelector((state) => state.auth.userData);
-  const userId = userData.id;
+  const userId = userData?.id;
   const { id: receiverId } = useParams();
 
+  const [conversationId, setConversationId] = useState(null);
   const [messageContent, setMessageContent] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,43 +19,8 @@ function Chat() {
   const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  useEffect(() => {
-    socket.emit("join", { userId });
-
-    // Load chat history when component mounts
-    socket.emit("load-chat-history", {
-      user1_id: userId,
-      user2_id: receiverId,
-    });
-
-    socket.on("chat-history", ({ conversation_id, messages }) => {
-      setMessages(messages); // Update your state to show in UI
-      scrollToBottom();
-    });
-
-    // Receive a new message
-    socket.on("receive-message", (message) => {
-      setMessages((prev) => [...prev, message]);
-      scrollToBottom();
-    });
-
-    // Load older messages when scrolling to the top
-    socket.emit("load-messages", {
-      conversation_id: receiverId,
-      page: 1,
-      pageSize: 20,
-    });
-
-    return () => {
-      socket.off("receive-message");
-      socket.off("chat-history");
-    };
-  }, [userId, receiverId]);
 
   const handleSend = () => {
     if (!receiverId || !messageContent.trim()) return;
@@ -63,51 +29,95 @@ function Chat() {
       sender_id: userId,
       receiver_id: parseInt(receiverId),
       message_content: messageContent,
-      timestamp: new Date().toISOString(),
-      is_read: false, // ✅ mark message initially unread
+      created_at: new Date().toISOString(), // saves in full UTC format
+      is_read: false,
     };
 
     socket.emit("send-message", newMessage);
-    setMessages((prev) => [...prev, newMessage]);
     setMessageContent("");
-    scrollToBottom();
+    setMessages((prev) => [...prev, newMessage]);
+    setTimeout(scrollToBottom, 100);
   };
 
   const handleScroll = (e) => {
-    const { scrollTop } = e.target;
-    if (scrollTop === 0 && messages.length < totalMessages) {
-      setPage((prev) => prev + 1);
+    if (e.target.scrollTop === 0 && messages.length < totalMessages && !loading) {
+      const nextPage = page + 1;
+      setLoading(true);
+      setPage(nextPage);
       socket.emit("load-messages", {
-        conversation_id: receiverId,
-        page: page + 1,
+        conversation_id: conversationId,
+        page: nextPage,
         pageSize: 20,
       });
     }
   };
 
   const markAsRead = () => {
-    socket.emit("open-conversation", {
-      conversation_id: receiverId,
-      user_id: userId,
-    });
+    if (conversationId) {
+      socket.emit("open-conversation", {
+        conversation_id: conversationId,
+        user_id: userId,
+      });
+    }
   };
 
   useEffect(() => {
-    socket.on("messages-loaded", ({ messages: newMessages, totalCount }) => {
-      setMessages((prev) => [...newMessages.reverse(), ...prev]);
-      setTotalMessages(totalCount);
-      setLoading(false);
-      scrollToBottom();
+    socket.emit("join", { userId });
+    socket.emit("load-chat-history", {
+      user1_id: userId,
+      user2_id: receiverId,
     });
 
-    return () => {
-      socket.off("messages-loaded");
+    const handleChatHistory = ({ conversation_id }) => {
+      setConversationId(conversation_id);
+      setPage(1);
+      if(conversation_id){
+        socket.emit("load-messages", {
+          conversation_id,
+          page: 1,
+          pageSize: 20,
+        });
+      }else{
+        console.log(`conversation between user ${userId} and user ${receiverId} doesn't exists!`);
+        
+      }
     };
-  }, [page]);
+
+    socket.on("chat-history", handleChatHistory);
+
+    return () => {
+      socket.off("chat-history", handleChatHistory);
+    };
+  }, [userId, receiverId]);
 
   useEffect(() => {
-    markAsRead();
-  }, [receiverId]);
+    const handleMessagesLoaded = ({ messages: newMessages, totalCount }) => {
+      setMessages(newMessages.reverse());
+      setTotalMessages(totalCount);
+      setLoading(false);
+    };
+
+    socket.on("messages-loaded", handleMessagesLoaded);
+
+    return () => socket.off("messages-loaded", handleMessagesLoaded);
+  }, [conversationId]);
+
+  useEffect(() => {
+    const handleReceiveMessage = (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setTimeout(scrollToBottom, 100);
+    };
+  
+    socket.on("receive-message", handleReceiveMessage);
+    return () => socket.off("receive-message", handleReceiveMessage);
+  }, []);  
+
+  useEffect(() => {
+    if (conversationId) {
+      markAsRead();
+      scrollToBottom();
+    }
+  }, [conversationId, messages]);
 
   return (
     <div
@@ -157,7 +167,7 @@ function Chat() {
         {messages.length === 0 ? (
           <p style={{ textAlign: "center", color: "#888" }}>No messages yet</p>
         ) : (
-          messages.map((msg, index) => {
+          messages?.map((msg, index) => {
             const isSender = msg.sender_id === userId;
             return (
               <div
@@ -194,7 +204,7 @@ function Chat() {
                       color: isSender ? "#dcdcdc" : "#666",
                     }}
                   >
-                    {new Date(msg.timestamp).toLocaleTimeString([], {
+                    {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -207,7 +217,7 @@ function Chat() {
                           color: msg.is_read ? "#28a745" : "#999",
                         }}
                       >
-                        {msg.is_read ? "Read" : "Sent"}
+                        {msg.is_read ? "Seen" : "Sent"}
                       </div>
                     )}
                   </div>

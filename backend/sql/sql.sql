@@ -9,15 +9,15 @@ CREATE TABLE users (
   email VARCHAR(100) UNIQUE NOT NULL,
   phone VARCHAR(15),
   password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
+  updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
 );
 
 -- Create function to auto-update 'updated_at'
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW.updated_at = CURRENT_TIMESTAMP;
+  NEW.updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata');
   RETURN NEW;
 END;
 $$ language 'plpgsql';
@@ -85,8 +85,8 @@ CREATE TABLE profiles (
   photo_url TEXT,
   
   -- Timestamps
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
+  updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
 );
 
 
@@ -197,9 +197,9 @@ CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
   sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_message_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   unread_count INTEGER DEFAULT 0,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   UNIQUE(sender_id, receiver_id) -- Ensures one entry per conversation between two users
 );
 
@@ -210,7 +210,7 @@ returns void as $$
 begin
   update conversations
   set unread_count = unread_count + 1,
-      updated_at = current_timestamp
+      updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
   where conversation_id = conv_id;
 end;
 $$ language plpgsql;
@@ -232,7 +232,7 @@ begin
   -- Reset unread_count to 0
   update conversations
   set unread_count = 0,
-      updated_at = current_timestamp
+      updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
   where conversation_id = conv_id;
 end;
 $$ language plpgsql;
@@ -247,7 +247,7 @@ CREATE TABLE messages (
   sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   message_content TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   is_read BOOLEAN DEFAULT FALSE,
   status TEXT DEFAULT 'delivered', -- ✅ NEW COLUMN
   conversation_id INTEGER REFERENCES conversations(conversation_id) ON DELETE CASCADE
@@ -262,7 +262,7 @@ CREATE TABLE messages (
 --   user_id INTEGER REFERENCES users(id),
 --   action VARCHAR(255),
 --   details TEXT,
---   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+--   created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
 -- );
 
 --------------------------------------------------------------------------------------------------------------------------------------
@@ -273,6 +273,6 @@ CREATE TABLE user_wishlist (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   liked_profile_id INTEGER REFERENCES profiles(id) ON DELETE CASCADE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   UNIQUE(user_id, liked_profile_id)
 );

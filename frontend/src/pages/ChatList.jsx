@@ -30,6 +30,8 @@ function ChatList() {
         if (!conv) return null; // Skip if conv is invalid
   
         // Get the latest message (assuming messages are sorted or just pick the last)
+        console.log("see messages: ", conv.messages);
+        
         const lastMessageObj = conv.messages?.[conv.messages.length - 1] || {};
   
         return {
@@ -48,7 +50,6 @@ function ChatList() {
             photo_url: conv.receiver.profiles?.[0]?.photo_url || '', // Safely access profile photo
           },
           last_message: lastMessageObj.message_content || '',
-          last_message_time: lastMessageObj.created_at || '',
         };
       }).filter(Boolean); // Filter out any invalid ones
   
@@ -135,7 +136,7 @@ function ChatList() {
       <div className="db-chat-info">
         <div className={`time ${conv.unread_count > 0 ? 'new' : ''}`}>
           <span className="timer">
-            {new Date(conv.last_message_time).toLocaleTimeString([], {
+            {new Date(conv.last_message_ate).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit',
             })}
@@ -166,7 +167,7 @@ function ChatList() {
     : 'No messages yet';
 
   // Format date: if today -> HH:MM, else -> DD MMM
-  const messageDate = new Date(conv.last_message_time);
+  const messageDate = new Date(conv.last_message_at);
   const now = new Date();
   const isToday = messageDate.toDateString() === now.toDateString();
   const timeLabel = isToday
