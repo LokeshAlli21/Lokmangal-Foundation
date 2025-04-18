@@ -16,12 +16,10 @@ export const registerSocketEvents = (socket, io) => {
   });
 
   // ✉️ Handle sending a message
-
-  socket.on('send-message', async ({ sender_id, receiver_id, message_content,is_read }) => {
+  socket.on('send-message', async ({ sender_id, receiver_id, message_content, is_read }) => {
     console.log('📨 Message received from', sender_id, 'to', receiver_id);
-    console.log('message_content',message_content);
-    
-
+    console.log('message_content', message_content);
+  
     try {
       // Check if conversation already exists between sender and receiver
       let { data: existingConversation, error: convError } = await supabase
@@ -31,9 +29,9 @@ export const registerSocketEvents = (socket, io) => {
           `and(sender_id.eq.${sender_id},receiver_id.eq.${receiver_id}),and(sender_id.eq.${receiver_id},receiver_id.eq.${sender_id})`
         )
         .maybeSingle();
-
+  
       let conversation_id;
-
+  
       // 📌 If no conversation exists, create a new one
       if (!existingConversation && !convError) {
         const { data: newConv, error: newConvErr } = await supabase
@@ -45,59 +43,73 @@ export const registerSocketEvents = (socket, io) => {
           })
           .select('conversation_id')
           .single();
-
+  
         if (newConvErr) {
           console.error('❌ Error creating conversation:', newConvErr.message);
           return socket.emit('error-message', { error: 'Could not create conversation' });
         }
-
+  
         conversation_id = newConv.conversation_id;
       } else {
+        console.log('🔍 Existing Conversation:', existingConversation);
         // ✅ Use existing conversation
         conversation_id = existingConversation?.conversation_id;
-
-        // Increment unread count via Supabase RPC function
-        const { error: incrementErr } = await supabase.rpc('increment_unread_count', {
-          conv_id: conversation_id,
-        });
-
-        if (incrementErr) {
-          console.error('❌ Error incrementing unread count:', incrementErr.message);
-        }
-
+  
+        // 🐞 DEBUG: Check if conversation_id was extracted properly
+        if (!conversation_id) {
+          console.warn('⚠️ No conversation_id found. Cannot increment unread count.');
+        } else {
+          console.log('✅ conversation_id to increment unread count for:', conversation_id);
+        
+          // Step 1: Get current unread_count
+          const { data: conversationData, error: fetchErr } = await supabase
+            .from('conversations')
+            .select('unread_count')
+            .eq('conversation_id', conversation_id)
+            .single();
+        
+          if (fetchErr) {
+            console.error('❌ Error fetching current unread_count:', fetchErr.message);
+          } else {
+            const newUnreadCount = (conversationData?.unread_count || 0) + 1;
+        
+            // Step 2: Update unread_count
+            const { error: updateErr } = await supabase
+              .from('conversations')
+              .update({ unread_count: newUnreadCount })
+              .eq('conversation_id', conversation_id);
+        
+            if (updateErr) {
+              console.error('❌ Error updating unread_count:', updateErr.message);
+            } else {
+              console.log('✅ Unread count incremented to', newUnreadCount, 'for conversation_id:', conversation_id);
+            }
+          }
+        }        
+  
+        // 🕰️ Update last_message_at timestamp
         function getISTTimestamp() {
           const nowUTC = new Date();
-
-          // IST is UTC + 5 hours 30 minutes
           const istOffset = 5.5 * 60 * 60 * 1000; // 19800000 ms
           const istDate = new Date(nowUTC.getTime() + istOffset);
-
-          // Format to ISO (without 'Z' at the end)
-          const istISOString = istDate.toISOString().slice(0, 19).replace('T', ' ');
-
-          // console.log("IST Time:", istISOString);
-          return istISOString
-
+          return istDate.toISOString().slice(0, 19).replace('T', ' ');
         }
-        
-
-        // Update last_message_at timestamp
+  
         const currentTimestamp = getISTTimestamp();
-        console.log("🔄 Updating last_message_at with:", currentTimestamp);
-
+  
+        // Update last_message_at timestamp in the conversation
         const { data, error } = await supabase
           .from('conversations')
           .update({ last_message_at: currentTimestamp })
           .eq('conversation_id', conversation_id);
-
+  
         if (error) {
           console.error("❌ Failed to update last_message_at:", error.message, error);
         } else {
           console.log("✅ last_message_at updated successfully:", data);
         }
-
       }
-
+  
       // Insert new message into messages table
       const { data: insertedMessage, error: messageErr } = await supabase
         .from('messages')
@@ -105,19 +117,18 @@ export const registerSocketEvents = (socket, io) => {
           sender_id,
           receiver_id,
           message_content,
-          // created_at,
           conversation_id,
           is_read,
-          status: 'delivered'
+          status: 'delivered',
         })
         .select('*')
         .single();
-
+  
       if (messageErr) {
         console.error('❌ DB Insert Error:', messageErr.message);
         return socket.emit('error-message', { error: 'Message not sent' });
       }
-
+  
       // Prepare message to be sent to receiver
       const messageToSend = {
         ...insertedMessage,
@@ -128,22 +139,23 @@ export const registerSocketEvents = (socket, io) => {
         conversation_id,
         created_at: insertedMessage.created_at,
       };
-
+  
       // 🔔 Emit message to receiver if online
       const receiverSocketId = userSocketMap[receiver_id];
-
+  
       if (receiverSocketId) {
         io.to(receiverSocketId).emit('receive-message', messageToSend);
         console.log(`📬 Message delivered to user ${receiver_id}`);
       } else {
         console.log(`📭 User ${receiver_id} is offline or not connected`);
       }
-
+  
     } catch (err) {
       console.error('🔥 send-message error:', err.message);
       socket.emit('error-message', { error: 'Something went wrong' });
     }
   });
+  
 
   // ✅ Mark conversation as read by user
   socket.on('open-conversation', async ({ conversation_id, user_id }) => {

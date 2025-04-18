@@ -205,15 +205,16 @@ CREATE TABLE conversations (
 
 -- ✅ 1. Supabase SQL: Increment unread count (RPC function)
 
-create or replace function increment_unread_count(conv_id integer)
-returns void as $$
-begin
-  update conversations
-  set unread_count = unread_count + 1,
-      updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
-  where conversation_id = conv_id;
-end;
-$$ language plpgsql;
+-- create or replace function increment_unread_count(conv_id integer)
+-- returns void as $$
+-- begin
+--   update conversations
+--   set unread_count = unread_count + 1,
+--       updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
+--   where conversation_id = conv_id;
+--   raise notice 'Unread count incremented for conversation_id: %', conv_id;
+-- end;
+-- $$ language plpgsql;
 
 
 
