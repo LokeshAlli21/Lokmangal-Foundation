@@ -149,7 +149,7 @@ function ChatList() {
     </li>
   ))} */}
 
-
+{(conversationList.length === 0 ) && <h2>No chats are avalible</h2> }
 
                 
 {conversationList.map((conv) => {

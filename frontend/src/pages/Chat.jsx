@@ -1,12 +1,37 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import socket from "../socket";
+import databaseService from "../backend-services/database/database";
 
 function Chat() {
+
+  const { photoUrl } = useOutletContext();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+// Example of toggling dark mode
+useEffect(() => {
+  const savedMode = localStorage.getItem("theme");
+  if (savedMode === "dark") {
+    setIsDarkMode(true);
+  }
+}, []);
+
+const toggleDarkMode = () => {
+  console.log("called");
+  setIsDarkMode((prevMode) => {
+    const newMode = !prevMode;
+    localStorage.setItem("theme", newMode ? "dark" : "light");
+    return newMode;
+  });
+  
+};
+
   const userData = useSelector((state) => state.auth.userData);
   const userId = userData?.id;
   const { id: receiverId } = useParams();
+
+  const [receiverProfile, setReceiverProfile] = useState(null)
 
   const [conversationId, setConversationId] = useState(null);
   const [messageContent, setMessageContent] = useState("");
@@ -19,8 +44,15 @@ function Chat() {
   const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatScreen = document.getElementById("chat-scroll");
+    if (messagesEndRef.current && chatScreen) {
+      chatScreen.scrollTo({
+        top: messagesEndRef.current.offsetTop,
+        behavior: "smooth"
+      });
+    }
   };
+  
 
   const handleSend = () => {
     if (!receiverId || !messageContent.trim()) return;
@@ -119,153 +151,298 @@ function Chat() {
     }
   }, [conversationId, messages]);
 
+  useEffect(() => {
+    if (receiverId) {
+        databaseService.getChatReceiverNameAndPhotoById(receiverId)
+        .then((data) => {
+            setReceiverProfile(data)
+        })
+        .catch(console.error);
+    }
+    
+    
+    }, [receiverId]);
+
+
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    useEffect(() => {
+      const handleFullscreenChange = () => {
+        setIsFullscreen(!!document.fullscreenElement);
+      };
+  
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      return () => {
+        document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      };
+    }, []);
+  
+    const toggleFullscreen = () => {
+      const elem = document.getElementById("chat-screen");
+      if (!document.fullscreenElement && elem?.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    };
+
+
   return (
-    <div
+    <div id="chat-screen"
+  style={{
+    maxWidth: "600px",
+    margin: "100px auto 20px",
+    padding: "20px",
+    borderRadius: "16px",
+    backgroundColor: isDarkMode ? "#1f1f1f" : "#ffffff",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+    display: "flex",
+    flexDirection: "column",
+    height: "80vh",
+    color: isDarkMode ? "#f5f5f5" : "#111",
+    transition: "all 0.3s ease",
+    position: "relative"
+  }}
+>
+<div
       style={{
-        maxWidth: "600px",
-        margin: "20px auto",
-        padding: "20px",
-        borderRadius: "16px",
-        backgroundColor: "#ffffff",
-        boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+        position: "absolute",
+        top: "10px",
+        right: "10px",
         display: "flex",
-        flexDirection: "column",
-        height: "80vh",
+        gap: "10px",
       }}
     >
-      <h2
-        style={{
-          textAlign: "center",
-          fontSize: "24px",
-          fontWeight: "700",
-          marginBottom: "20px",
-          color: "#333",
-        }}
-      >
-        Chat with User {receiverId}
-      </h2>
+      
 
+      {/* Fullscreen Toggle */}
       <div
-        ref={messagesContainerRef}
-        onScroll={handleScroll}
+        onClick={toggleFullscreen}
         style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: "10px",
-          marginBottom: "20px",
-          border: "1px solid #eee",
-          borderRadius: "10px",
-          backgroundColor: "#fafafa",
+          padding: "8px 14px",
+          backgroundColor: isDarkMode?"#555": '#fff',
+          color: isDarkMode?"#fff": '#555',
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontSize: "14px",
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
         }}
       >
-        {loading && (
-          <p style={{ textAlign: "center", color: "#888" }}>
-            Loading more messages...
-          </p>
-        )}
-
-        {messages.length === 0 ? (
-          <p style={{ textAlign: "center", color: "#888" }}>No messages yet</p>
-        ) : (
-          messages?.map((msg, index) => {
-            const isSender = msg.sender_id === userId;
-            return (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: isSender ? "flex-end" : "flex-start",
-                  marginBottom: "12px",
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: isSender ? "#007bff" : "#e1f3d8",
-                    color: isSender ? "#fff" : "#000",
-                    padding: "10px 14px",
-                    borderRadius: "12px",
-                    maxWidth: "75%",
-                    wordBreak: "break-word",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <strong style={{ fontSize: "13px" }}>
-                    {isSender ? "You" : `User ${msg.sender_id}`}
-                  </strong>
-                  <div style={{ marginTop: "4px", fontSize: "15px" }}>
-                    {msg.message_content}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "11px",
-                      marginTop: "6px",
-                      textAlign: "right",
-                      color: isSender ? "#dcdcdc" : "#666",
-                    }}
-                  >
-                    {new Date(msg.created_at).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                    {isSender && (
-                      <div
-                        style={{
-                          fontSize: "10px",
-                          marginTop: "2px",
-                          textAlign: "right",
-                          color: msg.is_read ? "#28a745" : "#999",
-                        }}
-                      >
-                        {msg.is_read ? "Seen" : "Sent"}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-        <div ref={messagesEndRef} />
+        {isFullscreen ? "❌" : "🖥️"} 
+        {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
       </div>
-
-      <div style={{ display: "flex", gap: "10px" }}>
-        <textarea
-          rows="2"
-          placeholder="Type your message..."
-          value={messageContent}
-          onChange={(e) => setMessageContent(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          style={{
-            flex: 1,
-            padding: "10px",
-            fontSize: "16px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            resize: "none",
-          }}
-        />
-        <button
-          onClick={handleSend}
-          style={{
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "10px",
-            fontSize: "16px",
-            cursor: "pointer",
-          }}
-        >
-          Send
-        </button>
+      {/* Theme Toggle */}
+      <div
+        onClick={toggleDarkMode}
+        style={{
+          padding: "8px 14px",
+          backgroundColor: isDarkMode ? "#555" : "#fff",
+          color: "#fff",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontSize: "14px",
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+        }}
+      >
+        {isDarkMode ? "🌞" : "🌙"} 
       </div>
     </div>
+
+
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "20px",
+      padding: "10px",
+      backgroundColor: isDarkMode ? "#2c2c2c" : "#f1f5f9",
+      borderRadius: "15px",
+      marginBottom: "16px"
+    }}
+  >
+    <img
+      src={receiverProfile?.photo_url}
+      alt="Profile"
+      style={{
+        height: "80px",
+        width: "80px",
+        borderRadius: "50%",
+        objectFit: "cover",
+        border: `2px solid ${isDarkMode? 'rgb(229, 70, 89) ' : 'rgb(112, 171, 233)'}`
+      }}
+    />
+    <h2
+      style={{
+        fontSize: "28px",
+        fontWeight: "600",
+        color: isDarkMode ? "#fff" : "#111827"
+      }}
+    >
+      {receiverProfile?.first_name} {receiverProfile?.last_name}
+    </h2>
+  </div>
+
+  <div
+  id="chat-scroll"
+    ref={messagesContainerRef}
+    onScroll={handleScroll}
+    style={{
+      flex: 1,
+      overflowY: "auto",
+      padding: "10px",
+      backgroundColor: isDarkMode ? "#1a1a1a" : "#f9fafb",
+      borderRadius: "12px",
+      marginBottom: "20px",
+      transition: "background-color 0.3s ease"
+    }}
+  >
+    {loading && (
+      <p style={{ textAlign: "center", color: "#888", fontSize: "14px" }}>
+        Loading more messages...
+      </p>
+    )}
+
+    {messages.length === 0 ? (
+      <p style={{ textAlign: "center", color: "#888", fontSize: "14px" }}>
+        No messages yet
+      </p>
+    ) : (
+      messages.map((msg, index) => {
+        const isSender = msg.sender_id === userId;
+
+        return (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              justifyContent: isSender ? "flex-end" : "flex-start",
+              marginBottom: "16px",
+              alignItems: "flex-end",
+              gap: "5px"
+            }}
+          >
+            <img
+              src={isSender ? photoUrl : receiverProfile?.photo_url}
+              alt="Avatar"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                objectFit: "cover"
+              }}
+            />
+
+            <div
+              style={{
+                backgroundColor: isSender
+                  ? "#4f46e5"
+                  : isDarkMode
+                  ? "#2f2f2f"
+                  : "#ffffff",
+                color: isSender ? "#fff" : isDarkMode ? "#f5f5f5" : "#111827",
+                padding: "12px 16px",
+                borderRadius: "24px",
+                maxWidth: "70%",
+                fontSize: "15px",
+                lineHeight: "1.5",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                transition: "all 0.3s ease"
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  marginBottom: "4px",
+                  color: isDarkMode ? "#bbb" : "#555"
+                }}
+              >
+                {isSender ? "You" : `${receiverProfile.first_name}`}
+              </div>
+
+              <div>{msg.message_content}</div>
+
+              <div
+                style={{
+                  fontSize: "11px",
+                  marginTop: "6px",
+                  textAlign: "right",
+                  color: isSender ? "#dbeafe" : "#6b7280"
+                }}
+              >
+                {new Date(msg.created_at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit"
+                })}
+                {isSender && (
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      color: msg.is_read ? "#34d399" : "#9ca3af"
+                    }}
+                  >
+                    {msg.is_read ? "Seen" : "Sent"}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })
+    )}
+    <div ref={messagesEndRef} />
+  </div>
+
+  <div style={{ display: "flex", gap: "10px" }}>
+    <textarea
+      rows="2"
+      placeholder="Type your message..."
+      value={messageContent}
+      onChange={(e) => setMessageContent(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          handleSend();
+        }
+      }}
+      style={{
+        flex: 1,
+        padding: "12px",
+        fontSize: "16px",
+        borderRadius: "12px",
+        border: isDarkMode ? "1px solid #444" : "1px solid #ccc",
+        backgroundColor: isDarkMode ? "#2b2b2b" : "#fff",
+        color: isDarkMode ? "#fff" : "#000",
+        resize: "none"
+      }}
+    />
+    <button
+      onClick={handleSend}
+      style={{
+        backgroundColor: "#4f46e5",
+        color: "#fff",
+        border: "none",
+        padding: "12px 20px",
+        borderRadius: "12px",
+        fontSize: "16px",
+        cursor: "pointer",
+        transition: "background-color 0.2s ease-in-out"
+      }}
+    >
+      Send
+    </button>
+  </div>
+</div>
+
   );
 }
 

@@ -329,6 +329,30 @@ export const getProfilePhotoById = async (req, res) => {
   }
 };
 
+export const getChatReceiverNameAndPhotoById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`photo_url,
+              first_name,
+              last_name`)
+      .eq('id', id)
+      .single(); // ✅ single row expected
+
+    if (error) {
+      console.error('Error fetching profile photo and name:', error);
+      return res.status(404).json({ message: 'Profile photo and name not found' });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching profile photo and name:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export const uploadProfileImage = async (req, res) => {
   // console.log('Upload route hit');
   const { id } = req.params;  

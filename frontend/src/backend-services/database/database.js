@@ -74,7 +74,6 @@ class DatabaseService {
     }
   }
 
-  async getAllProfilesByFilter(filters = {}){}
 
   async getProfilePhotoById(id) {
     try {
@@ -89,7 +88,21 @@ class DatabaseService {
       throw error;
     }
   }
-  
+
+
+  async getChatReceiverNameAndPhotoById(id){
+    try {
+      const response = await fetch(`${this.baseUrl}/api/profiles/profile/name-and-photo/${id}`, {
+        headers: this.getAuthHeaders(),
+      });
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profile name and photo loaded successfully!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to load profile name and photo: ${error.message}`);
+      throw error;
+    }
+  }
 
   async uploadImageToSupabase(userId, imageFile) {
     try {

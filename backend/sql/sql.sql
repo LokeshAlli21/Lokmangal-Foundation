@@ -195,10 +195,12 @@ EXECUTE PROCEDURE sync_user_after_profile_update();
 
 CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
-  sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user1_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user2_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  current_sender_id integer,
   last_message_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
-  unread_count INTEGER DEFAULT 0,
+  user1_unread_count INTEGER DEFAULT 0,
+  user2_unread_count INTEGER DEFAULT 0,
   updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   UNIQUE(sender_id, receiver_id) -- Ensures one entry per conversation between two users
 );

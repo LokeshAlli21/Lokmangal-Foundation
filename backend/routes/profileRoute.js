@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect } from '../middlewares/protect.js';
-import {getProfiles, getProfileById, getFullProfileByEmail, updateProfile, getProfilePhotoById, uploadProfileImage, getUserWishlist, addUserWishlist} from '../controllers/profileController.js'
+import {getProfiles, getProfileById, getFullProfileByEmail, updateProfile, getChatReceiverNameAndPhotoById, getProfilePhotoById, uploadProfileImage, getUserWishlist, addUserWishlist} from '../controllers/profileController.js'
 import {upload} from '../supabase/supabaseClient.js'
 
 const router = express.Router();
@@ -14,6 +14,8 @@ router.post('/add-user-wishlist', protect, addUserWishlist)
 router.get('/user-wishlist/:userId', getUserWishlist);
 
 router.get('/profile/photo/:id', protect, getProfilePhotoById);
+
+router.get('/profile/name-and-photo/:id', protect, getChatReceiverNameAndPhotoById);
 
 router.post('/get-full-profile', protect, getFullProfileByEmail);
 
