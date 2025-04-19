@@ -111,9 +111,9 @@ const router = createBrowserRouter([
       {
         path: "/chat/:id",
         element: (
-            <AuthLayout  authentication={true}>
+            // <AuthLayout  authentication={true}>
               <Chat />
-            </AuthLayout>
+            // </AuthLayout>
         ),
       },
       {
