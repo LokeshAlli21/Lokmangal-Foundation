@@ -192,7 +192,7 @@ EXECUTE PROCEDURE sync_user_after_profile_update();
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------- conversations ✅ (for chat feature) -----------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------
-
+---------------------Need To Change The Schema
 CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
   user1_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
