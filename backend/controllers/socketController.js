@@ -97,16 +97,16 @@ export const registerSocketEvents = (socket, io) => {
   
         const currentTimestamp = getISTTimestamp();
   
-        // Update last_message_at timestamp in the conversation
+        // Update last_message_at and last_sender_id timestamp in the conversation
         const { data, error } = await supabase
           .from('conversations')
-          .update({ last_message_at: currentTimestamp })
+          .update({ last_message_at: currentTimestamp, last_sender_id: sender_id })
           .eq('conversation_id', conversation_id);
   
         if (error) {
-          console.error("❌ Failed to update last_message_at:", error.message, error);
+          console.error("❌ Failed to update last_message_at and last_sender_id:", error.message, error);
         } else {
-          console.log("✅ last_message_at updated successfully:", data);
+          console.log("✅ last_message_at and last_sender_id updated successfully:", data);
         }
       }
   
@@ -232,6 +232,7 @@ export const registerSocketEvents = (socket, io) => {
     .select(`
       conversation_id,
       last_message_at,
+      last_sender_id,
       unread_count,
       sender:sender_id (
         id,

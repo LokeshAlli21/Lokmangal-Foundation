@@ -38,6 +38,7 @@ function ChatList() {
           isSender: isSender,
           conversation_id: conv.conversation_id,
           last_message_at: conv.last_message_at,
+          last_sender_id: conv.last_sender_id,
           unread_count: conv.unread_count || 0,
           sender: {
             id: conv.sender.id,
@@ -122,51 +123,30 @@ function ChatList() {
               <div className="db-pro-stat">
                 <div className="db-chat">
                   <ul>
-{/* {conversationList.map((conv) => (
-    <li key={conv.conversation_id} className="db-chat-trig" onClick={() => {
-      navigate(`/chat/${conv.user.id}`)
-    }}>
-      <div className="db-chat-pro">
-        <img src={conv.user.photo_url || 'images/profiles/default.jpg'} alt={conv.user.name} />
-      </div>
-      <div className="db-chat-bio">
-        <h5>{conv.user.name}</h5>
-        <span>{conv.last_message || 'No messages yet'}</span>
-      </div>
-      <div className="db-chat-info">
-        <div className={`time ${conv.unread_count > 0 ? 'new' : ''}`}>
-          <span className="timer">
-            {new Date(conv.last_message_ate).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
-          {conv.unread_count > 0 && (
-            <span className="cont">{conv.unread_count}</span>
-          )}
-        </div>
-      </div>
-    </li>
-  ))} */}
 
 {(conversationList.length === 0 ) && <h2>No chats are avalible</h2> }
 
                 
 {conversationList.map((conv) => {
-  const isSender = conv.isSender;
-  const user = isSender ? conv.receiver : conv.sender;
-  const name = user?.name || 'Unknown';
-  const photo = user?.photo_url || 'images/profiles/default.jpg';
-
-  const hasUnread = conv.unread_count > 0 && !isSender;
   const lastMessageText = conv.last_message?.trim() || '';
+  const isCurrentUserSender = conv.last_sender_id === userId;
+
+  // Determine the other user (to display name & photo)
+  const otherUser = conv.sender.id === userId ? conv.receiver : conv.sender;
+  const name = otherUser?.name || 'Unknown';
+  const photo = otherUser?.photo_url || 'images/profiles/default.jpg';
+
+  // Show unread count only if message was sent by the other user
+  const hasUnread = conv.unread_count > 0 && !isCurrentUserSender;
+
+  // Last message display
   const lastMessage = lastMessageText
-    ? isSender
+    ? isCurrentUserSender
       ? `You: ${lastMessageText}`
       : lastMessageText
     : 'No messages yet';
 
-  // Format date: if today -> HH:MM, else -> DD MMM
+  // Date formatting
   const messageDate = new Date(conv.last_message_at);
   const now = new Date();
   const isToday = messageDate.toDateString() === now.toDateString();
@@ -178,7 +158,7 @@ function ChatList() {
     <li
       key={conv.conversation_id}
       className="db-chat-trig"
-      onClick={() => navigate(`/chat/${user.id}`)}
+      onClick={() => navigate(`/chat/${otherUser.id}`)}
     >
       <div className="db-chat-pro">
         <img src={photo} alt={name} />
@@ -200,6 +180,7 @@ function ChatList() {
     </li>
   );
 })}
+
 
                     
                   </ul>

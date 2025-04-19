@@ -199,8 +199,8 @@ CREATE TABLE conversations (
   user2_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   current_sender_id integer,
   last_message_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
-  user1_unread_count INTEGER DEFAULT 0,
-  user2_unread_count INTEGER DEFAULT 0,
+  unread_count INTEGER DEFAULT 0,
+  last_sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   UNIQUE(sender_id, receiver_id) -- Ensures one entry per conversation between two users
 );
