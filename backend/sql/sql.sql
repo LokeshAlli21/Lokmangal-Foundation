@@ -195,8 +195,8 @@ EXECUTE PROCEDURE sync_user_after_profile_update();
 ---------------------Need To Change The Schema
 CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
-  user1_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  user2_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   current_sender_id integer,
   last_message_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   unread_count INTEGER DEFAULT 0,
