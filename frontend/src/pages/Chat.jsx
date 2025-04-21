@@ -56,6 +56,11 @@ const toggleDarkMode = () => {
     }
   };
   
+  const handleUserStatus = ({ userId: statusUserId, status }) => {
+    if (statusUserId === sender_id) {
+      setIsSenderOnline(status === 'online');
+    }
+  };
 
   const handleSend = () => {
     if (!receiverId || !messageContent.trim()) return;
@@ -68,10 +73,14 @@ const toggleDarkMode = () => {
       is_read: false,
     };
 
+    socket.emit("check-user-status", { userId: receiverId });
     socket.emit("send-message", newMessage);
     setMessageContent("");
     setMessages((prev) => [...prev, newMessage]);
     setTimeout(scrollToBottom, 100);
+    
+
+    socket.on("user-status", handleUserStatus);
   };
 
   const handleScroll = (e) => {
@@ -202,7 +211,7 @@ const toggleDarkMode = () => {
       if (!socket || !receiverId) return;
     
       const handleNewMessage = ({ sender_id, message_content }) => {
-        console.log("💬 New message from:", sender_id, message_content);
+        // console.log("💬 New message from:", sender_id, message_content);
     
         // Emit an event to ask for current status of the sender
         socket.emit("check-user-status", { userId: receiverId });
