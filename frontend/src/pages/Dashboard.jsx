@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import databaseService from "../backend-services/database/database"
 import { useSelector } from 'react-redux';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import socket from '../socket';
 
 function Dashboard() {
     const { photoUrl } = useOutletContext();
@@ -10,7 +11,11 @@ function Dashboard() {
 
     const navigate = useNavigate()
 
-    const userData = useSelector(state => state.auth.userData);
+    const userData = useSelector((state) => state.auth.userData);
+
+    const userId = userData?.id;
+    
+    const [conversationList, setConversationList] = useState([]);
     
     const [wishlist, setWishlist] = useState([]);
 
@@ -27,6 +32,55 @@ function Dashboard() {
         .catch(console.error);
     }
     }, [userData]);
+
+    useEffect(() => {
+        if (!userId) return;
+      
+        // Request conversations for the current user
+        socket.emit('load-conversations', { user_id: userId });
+      
+        // Listen for the loaded conversations
+        socket.on('conversations-loaded', ({ conversations }) => {
+          console.log('conversations: ', conversations);
+      
+          const transformed = conversations.map((conv) => {
+            // Determine if current user is sender or receiver
+            const isSender = conv.sender?.id === userId;
+            console.log("isSender: ", isSender);
+            
+      
+            if (!conv) return null; // Skip if conv is invalid
+            
+            const lastMessageObj = conv.messages?.[conv.messages.length - 1] || {};
+      
+            return {
+              isSender: isSender,
+              conversation_id: conv.conversation_id,
+              last_message_at: conv.last_message_at,
+              last_sender_id: conv.last_sender_id,
+              unread_count: conv.unread_count || 0,
+              sender: {
+                id: conv.sender.id,
+                name: conv.sender.name,
+                photo_url: conv.sender.profiles?.[0]?.photo_url || '', // Safely access profile photo
+              },
+              receiver: {
+                id: conv.receiver.id,
+                name: conv.receiver.name,
+                photo_url: conv.receiver.profiles?.[0]?.photo_url || '', // Safely access profile photo
+              },
+              last_message: lastMessageObj.message_content || '',
+            };
+          }).filter(Boolean); // Filter out any invalid ones
+      
+          setConversationList(transformed);
+        });
+      
+        // Cleanup on unmount
+        return () => {
+          socket.off('conversations-loaded');
+        };
+      }, [userId]);  
       
   return (
     <section>
@@ -162,436 +216,77 @@ function Dashboard() {
 
                         </ul>
                       </div>
-                {/* <div className="col-md-12 db-sec-com db-new-pro-main">
-                    
-                    
-                </div> */}
+
                 <div className="row" style={{marginTop: '30px'}}>
                     <div className="col-lg-12 db-sec-com">
                     <h2 className="db-tit">Recent chat list</h2>
                     <div className="db-pro-stat">
                         <div className="db-inte-prof-list db-inte-prof-chat">
                         <ul>
-                            <li>
-                            <div className="db-int-pro-1">
-                                {" "}
-                                <img src="images/profiles/2.jpg" alt="" />{" "}
-                            </div>
-                            <div className="db-int-pro-2">
-                                <h5>Julia Ann</h5> <span>Illunois, United States</span>{" "}
-                            </div>
-                            </li>
-                            <li>
-                            <div className="db-int-pro-1">
-                                {" "}
-                                <img src="images/profiles/16.jpg" alt="" />{" "}
-                            </div>
-                            <div className="db-int-pro-2">
-                                <h5>Julia Ann</h5> <span>Illunois, United States</span>{" "}
-                            </div>
-                            </li>
-                            <li>
-                            <div className="db-int-pro-1">
-                                {" "}
-                                <img src="images/profiles/13.jpg" alt="" />{" "}
-                            </div>
-                            <div className="db-int-pro-2">
-                                <h5>Julia Ann</h5> <span>Illunois, United States</span>{" "}
-                            </div>
-                            </li>
-                            <li>
-                            <div className="db-int-pro-1">
-                                {" "}
-                                <img src="images/profiles/14.jpg" alt="" />{" "}
-                            </div>
-                            <div className="db-int-pro-2">
-                                <h5>Julia Ann</h5> <span>Illunois, United States</span>{" "}
-                            </div>
-                            </li>
+                        {(conversationList.length === 0 ) && <h2>No chats are avalible</h2> }
+
+
+{
+    conversationList.map((conv) => {
+        const lastMessageText = conv.last_message?.trim() || '';
+        console.log(userId);
+        console.log(conv.last_sender_id);
+        
+        const isCurrentUserSender = conv.last_sender_id === userId;
+      
+        // Determine the other user (to display name & photo)
+        const otherUser = conv.sender.id === userId ? conv.receiver : conv.sender;
+        const name = otherUser?.name || 'Unknown';
+        const photo = otherUser?.photo_url || 'images/profiles/default.jpg';
+      
+        // Show unread count only if message was sent by the other user
+        const hasUnread = conv.unread_count > 0 && !isCurrentUserSender;
+      
+        // Last message display
+        const lastMessage = lastMessageText
+          ? isCurrentUserSender
+            ? `You: ${lastMessageText}`
+            : lastMessageText
+          : 'No messages yet';
+      
+        // Date formatting
+        const messageDate = new Date(conv.last_message_at);
+        const now = new Date();
+        const isToday = messageDate.toDateString() === now.toDateString();
+        const timeLabel = isToday
+          ? messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : messageDate.toLocaleDateString([], { day: '2-digit', month: 'short' });
+
+          return (
+
+            <li key={conv.conversation_id} onClick={() => navigate(`/chat/${otherUser.id}`)}>
+                <div className="db-int-pro-1">
+                    {" "}
+                    <img src={photo} alt={name} />{" "}
+                </div>
+                <div className="db-int-pro-2">
+                    <h5>{name}</h5> <span>{lastMessage}</span> 
+                    {hasUnread && <span className="cont" style={{float: 'right',    fontSize: "14px",
+    width: "20px",
+    height: "20px",
+    display: "inline-block",
+    background: "#4CAF50",
+    color: "#fff",
+    fontWeight: "500",
+    borderRadius: "50px",
+    textAlign: "center", }}>{conv.unread_count}</span>}{" "}
+                </div>
+            </li>
+            
+          );
+        })
+
+}
                         </ul>
                         </div>
                     </div>
                     </div>
                 </div>
-                {/* <div className="row">
-                    <div className="col-md-12 db-sec-com">
-                    <h2 className="db-tit">Interest request</h2>
-                    <div className="db-pro-stat">
-                        <div className="dropdown">
-                        <button
-                            type="button"
-                            className="btn btn-outline-secondary"
-                            data-bs-toggle="dropdown"
-                        >
-                            <i className="fa fa-ellipsis-h" aria-hidden="true" />
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Edid profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                View profile
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Plan change
-                            </a>
-                            </li>
-                            <li>
-                            <a className="dropdown-item" href="#">
-                                Download invoice now
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                        <div className="db-inte-main">
-                        <ul className="nav nav-tabs" role="tablist">
-                            <li className="nav-item">
-                            <a
-                                className="nav-link active"
-                                data-bs-toggle="tab"
-                                href="#home"
-                            >
-                                New requests
-                            </a>
-                            </li>
-                            <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                data-bs-toggle="tab"
-                                href="#menu1"
-                            >
-                                Accept request
-                            </a>
-                            </li>
-                            <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                data-bs-toggle="tab"
-                                href="#menu2"
-                            >
-                                Denay request
-                            </a>
-                            </li>
-                        </ul>
-                        <div className="tab-content">
-                            <div id="home" className="container tab-pane active">
-                            <br />
-                            <div className="db-inte-prof-list">
-                                <ul>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men1.jpg" alt="" />{" "}
-                                    <span className="badge bg-primary user-pla-pat">
-                                        Platinum user
-                                    </span>
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-sm"
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm"
-                                    >
-                                        Denay
-                                    </button>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men2.jpg" alt="" />{" "}
-                                    <span className="badge bg-primary user-pla-gold">
-                                        Gold user
-                                    </span>
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-sm"
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm"
-                                    >
-                                        Denay
-                                    </button>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men3.jpg" alt="" />{" "}
-                                    <span className="badge bg-primary user-pla-free">
-                                        Free user
-                                    </span>
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-sm"
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm"
-                                    >
-                                        Denay
-                                    </button>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men4.jpg" alt="" />{" "}
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-sm"
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm"
-                                    >
-                                        Denay
-                                    </button>
-                                    </div>
-                                </li>
-                                </ul>
-                            </div>
-                            </div>
-                            <div id="menu1" className="container tab-pane fade">
-                            <br />
-                            <div className="db-inte-prof-list">
-                                <ul>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men5.jpg" alt="" />{" "}
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                        <li>Accept on: 3:000 PM, 21 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-sm"
-                                    >
-                                        Denay
-                                    </button>
-                                    </div>
-                                </li>
-                                </ul>
-                            </div>
-                            </div>
-                            <div id="menu2" className="container tab-pane fade">
-                            <br />
-                            <div className="db-inte-prof-list">
-                                <ul>
-                                <li>
-                                    <div className="db-int-pro-1">
-                                    {" "}
-                                    <img src="images/profiles/men1.jpg" alt="" />{" "}
-                                    </div>
-                                    <div className="db-int-pro-2">
-                                    <h5>John Smith</h5>
-                                    <ol className="poi">
-                                        <li>
-                                        City: <strong>Illunois</strong>
-                                        </li>
-                                        <li>
-                                        Age: <strong>21</strong>
-                                        </li>
-                                        <li>
-                                        Height: <strong>5.7</strong>
-                                        </li>
-                                        <li>
-                                        Job: <strong>Working</strong>
-                                        </li>
-                                    </ol>
-                                    <ol className="poi poi-date">
-                                        <li>Request on: 10:30 AM, 18 August 2024</li>
-                                        <li>Denay on: 3:000 PM, 21 August 2024</li>
-                                    </ol>
-                                    <a
-                                        href="profile-details.html"
-                                        className="cta-5"
-                                        target="_blank"
-                                    >
-                                        View full profile
-                                    </a>
-                                    </div>
-                                    <div className="db-int-pro-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success btn-sm"
-                                    >
-                                        Accept
-                                    </button>
-                                    </div>
-                                </li>
-                                </ul>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="col-md-12 db-sec-com">
-                    <h2 className="db-tit">Profiles views</h2>
-                    <div className="chartin">
-                        <canvas id="Chart_leads" />
-                    </div>
-                    </div>
-                </div> */}
                 </div>
             </div>
             </div>

@@ -232,11 +232,12 @@ begin
     and receiver_id = user_id
     and is_read = false;
 
-  -- Reset unread_count to 0
+  -- Reset unread_count to 0 only if the user is not the last sender
   update conversations
   set unread_count = 0,
       updated_at = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
-  where conversation_id = conv_id;
+  where conversation_id = conv_id
+    and last_sender_id != user_id;
 end;
 $$ language plpgsql;
 

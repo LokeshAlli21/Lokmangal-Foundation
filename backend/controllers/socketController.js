@@ -31,15 +31,19 @@ export const registerSocketEvents = (socket, io) => {
         .maybeSingle();
   
       let conversation_id;
+
+      if (convError) {
+        console.error('❌ Error checking existing conversation:', convError.message);
+        return socket.emit('error-message', { error: 'Could not check existing conversation' });
+      }
   
       // 📌 If no conversation exists, create a new one
-      if (!existingConversation && !convError) {
+      if (existingConversation == null) {
         const { data: newConv, error: newConvErr } = await supabase
           .from('conversations')
           .insert({
             sender_id,
             receiver_id,
-            unread_count: 1,
           })
           .select('conversation_id')
           .single();
@@ -50,64 +54,85 @@ export const registerSocketEvents = (socket, io) => {
         }
   
         conversation_id = newConv.conversation_id;
-      } else {
-        console.log('🔍 Existing Conversation:', existingConversation);
-        // ✅ Use existing conversation
+        console.log('conversation id is created: ', newConv);
+        
+      }
+
+      
+      console.log('🔍 Existing Conversation:', existingConversation);
+      console.log(conversation_id);
+      
+      // ✅ Use existing conversation
+      if(!conversation_id){
         conversation_id = existingConversation?.conversation_id;
-  
-        // 🐞 DEBUG: Check if conversation_id was extracted properly
-        if (!conversation_id) {
-          console.warn('⚠️ No conversation_id found. Cannot increment unread count.');
-        } else {
-          console.log('✅ conversation_id to increment unread count for:', conversation_id);
-        
-          // Step 1: Get current unread_count
-          const { data: conversationData, error: fetchErr } = await supabase
-            .from('conversations')
-            .select('unread_count')
-            .eq('conversation_id', conversation_id)
-            .single();
-        
-          if (fetchErr) {
-            console.error('❌ Error fetching current unread_count:', fetchErr.message);
-          } else {
-            const newUnreadCount = (conversationData?.unread_count || 0) + 1;
-        
-            // Step 2: Update unread_count
-            const { error: updateErr } = await supabase
-              .from('conversations')
-              .update({ unread_count: newUnreadCount })
-              .eq('conversation_id', conversation_id);
-        
-            if (updateErr) {
-              console.error('❌ Error updating unread_count:', updateErr.message);
-            } else {
-              console.log('✅ Unread count incremented to', newUnreadCount, 'for conversation_id:', conversation_id);
-            }
-          }
-        }        
-  
-        // 🕰️ Update last_message_at timestamp
-        function getISTTimestamp() {
-          const nowUTC = new Date();
-          const istOffset = 5.5 * 60 * 60 * 1000; // 19800000 ms
-          const istDate = new Date(nowUTC.getTime() + istOffset);
-          return istDate.toISOString().slice(0, 19).replace('T', ' ');
-        }
-  
-        const currentTimestamp = getISTTimestamp();
-  
-        // Update last_message_at and last_sender_id timestamp in the conversation
-        const { data, error } = await supabase
+      }
+
+      // 🐞 DEBUG: Check if conversation_id was extracted properly
+      if (!conversation_id) {
+        console.warn('⚠️ No conversation_id found. Cannot increment unread count.');
+      } else {
+        console.log('✅ conversation_id to increment unread count for:', conversation_id);
+      
+        // Step 1: Get current unread_count
+        const { data: conversationData, error: fetchErr } = await supabase
           .from('conversations')
-          .update({ last_message_at: currentTimestamp, last_sender_id: sender_id })
-          .eq('conversation_id', conversation_id);
-  
-        if (error) {
-          console.error("❌ Failed to update last_message_at and last_sender_id:", error.message, error);
+          .select('unread_count')
+          .eq('conversation_id', conversation_id)
+          .single();
+          
+      
+        if (fetchErr) {
+          console.error('❌ Error fetching current unread_count:', fetchErr.message);
         } else {
-          console.log("✅ last_message_at and last_sender_id updated successfully:", data);
+          const newUnreadCount = (conversationData?.unread_count || 0) + 1;
+      
+          // Step 2: Update unread_count
+          const { error: updateErr } = await supabase
+            .from('conversations')
+            .update({ unread_count: newUnreadCount })
+            .eq('conversation_id', conversation_id);
+      
+          if (updateErr) {
+            console.error('❌ Error updating unread_count:', updateErr.message);
+          } else {
+            console.log('✅ Unread count incremented to', newUnreadCount, 'for conversation_id:', conversation_id);
+          }
         }
+      }        
+
+      // 🕰️ Update last_message_at timestamp
+      function getISTTimestamp() {
+        const nowUTC = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000; // 19800000 ms
+        const istDate = new Date(nowUTC.getTime() + istOffset);
+        return istDate.toISOString().slice(0, 19).replace('T', ' ');
+      }
+
+      const currentTimestamp = getISTTimestamp();
+
+      if (!sender_id) {
+        console.error("sender_id not found: ", sender_id);
+        return socket.emit('error-message', { error: 'sender_id not found' });
+      }
+      console.log("Sender ID: ", sender_id);  // Add this log to verify the value of sender_id
+
+      const { data, error } = await supabase
+        .from('conversations')
+        .update({ last_message_at: currentTimestamp, last_sender_id: sender_id })
+        .eq('conversation_id', conversation_id);
+
+      if (error) {
+        console.error("Error updating conversation: ", error);
+        return socket.emit('error-message', { error: 'Database update failed' });
+      }
+
+      console.log("Updated conversation data: ", data);  // Log the result to verify successful update
+
+        
+      if (error) {
+        console.error("❌ Failed to update last_message_at and last_sender_id:", error.message, error);
+      } else {
+        console.log("✅ last_message_at and last_sender_id updated successfully:", data);
       }
   
       // Insert new message into messages table
@@ -224,50 +249,65 @@ export const registerSocketEvents = (socket, io) => {
     }
   });  
 
-  // 📚 Load all conversations of a user
-  socket.on('load-conversations', async ({ user_id }) => {
-    try {
-      const { data: conversations, error } = await supabase
-    .from('conversations')
-    .select(`
-      conversation_id,
-      last_message_at,
-      last_sender_id,
-      unread_count,
-      sender:sender_id (
-        id,
-        name,
-        profiles (
-          photo_url
+// 📚 Load all conversations of a user
+socket.on('load-conversations', async ({ user_id }) => {
+  try {
+    // Step 1: Get conversations for the user
+    const { data: conversations, error } = await supabase
+      .from('conversations')
+      .select(`
+        conversation_id,
+        last_message_at,
+        last_sender_id,
+        unread_count,
+        sender:sender_id (
+          id,
+          name,
+          profiles (
+            photo_url
+          )
+        ),
+        receiver:receiver_id (
+          id,
+          name,
+          profiles (
+            photo_url
+          )
         )
-      ),
-      receiver:receiver_id (
-        id,
-        name,
-        profiles (
-          photo_url
-        )
-      ),
-      messages (
-        message_content,
-        created_at
-      )
-    `)
-    .or(`sender_id.eq.${user_id},receiver_id.eq.${user_id}`)
-    .order('last_message_at', { ascending: true }) // Order conversations by last_message_at
-    .limit(1); // Only retrieve one message per conversation
+      `)
+      .or(`sender_id.eq.${user_id},receiver_id.eq.${user_id}`)
+      .order('last_message_at', { ascending: false });
 
-      if (error) {
-        console.error('❌ Error loading conversations:', error.message);
-        return socket.emit('error-message', { error: 'Could not load conversations' });
-      }
-
-      socket.emit('conversations-loaded', { conversations });
-    } catch (err) {
-      console.error('🔥 load-conversations error:', err.message);
-      socket.emit('error-message', { error: 'Something went wrong while loading conversations' });
+    if (error) {
+      console.error('❌ Error loading conversations:', error.message);
+      return socket.emit('error-message', { error: 'Could not load conversations' });
     }
-  });
+
+    // Step 2: For each conversation, fetch latest message
+    const conversationWithLastMessage = await Promise.all(
+      conversations.map(async (conv) => {
+        const { data: messages } = await supabase
+          .from('messages')
+          .select('message_content, created_at')
+          .eq('conversation_id', conv.conversation_id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        return {
+          ...conv,
+          last_message: messages?.[0] || null,
+        };
+      })
+    );
+
+    // ✅ Emit the modified data with last message
+    socket.emit('conversations-loaded', { conversations: conversationWithLastMessage });
+  } catch (err) {
+    console.error('🔥 load-conversations error:', err.message);
+    socket.emit('error-message', { error: 'Something went wrong while loading conversations' });
+  }
+});
+
 
   // 📖 Load full chat history between two users
   socket.on('load-chat-history', async ({ user1_id, user2_id }) => {
