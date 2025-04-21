@@ -492,6 +492,8 @@ function Header({photoUrl}) {
         <i className="fa fa-align-center" aria-hidden="true" /> See more
       </h4>
       <ul>
+        {authStatus && 
+          <>
         <li>
           <a href="/interests">See other profiles</a>
         </li>
@@ -501,6 +503,13 @@ function Header({photoUrl}) {
         <li>
           <a href="/profile">Profile details</a>
         </li>
+        <li>
+          <a href="/chat-list">My Chats</a>
+        </li>
+        <li>
+          <a href="/log-out">Logout</a>
+        </li></>
+        }
 
         {!authStatus && 
         <>
