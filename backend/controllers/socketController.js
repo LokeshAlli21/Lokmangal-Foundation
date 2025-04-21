@@ -4,6 +4,13 @@ import { supabase } from '../supabase/supabaseClient.js';
 // Map to track connected users and their socket IDs
 const userSocketMap = {}; // Format: userId => socketId
 
+function getISTTimestamp() {
+  const nowUTC = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000; // 19800000 ms
+  const istDate = new Date(nowUTC.getTime() + istOffset);
+  return istDate.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 // Main function to register socket events
 export const registerSocketEvents = (socket, io) => {
   console.log('📲 Registered socket:', socket.id);
@@ -12,7 +19,11 @@ export const registerSocketEvents = (socket, io) => {
   socket.on('join', ({ userId }) => {
     userSocketMap[userId] = socket.id; // Map user to socket ID
     console.log(`👤 User ${userId} joined with socket ID: ${socket.id}`);
-    io.emit('user-status', { userId, status: 'online' }); // Notify all users of online status
+    io.emit('user-status', { userId, status: 'online' });
+    // Notify all other users
+    socket.broadcast.emit('user-status', { userId, status: 'online' });
+    // Send the current list of online users to the joining user
+    socket.emit('online-users', Object.keys(userSocketMap));
   });
 
   // ✉️ Handle sending a message
@@ -101,12 +112,7 @@ export const registerSocketEvents = (socket, io) => {
       }        
 
       // 🕰️ Update last_message_at timestamp
-      function getISTTimestamp() {
-        const nowUTC = new Date();
-        const istOffset = 5.5 * 60 * 60 * 1000; // 19800000 ms
-        const istDate = new Date(nowUTC.getTime() + istOffset);
-        return istDate.toISOString().slice(0, 19).replace('T', ' ');
-      }
+      
 
       const currentTimestamp = getISTTimestamp();
 
@@ -179,6 +185,18 @@ export const registerSocketEvents = (socket, io) => {
       console.error('🔥 send-message error:', err.message);
       socket.emit('error-message', { error: 'Something went wrong' });
     }
+
+    // 2. Notify the receiver in real-time if they are online
+    const receiverSocketId = userSocketMap[receiver_id];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('new-message', {
+        sender_id,
+        receiver_id,
+        message_content,
+        timestamp: getISTTimestamp()
+      });
+    }
+
   });
   
 

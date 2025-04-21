@@ -77,6 +77,27 @@ function Header({photoUrl}) {
       navigate('/log-out')
     }
   }
+
+
+
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth > 767);
+    };
+
+    // Add event listener on mount
+    window.addEventListener('resize', handleResize);
+
+    // Call it initially
+    handleResize();
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
 
   return (
@@ -85,13 +106,13 @@ function Header({photoUrl}) {
   <div id="preloader">
     <div className="plod">
       <span className="lod1">
-        <img src="images/loder/1.png" alt="" loading="lazy" />
+        <img src="../images/loder/1.png" alt="" loading="lazy" />
       </span>
       <span className="lod2">
-        <img src="images/loder/2.png" alt="" loading="lazy" />
+        <img src="../images/loder/2.png" alt="" loading="lazy" />
       </span>
       <span className="lod3">
-        <img src="images/loder/3.png" alt="" loading="lazy" />
+        <img src="../images/loder/3.png" alt="" loading="lazy" />
       </span>
     </div>
   </div>
@@ -210,7 +231,7 @@ function Header({photoUrl}) {
       <div className="menu-pop-help">
         <h4>Support Team</h4>
         <div className="user-pro">
-          <img src="images/profiles/1.jpg" alt="" loading="lazy" />
+          <img src="../images/profiles/1.jpg" alt="" loading="lazy" />
         </div>
         <div className="user-bio">
           <h5>Ashley emyy</h5>
@@ -345,7 +366,7 @@ function Header({photoUrl}) {
             </ul>
           </div>
           {/* USER PROFILE */}
-          <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '15px' }}>
+          <div style={{display: isLargeScreen ? 'flex' : 'none' , flexWrap:'nowrap', alignItems: 'center', columnGap: '15px' }}>
            <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
 
            <img
@@ -388,7 +409,7 @@ function Header({photoUrl}) {
                 <img src="images/icon/users.svg" alt="" />
               </span> */}
               <span className="mobile-menu" data-mob="mobile">
-                <img src="images/icon/menu.svg" alt="" />
+                <img src="../images/icon/menu.svg" alt="" />
               </span>
             </div>
           </div>
@@ -401,8 +422,35 @@ function Header({photoUrl}) {
   {/* MOBILE MENU POPUP */}
   <div className="mob-me-all mobile_menu" style={{zIndex: '200'}}>
     <div className="mob-me-clo">
-      <img src="images/icon/close.svg" alt="" />
+      <img src="../images/icon/close.svg" alt="" />
     </div>
+        <div style={{display: isLargeScreen ? 'none' : 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '15px' }}>
+           <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
+
+           <img
+            style={{height: '50px', width: '50px', objectFit: 'cover',
+               border: '1px solid rgb(118, 69, 8)',
+               borderRadius: '50%'
+              }}
+             src="../images/subhash bapu deshmukh.png" alt="subhash bapu deshmukh" /> 
+             <div style={{display: 'flex' , flexDirection: 'column', alignItems: 'start', columnGap: '0px', rowGap: '0px', height: '35px' }}>
+              <h5 style={{fontSize: '12px',whiteSpace: 'nowrap'}}><b>श्री. सुभाष (बापू) <br /> देशमुख</b></h5>
+              {/* <h6 style={{fontSize: '10px'}}><b>BJP: </b>आमदार (सोलपूर)</h6> */}
+             </div>
+           </div>
+            <div style={{display: 'flex' , flexWrap:'nowrap', alignItems: 'center', columnGap: '5px' }}>
+            <img
+            style={{height: '50px', width: '50px', objectFit: 'cover',
+               border: '1px solid rgb(118, 69, 8)',
+               borderRadius: '50%'
+              }}
+             src="../images/rohan deshmukh.png" alt="subhash bapu deshmukh" />
+             <div style={{display: 'flex' , flexDirection: 'column', alignItems: 'start', columnGap: '0px', rowGap: '0px' ,height: '35px'  }}>
+              <h5 style={{fontSize: '12px',  whiteSpace: 'nowrap'}}><b>श्री. रोहन सुभाष <br />   देशमुख</b></h5>
+              {/* <h6 style={{fontSize: '10px'}}><b>BJP: </b>कार्यकर्ता</h6> */}
+             </div>
+            </div>
+          </div>
     <div className="mv-bus">
       {/* <h4>
         <i className="fa fa-globe" aria-hidden="true" /> EXPLORE CATEGORY

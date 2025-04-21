@@ -27,6 +27,7 @@ const toggleDarkMode = () => {
   
 };
 
+  const [isOnline, setIsOnline] = useState(false);
   const userData = useSelector((state) => state.auth.userData);
   const userId = userData?.id;
   const { id: receiverId } = useParams();
@@ -100,6 +101,13 @@ const toggleDarkMode = () => {
       user2_id: receiverId,
     });
 
+     // Listen to status changes
+    socket.on('user-status', ({ userId:id, status }) => {
+      if (userId === id) {
+        setIsOnline(status === 'online');
+      }
+    });
+
     const handleChatHistory = ({ conversation_id }) => {
       setConversationId(conversation_id);
       setPage(1);
@@ -119,6 +127,7 @@ const toggleDarkMode = () => {
 
     return () => {
       socket.off("chat-history", handleChatHistory);
+      socket.off("user-status");
     };
   }, [userId, receiverId]);
 
@@ -185,6 +194,9 @@ const toggleDarkMode = () => {
         document.exitFullscreen();
       }
     };
+
+
+    
 
 
   return (
@@ -254,6 +266,8 @@ const toggleDarkMode = () => {
       >
         {isDarkMode ? "🌞" : "🌙"} 
       </div>
+      {/* <p>{isOnline ? "🟢 Online" : "⚪ Offline"}</p> */}
+
     </div>
 
 

@@ -38,6 +38,8 @@ import 'slick-carousel';
                                 import "slick-carousel/slick/slick-theme.css";
 import databaseService from './backend-services/database/database';
 
+import socket from './socket';
+
 function App() {
   const dispatch = useDispatch();
   const storeData = useSelector(state => state.auth); 
@@ -69,6 +71,19 @@ useEffect(() => {
       });
   }
 }, [storeData])
+
+// useEffect(() => {
+//   if (storeData.status) {
+//   socket.connect();
+
+//   socket.emit('join', { userId: storeData.userData.id });
+
+//   return () => {
+//     socket.disconnect(); // Optional cleanup
+//   };
+//   }
+// }, [storeData]);
+
   
 
   return (
