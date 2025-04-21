@@ -366,6 +366,18 @@ socket.on('load-conversations', async ({ user_id }) => {
     }
   });
 
+  // ✅ Handle user status check
+  socket.on("check-user-status", ({ userId }) => {
+    const targetSocketId = userSocketMap[userId];
+    const status = targetSocketId ? "online" : "offline";
+  
+    // Emit status only to the requesting client
+    socket.emit("user-status", { userId, status });
+  
+    console.log(`🔍 Checked status of user ${userId}: ${status}`);
+  });
+  
+
   // 🔌 Handle user disconnection
   socket.on('disconnect', () => {
     for (const [userId, socketId] of Object.entries(userSocketMap)) {

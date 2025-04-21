@@ -38,7 +38,7 @@ import 'slick-carousel';
                                 import "slick-carousel/slick/slick-theme.css";
 import databaseService from './backend-services/database/database';
 
-import socket from './socket';
+import { SocketProvider } from './context/SocketContext';
 
 function App() {
   const dispatch = useDispatch();
@@ -72,27 +72,17 @@ useEffect(() => {
   }
 }, [storeData])
 
-// useEffect(() => {
-//   if (storeData.status) {
-//   socket.connect();
-
-//   socket.emit('join', { userId: storeData.userData.id });
-
-//   return () => {
-//     socket.disconnect(); // Optional cleanup
-//   };
-//   }
-// }, [storeData]);
-
   
 
   return (
+    <SocketProvider userId={storeData?.userData?.id}>
     <>
       <Header photoUrl={photoUrl && photoUrl} />
       <ToastContainer position="bottom-right" autoClose={5000}  />
       <Outlet context={{ photoUrl }}   />
       <Footer />
     </>
+    </SocketProvider>
   );
 }
 

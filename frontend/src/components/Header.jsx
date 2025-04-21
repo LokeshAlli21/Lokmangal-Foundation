@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useSocket } from '../context/SocketContext.jsx';
 
 function Header({photoUrl}) {
+
+
+  const socket = useSocket();
 
   const navigate = useNavigate();
 
@@ -98,6 +103,20 @@ function Header({photoUrl}) {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('new-message', (data) => {
+      console.log('💬 New message:', data);
+      toast.info(`📩 New message from ${data.sender_name || 'User'}: ${data.message_content}`);
+    });
+
+    return () => {
+      socket.off('new-message');
+    };
+  }, [socket]);
   
 
   return (

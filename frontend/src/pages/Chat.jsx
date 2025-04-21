@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import socket from "../socket";
+import { useSocket } from '../context/SocketContext.jsx';
 import databaseService from "../backend-services/database/database";
 
 function Chat() {
+
+  const socket = useSocket();
 
   const { photoUrl } = useOutletContext();
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -95,7 +97,7 @@ const toggleDarkMode = () => {
   };
 
   useEffect(() => {
-    socket.emit("join", { userId });
+    // socket.emit("join", { userId });
     socket.emit("load-chat-history", {
       user1_id: userId,
       user2_id: receiverId,
@@ -103,7 +105,7 @@ const toggleDarkMode = () => {
 
      // Listen to status changes
     socket.on('user-status', ({ userId:id, status }) => {
-      if (userId === id) {
+      if (receiverId === id) {
         setIsOnline(status === 'online');
       }
     });
@@ -129,7 +131,7 @@ const toggleDarkMode = () => {
       socket.off("chat-history", handleChatHistory);
       socket.off("user-status");
     };
-  }, [userId, receiverId]);
+  }, [userId, receiverId,]);
 
   useEffect(() => {
     const handleMessagesLoaded = ({ messages: newMessages, totalCount }) => {
@@ -196,8 +198,32 @@ const toggleDarkMode = () => {
     };
 
 
+    useEffect(() => {
+      if (!socket || !receiverId) return;
     
-
+      const handleNewMessage = ({ sender_id, message_content }) => {
+        console.log("💬 New message from:", sender_id, message_content);
+    
+        // Emit an event to ask for current status of the sender
+        socket.emit("check-user-status", { userId: receiverId });
+      };
+    
+      const handleUserStatus = ({ userId: statusUserId, status }) => {
+        if (statusUserId === sender_id) {
+          setIsSenderOnline(status === 'online');
+        }
+      };
+    
+      socket.on("new-message", handleNewMessage);
+      socket.on("user-status", handleUserStatus);
+    
+      return () => {
+        socket.off("new-message", handleNewMessage);
+        socket.off("user-status", handleUserStatus);
+      };
+    }, [socket, receiverId]);
+    
+    
 
   return (
     <div id="chat-screen"
@@ -220,6 +246,7 @@ const toggleDarkMode = () => {
       style={{
         position: "absolute",
         top: "10px",
+        zIndex: 10,
         right: "10px",
         display: "flex",
         gap: "10px",
@@ -266,7 +293,7 @@ const toggleDarkMode = () => {
       >
         {isDarkMode ? "🌞" : "🌙"} 
       </div>
-      {/* <p>{isOnline ? "🟢 Online" : "⚪ Offline"}</p> */}
+      
 
     </div>
 
@@ -277,6 +304,7 @@ const toggleDarkMode = () => {
       display: "flex",
       alignItems: "center",
       gap: "20px",
+      position: 'relative',
       padding: "10px",
       backgroundColor: isDarkMode ? "#2c2c2c" : "#f1f5f9",
       borderRadius: "15px",
@@ -303,6 +331,7 @@ const toggleDarkMode = () => {
     >
       {receiverProfile?.first_name} {receiverProfile?.last_name}
     </h2>
+    <p style={{position: 'absolute', left: '2px', top: '2px'}}>{isOnline ? "🟢" : "⚪"}</p>
   </div>
 
   <div
@@ -380,7 +409,7 @@ const toggleDarkMode = () => {
                   color: isDarkMode ? "#bbb" : "#555"
                 }}
               >
-                {isSender ? "You" : `${receiverProfile.first_name}`}
+                {isSender ? "You" : `${receiverProfile?.first_name}`}
               </div>
 
               <div>{msg.message_content}</div>

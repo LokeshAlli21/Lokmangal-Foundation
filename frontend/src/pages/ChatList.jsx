@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import socket from '../socket';
+import { useSocket } from '../context/SocketContext.jsx';
 
 function ChatList() {
+  const socket = useSocket();
   const { photoUrl } = useOutletContext();
 
   const navigate = useNavigate()
@@ -16,47 +17,65 @@ function ChatList() {
   useEffect(() => {
     if (!userId) return;
 
-// Request conversations for the current user
-socket.emit('load-conversations', { user_id: userId });
+      // Request conversations for the current user
+      socket.emit('load-conversations', { user_id: userId });
 
-// Listen for the loaded conversations
-socket.on('conversations-loaded', ({ conversations }) => {
-  console.log('conversations: ', conversations);
+      // Listen for the loaded conversations
+      socket.on('conversations-loaded', ({ conversations }) => {
+        console.log('conversations: ', conversations);
 
-  const transformed = conversations.map((conv) => {
-    if (!conv) return null;
+        const transformed = conversations.map((conv) => {
+          if (!conv) return null;
 
-    return {
-      conversation_id: conv.conversation_id,
-      last_message_at: conv.last_message_at,
-      last_sender_id: conv.last_sender_id,
-      unread_count: conv.unread_count || 0,
-      user1: {
-        id: conv.sender.id,
-        name: conv.sender.name,
-        photo_url: conv.sender.profiles[0].photo_url || '',
-      },
-      user2: {
-        id: conv.receiver.id,
-        name: conv.receiver.name,
-        photo_url: conv.receiver.profiles[0].photo_url || '',
-      },
-      last_message: conv.last_message?.message_content || '', // ✅ now from backend
+          return {
+            conversation_id: conv.conversation_id,
+            last_message_at: conv.last_message_at,
+            last_sender_id: conv.last_sender_id,
+            unread_count: conv.unread_count || 0,
+            user1: {
+              id: conv.sender.id,
+              name: conv.sender.name,
+              photo_url: conv.sender.profiles[0].photo_url || '',
+            },
+            user2: {
+              id: conv.receiver.id,
+              name: conv.receiver.name,
+              photo_url: conv.receiver.profiles[0].photo_url || '',
+            },
+            last_message: conv.last_message?.message_content || '', // ✅ now from backend
+          };
+        }).filter(Boolean);
+
+        setConversationList(transformed);
+      });
+
+
+
+
+      // Cleanup on unmount
+      return () => {
+        socket.off('conversations-loaded');
+      };
+
+  }, [userId,socket]); 
+  
+
+  
+  useEffect(() => {
+    if (!socket || !userId) return;
+  
+    const handleNewMessage = () => {
+      // Re-fetch conversations to get updated unread counts & last messages
+      socket.emit('load-conversations', { user_id: userId });
     };
-  }).filter(Boolean);
-
-  setConversationList(transformed);
-});
-
-
-
-
-// Cleanup on unmount
-return () => {
-  socket.off('conversations-loaded');
-};
-
-  }, [userId]);  
+  
+    socket.on('new-message', handleNewMessage);
+  
+    return () => {
+      socket.off('new-message', handleNewMessage);
+    };
+  }, [socket, userId]);
+  
   
   console.log("transformed: ",conversationList);
   return (
