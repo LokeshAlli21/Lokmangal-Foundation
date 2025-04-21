@@ -521,12 +521,12 @@ function Header({photoUrl}) {
         
         
         
-        <li>
+        {/* <li>
           <a href="/contact">Contact</a>
         </li>
         <li>
           <a href="/about">About</a>
-        </li>
+        </li> */}
         {authStatus &&
         <li>
           <a href="/log-out">Logout</a>
