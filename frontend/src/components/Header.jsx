@@ -506,9 +506,7 @@ function Header({photoUrl}) {
         <li>
           <a href="/chat-list">My Chats</a>
         </li>
-        <li>
-          <a href="/log-out">Logout</a>
-        </li></>
+        </>
         }
 
         {!authStatus && 
@@ -529,6 +527,10 @@ function Header({photoUrl}) {
         <li>
           <a href="/about">About</a>
         </li>
+        {authStatus &&
+        <li>
+          <a href="/log-out">Logout</a>
+        </li>}
       </ul>
       {/* <div className="menu-pop-help">
         <h4>Support Team</h4>
