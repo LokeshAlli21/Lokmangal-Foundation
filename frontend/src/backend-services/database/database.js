@@ -147,6 +147,67 @@ class DatabaseService {
     }
   }
   
+  // Block user
+  async blockUser({ blocker_id, blocked_id }) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/block/block-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({ blocker_id, blocked_id }),
+      });
+
+      const data = await this.handleResponse(response);
+      toast.success("🚫 User blocked successfully!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to block user: ${error.message}`);
+      throw error;
+    }
+  }
+
+  // Unblock user
+  async unblockUser({ blocker_id, blocked_id }) {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/block/unblock-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({ blocker_id, blocked_id }),
+      });
+
+      const data = await this.handleResponse(response);
+      toast.success("✅ User unblocked successfully!");
+      return data;
+    } catch (error) {
+      toast.error(`❌ Failed to unblock user: ${error.message}`);
+      throw error;
+    }
+  }
+
+// Check if blocker_id has blocked blocked_id or vice versa
+async checkUserIsBlockedById({ blocker_id, blocked_id }) {
+  try {
+    const response = await fetch(
+      `${this.baseUrl}/api/block/isBlocked?blocker_id=${blocker_id}&blocked_id=${blocked_id}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+
+    const data = await this.handleResponse(response);
+    toast.success("✅ Block status checked!");
+    return data;
+  } catch (error) {
+    toast.error(`❌ Failed to check block status: ${error.message}`);
+    throw error;
+  }
+}
+
 
 
 // ✅ Get full profile by email (POST request)
