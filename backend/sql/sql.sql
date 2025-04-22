@@ -257,6 +257,19 @@ CREATE TABLE messages (
   conversation_id INTEGER REFERENCES conversations(conversation_id) ON DELETE CASCADE
 );
 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------- blocked_users Table -------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE blocked_users (
+  blocker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  blocked_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  blocked_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
+  PRIMARY KEY (blocker_id, blocked_id)
+);
+
+
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------- maudit_logs (optional, for tracking changes and actions) --------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------------

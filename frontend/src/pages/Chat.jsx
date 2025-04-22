@@ -233,8 +233,76 @@ const toggleDarkMode = () => {
         socket.off("user-status", handleUserStatus);
       };
     }, [socket, receiverId]);
+
+
+
+    const [open, setOpen] = useState(false);
+    const menuRef = useRef();
+
+    const handleBlock = () =>{
+      console.log('called handleBlock');
+      
+    }
+    const handleClearChat = () =>{
+      console.log('called handleClearChat');
+    }
     
-    
+  
+    useEffect(() => {
+      const handleClickOutside = (e) => {
+        if (menuRef.current && !menuRef.current.contains(e.target)) {
+          setOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+  
+    const dotStyle = {
+      width: "4px",
+      height: "4px",
+      backgroundColor: isDarkMode ? "#fff" : "#333",
+      borderRadius: "50%",
+    };
+  
+    const buttonStyle = {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      padding: "25px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "3px",
+    };
+  
+    const menuStyle = {
+      position: "absolute",
+      top: "50px",
+      right: "10px",
+      background: isDarkMode ? "#444" : "#fff",
+      // border: "1px solid #ddd",
+      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+      borderRadius: "4px",
+      zIndex: 100,
+      overflow: "hidden",
+      minWidth: "140px",
+    };
+  
+    const menuItemStyle = {
+      padding: "8px 12px",
+      cursor: "pointer",
+      color: isDarkMode ? "#fff" : "#000",
+      backgroundColor: "transparent",
+    };
+  
+    const handleOptionClick = (option) => {
+      const confirmText = `Are you sure you want to ${option}?`;
+      if (window.confirm(confirmText)) {
+        if (option === "clear chat") handleClearChat();
+        if (option === "block") handleBlock();
+      }
+    };
+
 
   return (
     <div id="chat-screen"
@@ -310,41 +378,79 @@ const toggleDarkMode = () => {
 
 
 
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "20px",
-      position: 'relative',
-      padding: "10px",
-      backgroundColor: isDarkMode ? "#2c2c2c" : "#f1f5f9",
-      borderRadius: "15px",
-      marginBottom: "16px"
-    }}
-    onClick={() => {handleNavigate(receiverId)}}
-  >
-    <img
-      src={receiverProfile?.photo_url}
-      alt="Profile"
+
+    <div
       style={{
-        height: "80px",
-        width: "80px",
-        borderRadius: "50%",
-        objectFit: "cover",
-        border: `2px solid ${isDarkMode? 'rgb(229, 70, 89) ' : 'rgb(112, 171, 233)'}`
+        display: "flex",
+        alignItems: "center",
+        gap: "20px",
+        position: "relative",
+        padding: "10px",
+        backgroundColor: isDarkMode ? "#2c2c2c" : "#f1f5f9",
+        borderRadius: "15px",
+        marginBottom: "16px",
       }}
-    />
-    <h2
-      style={{
-        fontSize: "28px",
-        fontWeight: "600",
-        color: isDarkMode ? "#fff" : "#111827"
-      }}
+      ref={menuRef}
     >
-      {receiverProfile?.first_name} {receiverProfile?.last_name}
-    </h2>
-    <p style={{position: 'absolute', left: '2px', top: '2px'}}>{isOnline ? "🟢" : ""}</p>
-  </div>
+      <img
+        src={receiverProfile?.photo_url}
+        alt="Profile"
+        style={{
+          height: "80px",
+          width: "80px",
+          borderRadius: "50%",
+          objectFit: "cover",
+          border: `2px solid ${
+            isDarkMode ? "rgb(229, 70, 89)" : "rgb(112, 171, 233)"
+          }`,
+        }}
+        onClick={() => handleNavigate(receiverId)}
+      />
+      <h2
+        style={{
+          fontSize: "28px",
+          fontWeight: "600",
+          flex: 1,
+          color: isDarkMode ? "#fff" : "#111827",
+        }}
+      >
+        {receiverProfile?.first_name} {receiverProfile?.last_name}
+      </h2>
+
+      <div style={{ position: "relative" }}>
+        <button style={buttonStyle} onClick={() => setOpen((prev) => !prev)}>
+          <span style={dotStyle}></span>
+          <span style={dotStyle}></span>
+          <span style={dotStyle}></span>
+        </button>
+
+        {open && (
+          <div style={menuStyle}>
+            {["clear chat", "block"].map((item) => (
+              <div
+                key={item}
+                style={menuItemStyle}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = isDarkMode
+                    ? "#555"
+                    : "#f1f1f1")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "transparent")
+                }
+                onClick={() => handleOptionClick(item)}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <p style={{ position: "absolute", left: "2px", top: "2px" }}>
+        {isOnline ? "🟢" : ""}
+      </p>
+    </div>
 
   <div
   id="chat-scroll"
