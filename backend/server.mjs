@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import noAuthRoutes from './routes/noAuthRoutes.js';
 import testWithAuth from './routes/routes.js';
 import profileRoute from './routes/profileRoute.js';
+import blockRoutes from './routes/blockRoutes.js';
 
 import http from 'http';
 import { initSocket } from './socket-io/socket.js';
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/test-with-auth', testWithAuth);
 app.use('/api/no-auth', noAuthRoutes);
 app.use('/api/profiles', profileRoute);
+app.use('/api/block', blockRoutes);
 
 // Main route
 app.get('/', (req, res) => {
