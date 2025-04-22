@@ -51,7 +51,7 @@ function Dashboard() {
       
             if (!conv) return null; // Skip if conv is invalid
             
-            const lastMessageObj = conv.messages?.[conv.messages.length - 1] || {};
+            const lastMessageObj = conv.last_message?.[conv.last_message.length - 1] || {};
       
             return {
               isSender: isSender,
@@ -69,7 +69,7 @@ function Dashboard() {
                 name: conv.receiver.name,
                 photo_url: conv.receiver.profiles?.[0]?.photo_url || '', // Safely access profile photo
               },
-              last_message: lastMessageObj.message_content || '',
+              last_message: conv.last_message || '',
             };
           }).filter(Boolean); // Filter out any invalid ones
       
@@ -228,9 +228,11 @@ function Dashboard() {
 
 {
     conversationList.map((conv) => {
-        const lastMessageText = conv.last_message?.trim() || '';
-        console.log(userId);
-        console.log(conv.last_sender_id);
+        const lastMessageText = conv.last_message?.message_content?.trim() || '';
+        // console.log("conv.last_message?.message_content: ", conv.last_message);
+        
+        // console.log(userId);
+        // console.log(conv.last_sender_id);
         
         const isCurrentUserSender = conv.last_sender_id === userId;
       
