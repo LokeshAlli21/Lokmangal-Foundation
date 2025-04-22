@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSocket } from '../context/SocketContext.jsx';
+import databaseService from '../backend-services/database/database.js';
 
 function Header({photoUrl}) {
 
@@ -104,14 +105,77 @@ function Header({photoUrl}) {
     };
   }, []);
 
+  const [newMessageProfile, setNewMessageProfile] = useState(null)
 
   useEffect(() => {
     if (!socket) return;
 
     socket.on('new-message', (data) => {
-      console.log('💬 New message:', data);
-      toast.info(`📩 New message from ${data.sender_name || 'User'}: ${data.message_content}`);
-    });
+      // console.log('💬 New message:', data);
+    
+      if (data.sender_id) {
+        databaseService.getChatReceiverNameAndPhotoById(data.sender_id)
+          .then((d) => {
+            // console.log(d);
+    
+            toast(
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+              }}
+              onClick={() => {
+                navigate(`/chat/${data.sender_id}`)
+              }}
+              >
+                <img
+                  src={d?.photo_url || 'https://via.placeholder.com/70'}
+                  alt={d?.first_name}
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '',
+                  }}
+                />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontWeight: 600, fontSize: '16px', color: '#1f2937' }}>
+                    {d?.first_name} {d?.last_name}
+                  </span>
+                  <span style={{ fontSize: '14px', color: '#374151', marginTop: '2px' }}>
+                    {data.message_content}
+                  </span>
+                </div>
+                <span style={{
+                  position: 'absolute',
+                  bottom: '8px',
+                  right: '12px',
+                  fontSize: '11px',
+                  color: '#6b7280',
+                }}>
+                   {new Date(data.timestamp).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>,
+              {
+                position: 'top-right',
+                autoClose: false,
+                closeOnClick: true,
+                draggable: true,
+              }
+            );
+    
+            setNewMessageProfile(d);
+          })
+          .catch(console.error);
+      }
+    
+      // Optional fallback toast
+      // toast(`🗨️ New message from ${data.sender_name || 'User'}: ${data.message_content}`);
+    });    
 
     return () => {
       socket.off('new-message');

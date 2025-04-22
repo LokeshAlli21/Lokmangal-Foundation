@@ -96,7 +96,7 @@ class DatabaseService {
         headers: this.getAuthHeaders(),
       });
       const data = await this.handleResponse(response);
-      toast.success("✅ Profile name and photo loaded successfully!");
+      // toast.success("✅ Profile name and photo loaded successfully!");
       return data;
     } catch (error) {
       toast.error(`❌ Failed to load profile name and photo: ${error.message}`);

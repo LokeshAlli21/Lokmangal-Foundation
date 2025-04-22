@@ -3,8 +3,15 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useSocket } from '../context/SocketContext.jsx';
 import databaseService from "../backend-services/database/database";
+import { useNavigate } from "react-router-dom";
 
 function Chat() {
+
+  const navigate = useNavigate()
+  
+  const handleNavigate = (id) =>{
+    navigate(`/profile-details/${id}`)
+  }
 
   const socket = useSocket();
 
@@ -57,8 +64,8 @@ const toggleDarkMode = () => {
   };
   
   const handleUserStatus = ({ userId: statusUserId, status }) => {
-    if (statusUserId === sender_id) {
-      setIsSenderOnline(status === 'online');
+    if (statusUserId === receiverId) {
+      setIsOnline(status === 'online');
     }
   };
 
@@ -217,11 +224,6 @@ const toggleDarkMode = () => {
         socket.emit("check-user-status", { userId: receiverId });
       };
     
-      const handleUserStatus = ({ userId: statusUserId, status }) => {
-        if (statusUserId === sender_id) {
-          setIsSenderOnline(status === 'online');
-        }
-      };
     
       socket.on("new-message", handleNewMessage);
       socket.on("user-status", handleUserStatus);
@@ -319,6 +321,7 @@ const toggleDarkMode = () => {
       borderRadius: "15px",
       marginBottom: "16px"
     }}
+    onClick={() => {handleNavigate(receiverId)}}
   >
     <img
       src={receiverProfile?.photo_url}
@@ -340,7 +343,7 @@ const toggleDarkMode = () => {
     >
       {receiverProfile?.first_name} {receiverProfile?.last_name}
     </h2>
-    <p style={{position: 'absolute', left: '2px', top: '2px'}}>{isOnline ? "🟢" : "⚪"}</p>
+    <p style={{position: 'absolute', left: '2px', top: '2px'}}>{isOnline ? "🟢" : ""}</p>
   </div>
 
   <div
