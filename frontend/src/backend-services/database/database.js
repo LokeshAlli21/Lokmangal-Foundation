@@ -114,6 +114,31 @@ class DatabaseService {
       throw error;
     }
   }
+
+  async blockUserByAdmin ({adminId,userId }) {
+    console.log('called ........................................................................................................');
+    
+    try {
+      const response = await fetch(`${this.baseUrl}/api/super-admin/block-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({
+          adminId: adminId,
+          userId: userId,
+        }),
+      });
+  
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+  
+      toast.success(result.message);
+    } catch (error) {
+      toast.error(`🚨 Admin block failed: ${error.message}`);
+    }
+  };
   
 
   async getProfilePhotoById(id) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import databaseService from '../backend-services/database/database';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function ViewAllProfiles() {
 
@@ -35,6 +36,25 @@ function ViewAllProfiles() {
     fetchProfiles();
   }, [userId]);
 
+  
+
+  const handleBlockByAdmin = async (targetUserId) => {
+    try {
+
+      await databaseService.blockUserByAdmin({
+        adminId: userId,
+        userId: targetUserId,
+      });
+
+      toast.success(`✅ User ${targetUserId} has been blocked!`);
+      setProfiles(prev => prev.filter(profile => profile.user_id !== targetUserId));
+    } catch (err) {
+      toast.error(`🚨 Failed to block user: ${err.message}`);
+      console.error("Error blocking user:", err);
+    } 
+  };
+  const handleUnblockByAdmin = () => {} 
+
   if (loading) return <p>Loading profiles...</p>;
 
   if (notAllowed) {
@@ -52,15 +72,7 @@ function ViewAllProfiles() {
       {profiles.length === 0 ? (
         <p>No profiles found.</p>
       ) : (
-        
-
-
-
-
-
-
-
-        <section>
+<section>
   <div className="db" style={{marginTop: 0, padding: "50px"}}>
     <div className="container">
       <div className="row">

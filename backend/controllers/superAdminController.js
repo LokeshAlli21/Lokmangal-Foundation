@@ -47,3 +47,33 @@ export const getProfilesForSuperAdmin = async (req, res) => {
     // Return user role (super_admin, admin, user, etc.)
     return res.status(200).json({ role: user.role });
   };
+
+  export const blockUserByAdmin = async (req, res) => {
+    const { adminId, userId } = req.body;
+  
+    if (!adminId || !userId) {
+      return res.status(400).json({ error: "Missing adminId or userId" });
+    }
+  
+    // Optional: check if adminId belongs to an admin
+    const { data: admin, error: adminError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", adminId)
+      .single();
+  
+    if (adminError || admin.role !== "super_admin") {
+      return res.status(403).json({ error: "Only admins can block users." });
+    }
+  
+    // Block user (store in a separate table or a blocked flag)
+    const { error: blockError } = await supabase
+      .from("admin_blocked_users")
+      .upsert([{ admin_id: adminId, user_id: userId }]);
+  
+    if (blockError) {
+      return res.status(500).json({ error: "Failed to block user." });
+    }
+  
+    return res.status(200).json({ message: "User blocked by admin successfully" });
+  };
