@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { data, useOutletContext, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useSocket } from '../context/SocketContext.jsx';
 import databaseService from "../backend-services/database/database";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Chat() {
+
+  const [isBlocker, setIsBlocker] = useState(false)
+  const [isBlockedBy, setIsBlockedBy] = useState(false)
 
   const navigate = useNavigate()
   
@@ -228,21 +232,48 @@ const toggleDarkMode = () => {
       socket.on("new-message", handleNewMessage);
       socket.on("user-status", handleUserStatus);
     
+
+      // Listen for the response of send-message event
+      socket.on("send-message", handleMessageStatus);
       return () => {
         socket.off("new-message", handleNewMessage);
         socket.off("user-status", handleUserStatus);
+        socket.off("send-message", handleMessageStatus);
       };
     }, [socket, receiverId]);
 
+
+    const handleMessageStatus = (response) => {
+      console.log("Received response:", response);  // Log the response for debugging
+      if (response.status === "blocked") {
+        toast.error(response.message);  // Show block message
+      } else if (response.status === "success") {
+        // toast.success(response.message);  // Message sent successfully
+        console.log("response.message: ",response.message);
+        
+      } else {
+        toast.error(response.message || "Failed to send message");  // General error message
+      }
+    }
 
 
     const [open, setOpen] = useState(false);
     const menuRef = useRef();
 
-    const handleBlock = () =>{
+    const handleBlock = async () => {
       console.log('called handleBlock');
-      
-    }
+      try {
+        const data = await databaseService.blockUser({
+          blocker_id: userId,
+          blocked_id: receiverId
+        });
+        console.log('User blocked successfully:: data: ', data);
+        setIsBlocker(true)
+      } catch (error) {
+        console.error('Error blocking user:', error);
+      }
+    };
+    
     const handleClearChat = () =>{
       console.log('called handleClearChat');
     }
@@ -302,6 +333,34 @@ const toggleDarkMode = () => {
         if (option === "block") handleBlock();
       }
     };
+
+    useEffect(() => {
+      const checkBlockStatus = async () => {
+        try {
+          const status = await databaseService.checkUserIsBlockedById({
+            blocker_id: userId,
+            blocked_id: receiverId,
+          });
+    
+          if (status.is_blocker) {
+            setIsBlocker(true)
+            // toast("You have blocked this user.");
+            console.log("You have blocked this user.");
+          } else if (status.is_blocked) {
+            setIsBlockedBy(true)
+            // toast("You are blocked by this user.");
+            console.log("You are blocked by this user.");
+          } else {
+            // toast("No blocking in either direction.");
+            console.log("No blocking in either direction.");
+          }
+        } catch (error) {
+          console.error("Error checking block status:", error);
+        }
+      };
+    
+      checkBlockStatus();
+    }, [userId, receiverId]); // Add dependencies if they are dynamic    
 
 
   return (
@@ -453,7 +512,7 @@ const toggleDarkMode = () => {
     </div>
 
   <div
-  id="chat-scroll"
+    id="chat-scroll"
     ref={messagesContainerRef}
     onScroll={handleScroll}
     style={{
@@ -466,13 +525,11 @@ const toggleDarkMode = () => {
       transition: "background-color 0.3s ease"
     }}
   >
-    {loading && (
+    {isBlockedBy ? (
       <p style={{ textAlign: "center", color: "#888", fontSize: "14px" }}>
-        Loading more messages...
+        You are blocked by this user. You cannot send or view messages.
       </p>
-    )}
-
-    {messages.length === 0 ? (
+    ) : messages.length === 0 ? (
       <p style={{ textAlign: "center", color: "#888", fontSize: "14px" }}>
         No messages yet
       </p>
@@ -566,15 +623,27 @@ const toggleDarkMode = () => {
   <div style={{ display: "flex", gap: "10px" }}>
     <textarea
       rows="2"
-      placeholder="Type your message..."
+      placeholder={
+        isBlockedBy
+          ? "You are blocked by this user"
+          : isBlocker
+          ? "You have blocked this user"
+          : "Type your message..."
+      }
       value={messageContent}
       onChange={(e) => setMessageContent(e.target.value)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          !isBlockedBy &&
+          !isBlocker
+        ) {
           e.preventDefault();
           handleSend();
         }
       }}
+      disabled={isBlockedBy || isBlocker}
       style={{
         flex: 1,
         padding: "12px",
@@ -588,6 +657,7 @@ const toggleDarkMode = () => {
     />
     <button
       onClick={handleSend}
+      disabled={isBlockedBy || isBlocker}
       style={{
         backgroundColor: "#4f46e5",
         color: "#fff",
@@ -595,7 +665,8 @@ const toggleDarkMode = () => {
         padding: "12px 20px",
         borderRadius: "12px",
         fontSize: "16px",
-        cursor: "pointer",
+        cursor: isBlockedBy || isBlocker ? "not-allowed" : "pointer",
+        opacity: isBlockedBy || isBlocker ? 0.5 : 1,
         transition: "background-color 0.2s ease-in-out"
       }}
     >

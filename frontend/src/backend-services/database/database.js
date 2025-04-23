@@ -147,26 +147,33 @@ class DatabaseService {
     }
   }
   
-  // Block user
-  async blockUser({ blocker_id, blocked_id }) {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/block/block-user`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getAuthHeaders(),
-        },
-        body: JSON.stringify({ blocker_id, blocked_id }),
-      });
+// Block user
+async blockUser({ blocker_id, blocked_id }) {
+  try {
+    const response = await fetch(`${this.baseUrl}/api/block/block-user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...this.getAuthHeaders(),
+      },
+      body: JSON.stringify({ blocker_id, blocked_id }),
+    });
 
-      const data = await this.handleResponse(response);
-      toast.success("🚫 User blocked successfully!");
-      return data;
-    } catch (error) {
-      toast.error(`❌ Failed to block user: ${error.message}`);
-      throw error;
-    }
+    // Debug: check if it's returning HTML
+    const text = await response.text();
+    console.log("Raw response text:", text);
+
+    // Try parsing manually
+    const data = JSON.parse(text); // You can skip this if you still use `this.handleResponse(response)`
+    toast.success("🚫 User blocked successfully!");
+    return data;
+  } catch (error) {
+    toast.error(`❌ Failed to block user: ${error.message}`);
+    console.error("Block user error:", error);
+    throw error;
   }
+}
+
 
   // Unblock user
   async unblockUser({ blocker_id, blocked_id }) {

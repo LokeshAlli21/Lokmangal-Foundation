@@ -32,6 +32,24 @@ export const registerSocketEvents = (socket, io) => {
     console.log('message_content', message_content);
   
     try {
+
+      // 🚫 Check if the receiver has blocked the sender
+      const { data: blockRecord, blockError  } = await supabase
+      .from('blocked_users')
+      .select('*')
+      .or(`blocker_id.eq.${receiver_id},blocked_id.eq.${sender_id}`)
+      .maybeSingle();
+
+      if (blockError ) {
+        console.error('❌ Supabase error while checking block:', blockError .message);
+        return socket.emit('send-message', { status: 'error', message: 'Internal error while checking block status' });
+      }
+
+      if (blockRecord) {
+        console.log('❌ Message blocked due to user block');
+        return socket.emit('send-message', { status: 'blocked', message: "🚫 You can't send messages to this user." });
+      }
+
       // Check if conversation already exists between sender and receiver
       let { data: existingConversation, error: convError } = await supabase
         .from('conversations')
@@ -196,6 +214,12 @@ export const registerSocketEvents = (socket, io) => {
         timestamp: getISTTimestamp()
       });
     }
+
+    // Proceed to send the message
+    socket.emit('send-message', { 
+      status: 'success', 
+      message: 'Message sent successfully'
+    });
 
   });
   

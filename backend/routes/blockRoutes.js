@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/isBlocked', protect, isBlocked);
 
-router.put('/block-user', protect, blockUser);
+router.post('/block-user', protect, blockUser);
 
 router.post('/unblock-user', protect, unblockUser);
 
