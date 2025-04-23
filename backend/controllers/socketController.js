@@ -402,6 +402,46 @@ socket.on('load-conversations', async ({ user_id }) => {
   });
   
 
+  // 🧹 Handle clear chat between two users
+socket.on('clear-chat', async ({ sender_id, receiver_id }) => {
+  try {
+    const { error } = await supabase
+    .from('messages')
+    .delete()
+    .or(`and(sender_id.eq.${sender_id},receiver_id.eq.${receiver_id}),and(sender_id.eq.${receiver_id},receiver_id.eq.${sender_id})`);
+
+    if (error) {
+      console.error('❌ Error clearing chat:', error.message);
+      return socket.emit('chat-cleared', {
+        status: 'error',
+        message: 'Failed to clear chat'
+      });
+    }
+
+    console.log(`🧹 Chat cleared between ${sender_id} and ${receiver_id}`);
+    socket.emit('chat-cleared', {
+      status: 'success',
+      message: 'Chat cleared successfully'
+    });
+
+    // Optional: notify the receiver
+    const receiverSocketId = userSocketMap[receiver_id];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('chat-cleared-notify', {
+        sender_id,
+        message: '🧹 User has cleared the chat with you.'
+      });
+    }
+
+  } catch (err) {
+    console.error('❌ Unexpected error clearing chat:', err);
+    socket.emit('chat-cleared', {
+      status: 'error',
+      message: 'Unexpected error occurred while clearing chat'
+    });
+  }
+});
+
   // 🔌 Handle user disconnection
   socket.on('disconnect', () => {
     for (const [userId, socketId] of Object.entries(userSocketMap)) {

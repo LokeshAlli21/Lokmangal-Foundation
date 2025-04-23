@@ -207,7 +207,7 @@ async checkUserIsBlockedById({ blocker_id, blocked_id }) {
     );
 
     const data = await this.handleResponse(response);
-    toast.success("✅ Block status checked!");
+    // toast.success("✅ Block status checked!");
     return data;
   } catch (error) {
     toast.error(`❌ Failed to check block status: ${error.message}`);

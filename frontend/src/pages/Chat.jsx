@@ -261,7 +261,7 @@ const toggleDarkMode = () => {
     const menuRef = useRef();
 
     const handleBlock = async () => {
-      console.log('called handleBlock');
+      // console.log('called handleBlock');
       try {
         const data = await databaseService.blockUser({
           blocker_id: userId,
@@ -276,6 +276,14 @@ const toggleDarkMode = () => {
     
     const handleClearChat = () =>{
       console.log('called handleClearChat');
+      socket.emit('clear-chat', { sender_id: userId, receiver_id: receiverId }, (response) => {
+        if (response.status === 'success') {
+          toast.success(response.message);
+          setMessages([]); // Clear chat from UI
+        } else {
+          toast.error(response.message || 'Failed to clear chat');
+        }
+      });
     }
     
   
@@ -288,6 +296,35 @@ const toggleDarkMode = () => {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+      socket.on('chat-cleared-notify', ({ sender_id, message }) => {
+        toast.info(message);
+        setMessages([]); // Optional: auto-clear for receiver too
+      });
+    
+      return () => {
+        socket.off('chat-cleared-notify');
+      };
+    }, []);
+
+    useEffect(() => {
+      socket.on("chat-cleared", (response) => {
+        if (response.status === "success") {
+          toast.success(response.message); // 🧹 Show success toast
+          setMessages([]); // Clear messages from UI
+        } else {
+          toast.error(response.message || "Failed to clear chat"); // Error toast
+        }
+      });
+    
+      // Cleanup on unmount
+      return () => {
+        socket.off("chat-cleared");
+      };
+    }, [socket]);
+    
+    
   
     const dotStyle = {
       width: "4px",
