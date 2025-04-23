@@ -7,6 +7,8 @@ const shuffleArray = (array) => {
 };
 
 export const getProfiles = async (req, res) => {
+  console.log('getProfiles is called new ................................', req.query.id);
+  
   try {
     const id = req.query.id;
 
@@ -53,8 +55,8 @@ export const getProfiles = async (req, res) => {
         preferred_age_range
       `)
       .not('gender', 'eq', gender)
-      // .not('id', 'eq', id)
-      .limit(10);
+      .not('role', 'eq', 'super_admin') // 🚫 exclude super_admins
+      .limit(15);
   
     if (error) {
       console.error('Error fetching profiles:', error);

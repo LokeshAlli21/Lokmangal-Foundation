@@ -946,7 +946,7 @@ function Home() {
                   </h4>
                   <p className="text-gray-600 mb-1">
                     {profile.gender},{" "}
-                    {
+                    { profile.dob &&
                       Math.floor(
                         (new Date() - new Date(profile.dob)) / (365.25 * 24 * 60 * 60 * 1000)
                       )

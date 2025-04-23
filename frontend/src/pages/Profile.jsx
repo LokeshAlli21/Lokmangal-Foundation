@@ -22,7 +22,7 @@ function Profile() {
         toast("No profil is found.", { type: 'info' });
       } else {
         setProfileData(data);
-        // console.log('see my profile: ', data);
+        console.log('see my profile: ', data);
       }
     })
     .catch(error => {
@@ -211,7 +211,8 @@ function Profile() {
                   <span style={emojiStyle}>🗓️</span>
                   <span style={labelStyle}>Age:</span>
                   <span style={valueStyle}>
-                    {new Date().getFullYear() - new Date(profileData.dob).getFullYear() -
+                  {profileData.dob &&
+                    new Date().getFullYear() - new Date(profileData.dob).getFullYear() -
                       (new Date().getMonth() < new Date(profileData.dob).getMonth() ||
                       (new Date().getMonth() === new Date(profileData.dob).getMonth() &&
                       new Date().getDate() < new Date(profileData.dob).getDate()) ? 1 : 0)} years

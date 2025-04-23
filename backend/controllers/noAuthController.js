@@ -35,7 +35,9 @@ const shuffleArray = (array) => {
           photo_url,
           family_type,
           preferred_age_range
-        `);
+        `)
+        .not('role', 'eq', 'super_admin') // 🚫 exclude super_admins;
+        .limit(10); 
     
       // ✅ Age filter
       if (age) {

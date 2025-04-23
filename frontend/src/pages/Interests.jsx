@@ -546,8 +546,8 @@ const handleChat = (id) => {
 
 
                         {profiles.map((profile) => {
-        const birthDate = new Date(profile.dob);
-        const age = new Date().getFullYear() - birthDate.getFullYear();
+        const birthDate = profile.dob && new Date(profile.dob)
+        const age = profile.dob && new Date().getFullYear() - birthDate.getFullYear();
         const requestDate = new Date().toLocaleString(); // Current date-time
 
         return (

@@ -173,7 +173,8 @@ const ProfileDetails = () => {
                   <span style={emojiStyle}>🗓️</span>
                   <span style={labelStyle}>Age:</span>
                   <span style={valueStyle}>
-                    {new Date().getFullYear() - new Date(profileData.dob).getFullYear() -
+                  {profileData.dob &&
+                    new Date().getFullYear() - new Date(profileData.dob).getFullYear() -
                       (new Date().getMonth() < new Date(profileData.dob).getMonth() ||
                       (new Date().getMonth() === new Date(profileData.dob).getMonth() &&
                       new Date().getDate() < new Date(profileData.dob).getDate()) ? 1 : 0)} years
