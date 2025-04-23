@@ -12,6 +12,7 @@ import EditProfile from './EditProfile'
 import Profiledetails from './Profiledetails'
 import Contact from './Contact'
 import About from './About'
+import ViewAllProfiles from './ViewAllProfiles'
 
 export {
     Home,
@@ -28,4 +29,5 @@ export {
     Profiledetails,
     Contact,
     About,
+    ViewAllProfiles,
 }

@@ -7,7 +7,7 @@ const shuffleArray = (array) => {
 };
 
 export const getProfiles = async (req, res) => {
-  console.log('getProfiles is called new ................................', req.query.id);
+  // console.log('getProfiles is called new ................................', req.query.id);
   
   try {
     const id = req.query.id;

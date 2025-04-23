@@ -74,6 +74,29 @@ class DatabaseService {
     }
   }
 
+  async getProfilesForSuperAdmin(id) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/api/super-admin/get-profiles?id=${id}`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
+
+      if (response.status === 403) {
+        throw new Error("Access denied. Only Super Admins can view profiles.");
+      }
+  
+      const data = await this.handleResponse(response);
+      toast.success("✅ Profiles loaded successfully (Super Admin)!");
+      return data;
+  
+    } catch (error) {
+      toast.error(`🚨 Failed to load super admin profiles: ${error.message}`);
+      throw error;
+    }
+  }
+  
 
   async getProfilePhotoById(id) {
     try {
