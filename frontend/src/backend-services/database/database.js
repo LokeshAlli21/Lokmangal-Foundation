@@ -97,6 +97,24 @@ class DatabaseService {
     }
   }
   
+  async getUserRole(id) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/api/super-admin/get-user-role?id=${id}`,
+        {
+          headers: this.getAuthHeaders(),
+        }
+      );
+  
+      const data = await this.handleResponse(response);
+      return data.role; // returns role, e.g., 'super_admin', 'admin', 'user'
+  
+    } catch (error) {
+      toast.error(`🚨 ${error.message}`);
+      throw error;
+    }
+  }
+  
 
   async getProfilePhotoById(id) {
     try {

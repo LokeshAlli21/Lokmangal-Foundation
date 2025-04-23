@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react'
 import databaseService from '../backend-services/database/database';
 import { useSelector } from 'react-redux';
 import { useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function Profile() {
 
-  const { photoUrl } = useOutletContext();
-  
-  const userData = useSelector(state => state.auth.userData);
-  // console.log("getting userData : ", userData);
+  const { photoUrl, userRole} = useOutletContext();
+
+  const userData = useSelector((state) => state.auth.userData);
+
+  const userId = userData?.id;
+
+
   
   
   const [email, setEmail] = useState(userData.email)
@@ -134,18 +138,32 @@ function Profile() {
                     Profile
                   </a>
                 </li>
-                <li>
-                  <a href="/interests">
-                    <i className="fa fa-handshake-o" aria-hidden="true" />
-                    Interests
-                  </a>
-                </li>
-                <li>
-                  <a href="/chat-list">
-                    <i className="fa fa-commenting-o" aria-hidden="true" />
-                    Chat list
-                  </a>
-                </li>
+                {
+                          (userRole === 'user') &&
+                          <>
+                            <li>
+                            <a href="/interests">
+                                <i className="fa fa-handshake-o" aria-hidden="true" />
+                                Interests
+                            </a>
+                            </li>
+                            <li>
+                            <a href="/chat-list">
+                                <i className="fa fa-commenting-o" aria-hidden="true" />
+                                Chat list
+                            </a>
+                            </li>
+                          </>
+                        }
+                        {
+                          (userRole === 'super_admin') && 
+                          <li>
+                            <a href="/super-admin/view-all-profiles">
+                                <i className="fa fa-users" aria-hidden="true" />
+                                View All Profiles
+                            </a>
+                          </li>
+                        }
                 <li>
                   <a href="/setting">
                     <i className="fa fa-cog" aria-hidden="true" />

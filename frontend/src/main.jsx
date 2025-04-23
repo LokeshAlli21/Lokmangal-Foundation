@@ -95,7 +95,7 @@ const router = createBrowserRouter([
       {
         path: "/super-admin/view-all-profiles",
         element: (
-            <AuthLayout  authentication={false}>
+            <AuthLayout  authentication={true}>
               <ViewAllProfiles />
             </AuthLayout>
         ),

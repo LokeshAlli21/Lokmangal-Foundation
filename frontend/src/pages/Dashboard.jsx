@@ -6,7 +6,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import socket from '../socket';
 
 function Dashboard() {
-    const { photoUrl } = useOutletContext();
+    const { photoUrl, userRole } = useOutletContext();
 
 
     const navigate = useNavigate()
@@ -106,18 +106,32 @@ function Dashboard() {
                             Profile
                         </a>
                         </li>
-                        <li>
-                        <a href="/interests">
-                            <i className="fa fa-handshake-o" aria-hidden="true" />
-                            Interests
-                        </a>
-                        </li>
-                        <li>
-                        <a href="/chat-list">
-                            <i className="fa fa-commenting-o" aria-hidden="true" />
-                            Chat list
-                        </a>
-                        </li>
+                        {
+                          (userRole === 'user') &&
+                          <>
+                            <li>
+                            <a href="/interests">
+                                <i className="fa fa-handshake-o" aria-hidden="true" />
+                                Interests
+                            </a>
+                            </li>
+                            <li>
+                            <a href="/chat-list">
+                                <i className="fa fa-commenting-o" aria-hidden="true" />
+                                Chat list
+                            </a>
+                            </li>
+                          </>
+                        }
+                        {
+                          (userRole === 'super_admin') && 
+                          <li>
+                            <a href="/super-admin/view-all-profiles">
+                                <i className="fa fa-users" aria-hidden="true" />
+                                View All Profiles
+                            </a>
+                          </li>
+                        }
                         <li>
                         <a href="/setting">
                             <i className="fa fa-cog" aria-hidden="true" />

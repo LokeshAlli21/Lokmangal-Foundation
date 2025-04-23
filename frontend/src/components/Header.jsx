@@ -6,7 +6,10 @@ import { toast } from 'react-toastify';
 import { useSocket } from '../context/SocketContext.jsx';
 import databaseService from '../backend-services/database/database.js';
 
-function Header({photoUrl}) {
+function Header({userRole}) {
+
+  console.log("userRole: ",userRole);
+  
 
 
   const socket = useSocket();
@@ -416,12 +419,20 @@ function Header({photoUrl}) {
                     {userId && <li>
                       <a href={`/profile`}>My profile</a>
                     </li>}
-                    <li>
+                    {(userRole == 'user') &&
+                      <>
+                      <li>
                       <a href="/interests">Interests</a>
                     </li>
                     <li>
                       <a href="/chat-list">Chat lists</a>
                     </li>
+                    </>}
+                    {(userRole === 'super_admin') && 
+                    <li>
+                      <a href="/super-admin/view-all-profiles">View All Porfiles</a>
+                    </li>
+                    }
                     <li>
                       <a href="/setting">Profile settings</a>
                     </li>
@@ -558,18 +569,27 @@ function Header({photoUrl}) {
       <ul>
         {authStatus && 
           <>
+          {(userRole === 'user') && 
         <li>
           <a href="/interests">See other profiles</a>
         </li>
+          }
         <li>
           <a href="/dashboard">Dashboard</a>
         </li>
         <li>
           <a href="/profile">Profile details</a>
         </li>
+        {(userRole === 'super_admin') &&
+        <li>
+        <a href="/super-admin/view-all-profiles">View All Profiles</a>
+      </li>
+        }
+        {(userRole === 'user') && 
         <li>
           <a href="/chat-list">My Chats</a>
         </li>
+        }
         </>
         }
 

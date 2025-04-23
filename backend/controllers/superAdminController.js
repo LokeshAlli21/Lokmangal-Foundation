@@ -26,3 +26,24 @@ export const getProfilesForSuperAdmin = async (req, res) => {
   
     return res.status(200).json({ message: "Profiles fetched successfully", data: profiles });
   };
+
+  export const getUserRole = async (req, res) => {
+    const userId = req.query.id;
+  
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing user ID' });
+    }
+  
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', userId)
+      .single();
+  
+    if (error || !user) {
+      return res.status(500).json({ error: 'Failed to verify role' });
+    }
+  
+    // Return user role (super_admin, admin, user, etc.)
+    return res.status(200).json({ role: user.role });
+  };

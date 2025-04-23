@@ -39,11 +39,36 @@ import 'slick-carousel';
 import databaseService from './backend-services/database/database';
 
 import { SocketProvider } from './context/SocketContext';
+import { toast } from 'react-toastify';
 
 function App() {
   const dispatch = useDispatch();
   const storeData = useSelector(state => state.auth); 
   const [photoUrl, setPhotoUrl] = useState(null)  
+
+  const [userRole, setUserRole] = useState('user');
+
+  const userData = useSelector((state) => state.auth.userData);
+
+  const userId = userData?.id;
+
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const role = await databaseService.getUserRole(userId);
+        setUserRole(role); // set user role
+        toast(`checked user role: ${role}`)
+      } catch (err) {
+        console.log(err.message);
+        setUserRole('user'); // default to 'user' role
+      }
+    };
+
+    if (userId) {
+      fetchUserRole();
+    }
+  }, [userId]);
   
   useEffect(() => {
     authService.getCurrentUser()
@@ -77,9 +102,9 @@ useEffect(() => {
   return (
     <SocketProvider userId={storeData?.userData?.id}>
     <>
-      <Header photoUrl={photoUrl && photoUrl} />
+      <Header photoUrl={photoUrl && photoUrl} userRole={userRole}/>
       <ToastContainer position="bottom-right" autoClose={5000}  />
-      <Outlet context={{ photoUrl }}   />
+      <Outlet context={{ photoUrl, userRole}}   />
       <Footer />
     </>
     </SocketProvider>
