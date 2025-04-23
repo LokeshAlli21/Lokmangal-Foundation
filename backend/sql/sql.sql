@@ -9,6 +9,7 @@ CREATE TABLE users (
   email VARCHAR(100) UNIQUE NOT NULL,
   phone VARCHAR(15),
   password VARCHAR(255) NOT NULL,
+  role TEXT DEFAULT 'user',
   created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata'),
   updated_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Kolkata')
 );
@@ -35,6 +36,7 @@ EXECUTE PROCEDURE update_updated_at_column();
 CREATE TABLE profiles (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  role TEXT DEFAULT 'user',
   
   -- Personal Info
   first_name VARCHAR(100),
