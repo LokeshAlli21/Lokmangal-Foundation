@@ -1,4 +1,3 @@
-import { useId } from 'react';
 import env from '../../env/env';
 import { toast } from "react-toastify";
 
@@ -187,6 +186,35 @@ class DatabaseService {
       return [];
     }
   };
+  
+
+  async checkIfUserBlocked(userId) {
+    console.log('Checking if user is blocked...');
+  
+    try {
+      const response = await fetch(`${this.baseUrl}/api/super-admin/check-is-user-id-blocked-by-admin?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),  // Assuming this function handles authorization headers
+        },
+      });
+  
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to check if user is blocked');
+  
+      if (result.isBlocked) {
+        toast.success(`✅ User is blocked by an admin.`);
+      } else {
+        toast.info(`ℹ️ User is not blocked.`);
+      }
+  
+      return result.isBlocked; // You can return whether the user is blocked or not
+    } catch (error) {
+      toast.error(`🚨 Failed to check if user is blocked: ${error.message}`);
+      return false; // Return false if there's an error
+    }
+  }
   
   
 

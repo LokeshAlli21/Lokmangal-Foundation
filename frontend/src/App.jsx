@@ -52,6 +52,7 @@ function App() {
 
   const userId = userData?.id;
 
+  const [isBlockedProfile, setIsBlockedProfile] = useState(false);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -70,6 +71,28 @@ function App() {
     }
   }, [userId]);
   
+
+  useEffect(() => {
+    const checkUserBlockedStatus = async () => {
+      try {
+        const isBlocked = await databaseService.checkIfUserBlocked(userId);
+        setIsBlockedProfile(isBlocked);  // Set the status whether the user is blocked or not
+        if (isBlocked) {
+          toast.warning('🚫 This user is blocked by the admin.');
+        } else {
+          toast.info('✅ User is not blocked.');
+        }
+      } catch (err) {
+        console.error(err.message);
+        toast.error('🚨 Failed to check user block status');
+      }
+    };
+
+    if (userId) {
+      checkUserBlockedStatus();
+    }
+  }, [userId]); // Run the effect whenever `userId` changes
+
   useEffect(() => {
     authService.getCurrentUser()
     .then((userData) => {
@@ -104,7 +127,7 @@ useEffect(() => {
     <>
       <Header photoUrl={photoUrl && photoUrl} userRole={userRole}/>
       <ToastContainer position="bottom-right" autoClose={5000}  />
-      <Outlet context={{ photoUrl, userRole}}   />
+      <Outlet context={{ photoUrl, userRole, isBlockedProfile}}   />
       <Footer />
     </>
     </SocketProvider>

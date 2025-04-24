@@ -127,3 +127,39 @@ export const getProfilesForSuperAdmin = async (req, res) => {
       res.status(500).json({ success: false, message: 'Unexpected server error' });
     }
   };
+
+  export const checkIsUserIdBlockedByAdmin = async (req, res) => {
+
+    console.log('user hit checkIsUserIdBlockedByAdmin /////////////////////////////////////////////////');
+    
+    const { userId } = req.query;  // Get userId from query parameters
+    console.log(userId);
+  
+    if (!userId) {
+      return res.status(400).json({ error: "Missing userId" });
+    }
+  
+    try {
+      // Check if the user is blocked by any admin
+        const { data: blockedUser, error } = await supabase
+        .from("admin_blocked_users")
+        .select("*")
+        .eq("user_id", userId)
+        .limit(1); // Ensure that you only get one row (limit is optional but can help avoid issues)
+
+      if (error) {
+        console.log("error: ", error);
+        return res.status(500).json({ error: "Failed to check blocked user." });
+      }
+
+      // Check if any user is found
+      if (blockedUser.length > 0) {
+        return res.status(200).json({ isBlocked: true, message: "User is blocked by an admin." });
+      } else {
+        return res.status(200).json({ isBlocked: false, message: "User is not blocked." });
+      }
+    } catch (err) {
+      return res.status(500).json({ error: "Internal server error." });
+    }
+  };
+  
