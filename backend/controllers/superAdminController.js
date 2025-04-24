@@ -77,3 +77,53 @@ export const getProfilesForSuperAdmin = async (req, res) => {
   
     return res.status(200).json({ message: "User blocked by admin successfully" });
   };
+
+  export const unBlockUserByAdmin = async (req, res) => {
+    const { adminId, userId } = req.body;
+  
+    if (!adminId || !userId) {
+      return res.status(400).json({ error: "Missing adminId or userId" });
+    }
+  
+    // Optional: check if adminId belongs to an admin
+    const { data: admin, error: adminError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", adminId)
+      .single();
+  
+    if (adminError || admin.role !== "super_admin") {
+      return res.status(403).json({ error: "Only admins can unblock users." });
+    }
+  
+    // Unblock user (remove from blocked users table)
+    const { error: unblockError } = await supabase
+      .from("admin_blocked_users")
+      .delete()
+      .eq("admin_id", adminId)
+      .eq("user_id", userId);
+  
+    if (unblockError) {
+      return res.status(500).json({ error: "Failed to unblock user." });
+    }
+  
+    return res.status(200).json({ message: "User unblocked by admin successfully" });
+  };  
+
+  export const getBlockedUsersList = async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_blocked_users')
+        .select('*');
+  
+      if (error) {
+        console.error('Error fetching blocked users:', error.message);
+        return res.status(500).json({ success: false, message: 'Failed to fetch blocked users', error: error.message });
+      }
+  
+      res.status(200).json({ success: true, blockedUsers: data });
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      res.status(500).json({ success: false, message: 'Unexpected server error' });
+    }
+  };

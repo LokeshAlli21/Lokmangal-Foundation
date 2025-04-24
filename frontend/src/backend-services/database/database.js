@@ -116,8 +116,7 @@ class DatabaseService {
   }
 
   async blockUserByAdmin ({adminId,userId }) {
-    console.log('called ........................................................................................................');
-    
+    console.log('block called .........');
     try {
       const response = await fetch(`${this.baseUrl}/api/super-admin/block-user`, {
         method: "POST",
@@ -139,6 +138,56 @@ class DatabaseService {
       toast.error(`🚨 Admin block failed: ${error.message}`);
     }
   };
+
+
+  async unBlockUserByAdmin({ adminId, userId }) {
+    console.log('Unblock called ........');
+    
+    try {
+      const response = await fetch(`${this.baseUrl}/api/super-admin/un-block-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({
+          adminId: adminId,
+          userId: userId,
+        }),
+      });
+  
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+  
+      toast.success(result.message);
+    } catch (error) {
+      toast.error(`🚨 Admin unblock failed: ${error.message}`);
+    }
+  }
+  
+  async getBlockedUsersByAdmin () {
+    console.log('Fetching blocked users list...');
+  
+    try {
+      const response = await fetch(`${this.baseUrl}/api/super-admin/get-blocked-users-list`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+      });
+  
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Failed to fetch blocked users');
+  
+      toast.success("✅ Blocked users list fetched successfully");
+      return result.blockedUsers; // or result.data if your backend sends it like that
+    } catch (error) {
+      toast.error(`🚨 Failed to fetch blocked users: ${error.message}`);
+      return [];
+    }
+  };
+  
   
 
   async getProfilePhotoById(id) {

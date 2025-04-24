@@ -5,13 +5,13 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 function ViewAllProfiles() {
-
   const { photoUrl } = useOutletContext();
-
 
   const userData = useSelector((state) => state.auth.userData);
   const userId = userData?.id;
+
   const [profiles, setProfiles] = useState([]);
+  const [blockedUsers, setBlockedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notAllowed, setNotAllowed] = useState(false);
 
@@ -33,9 +33,21 @@ function ViewAllProfiles() {
       }
     };
 
-    fetchProfiles();
-  }, [userId]);
+    const fetchBlockedUsers = async () => {
+      try {
+        const blocked = await databaseService.getBlockedUsersByAdmin();
+        console.log("list: ", blocked);
+        
+        setBlockedUsers(blocked); // assumes the function returns an array
+      } catch (error) {
+        console.error("❌ Error fetching blocked users:", error);
+        toast.error("Failed to load blocked users.");
+      }
+    };
 
+    fetchProfiles();
+    fetchBlockedUsers();
+  }, [userId]);
   
 
   const handleBlockByAdmin = async (targetUserId) => {
@@ -47,13 +59,29 @@ function ViewAllProfiles() {
       });
 
       toast.success(`✅ User ${targetUserId} has been blocked!`);
-      setProfiles(prev => prev.filter(profile => profile.user_id !== targetUserId));
+
+      setBlockedUsers(prev => [...prev, { user_id: targetUserId }]);
     } catch (err) {
       toast.error(`🚨 Failed to block user: ${err.message}`);
       console.error("Error blocking user:", err);
-    } 
+    }
   };
-  const handleUnblockByAdmin = () => {} 
+
+  const handleUnblockByAdmin = async (targetUserId) => {
+    try {
+      await databaseService.unBlockUserByAdmin({
+        adminId: userId,
+        userId: targetUserId,
+      });
+  
+      toast.success(`✅ User ${targetUserId} has been unblocked!`);
+  
+      setBlockedUsers(prev => prev.filter(user => user.user_id !== targetUserId));
+    } catch (err) {
+      toast.error(`🚨 Failed to unblock user: ${err.message}`);
+      console.error("Error unblocking user:", err);
+    }
+  };
 
   if (loading) return <p>Loading profiles...</p>;
 
@@ -64,8 +92,6 @@ function ViewAllProfiles() {
       </div>
     );
   }
-  console.log(profiles);
-  
 
   return (
     <>
@@ -184,15 +210,7 @@ function ViewAllProfiles() {
               </a>
             </div>
             <div className="db-int-pro-3" style={{display: 'flex', flexDirection: 'column',height: '100%', rowGap: '10px', alignContent: 'center', alignItems: 'center'}}>
-            <button
-              type="button"
-              className="btn btn-danger btn-md"
-              style={{ color: 'white', padding: '5px 10px', marginRight: '8px' }}
-              onClick={() => handleBlockByAdmin(profile.id)}
-            >
-              <i className="fa fa-ban" aria-hidden="true"></i> Block
-            </button>
-
+            {blockedUsers.some((blocked) => blocked.user_id === profile.id) ? (
             <button
               type="button"
               className="btn btn-warning btn-md"
@@ -201,6 +219,17 @@ function ViewAllProfiles() {
             >
               <i className="fa fa-unlock-alt" aria-hidden="true"></i> Unblock
             </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-danger btn-md"
+              style={{ color: 'white', padding: '5px 10px', marginRight: '8px' }}
+              onClick={() => handleBlockByAdmin(profile.id)}
+            >
+              <i className="fa fa-ban" aria-hidden="true"></i> Block
+            </button>
+          )}
+
 
             </div>
           </li>
