@@ -6,7 +6,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import socket from '../socket';
 
 function Dashboard() {
-    const { photoUrl, userRole } = useOutletContext();
+    const { photoUrl, userRole, isBlockedProfile } = useOutletContext();
 
 
     const navigate = useNavigate()
@@ -149,6 +149,12 @@ function Dashboard() {
                 </div>
                 </div>
                 <div className="col-md-8 col-lg-9">
+                  {isBlockedProfile? 
+                  <h2 style={{ color: 'red', textAlign: 'center' }}>
+                    🚫 Your profile has been blocked by an administrator. Please contact support for further assistance.
+                  </h2>
+                  : 
+                  <>
                 <div className="db-inte-prof-list" style={{borderRadius: '10px',
     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',backgroundColor: 'white',
     padding: '30px',}}>
@@ -303,6 +309,8 @@ function Dashboard() {
                     </div>
                     </div>
                 </div>
+                </>
+                }
                 </div>
             </div>
             </div>

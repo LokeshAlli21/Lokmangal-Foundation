@@ -5,7 +5,7 @@ import { useSocket } from '../context/SocketContext.jsx';
 
 function ChatList() {
   const socket = useSocket();
-  const { photoUrl } = useOutletContext();
+  const { photoUrl,isBlockedProfile } = useOutletContext();
 
   const navigate = useNavigate()
 
@@ -131,6 +131,12 @@ function ChatList() {
           </div>
         </div>
         <div className="col-md-8 col-lg-9">
+        {isBlockedProfile? 
+                  <h2 style={{ color: 'red', textAlign: 'center' }}>
+                    🚫 Your profile has been blocked by an administrator. Please contact support for further assistance.
+                  </h2>
+                  : 
+                  <>
           <div className="row">
             <div className="col-md-12 db-sec-com">
               <h2 className="db-tit">Chat list</h2>
@@ -200,6 +206,8 @@ function ChatList() {
               </div>
             </div>
           </div>
+          </>
+          }
         </div>
       </div>
     </div>

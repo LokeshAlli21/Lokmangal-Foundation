@@ -6,7 +6,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 
 function Interests() {
 
-  const { photoUrl } = useOutletContext();
+  const { photoUrl, isBlockedProfile } = useOutletContext();
 
   const navigate = useNavigate()
 
@@ -326,6 +326,12 @@ const handleChat = (id) => {
           </div>
         </div>
         <div className="col-md-8 col-lg-9">
+        {isBlockedProfile? 
+                  <h2 style={{ color: 'red', textAlign: 'center' }}>
+                    🚫 Your profile has been blocked by an administrator. Please contact support for further assistance.
+                  </h2>
+                  : 
+                  <>
           <div className="row">
             <div className="col-md-12 db-sec-com">
               <h2 className="db-tit">Interest request</h2>
@@ -731,6 +737,8 @@ const handleChat = (id) => {
               </div>
             </div>
           </div>
+          </>
+                }
         </div>
       </div>
     </div>

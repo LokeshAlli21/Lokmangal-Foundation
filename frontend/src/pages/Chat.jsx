@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 
 function Chat() {
 
+    const { isBlockedProfile } = useOutletContext();
+
   const [isBlocker, setIsBlocker] = useState(false)
   const [isBlockedBy, setIsBlockedBy] = useState(false)
 
@@ -400,6 +402,14 @@ const toggleDarkMode = () => {
     }, [userId, receiverId]); // Add dependencies if they are dynamic    
 
 
+    if(isBlockedProfile){
+      return (
+        <h2 style={{ color: 'red', textAlign: 'center' }}>
+                    🚫 Your profile has been blocked by an administrator. Please contact support for further assistance.
+                  </h2>
+      )
+    } else {
+
   return (
     <div id="chat-screen"
   style={{
@@ -713,6 +723,8 @@ const toggleDarkMode = () => {
 </div>
 
   );
+
+}
 }
 
 export default Chat;
